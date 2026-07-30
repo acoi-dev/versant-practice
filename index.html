@@ -9,9 +9,18 @@
 <style>
   :root{
     --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee; --line2:#d6d8dd;
-    --accent:#1f4fd8; --bg:#fbfbfc;
+    --accent:#1f4fd8; --bg:#fbfbfc; --hover:#f2f3f5; --flashbg:rgba(0,0,0,.05);
     --ui:"Inter","Noto Sans JP",-apple-system,BlinkMacSystemFont,sans-serif;
   }
+  /* 寝る前用のダーク（純黒でなく目に優しい濃色） */
+  @media (prefers-color-scheme: dark){
+    :root{ --ink:#e9ebf0; --sub:#8b9099; --faint:#4b4f59; --line:#22242c; --line2:#33363f;
+           --accent:#8aa6ff; --bg:#0f1013; --hover:#191b20; --flashbg:rgba(255,255,255,.08); }
+  }
+  :root[data-theme="dark"]{ --ink:#e9ebf0; --sub:#8b9099; --faint:#4b4f59; --line:#22242c; --line2:#33363f;
+           --accent:#8aa6ff; --bg:#0f1013; --hover:#191b20; --flashbg:rgba(255,255,255,.08); }
+  :root[data-theme="light"]{ --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee; --line2:#d6d8dd;
+           --accent:#1f4fd8; --bg:#fbfbfc; --hover:#f2f3f5; --flashbg:rgba(0,0,0,.05); }
   *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;overflow:hidden;background:var(--bg)}
   body{font-family:var(--ui);color:var(--ink);font-feature-settings:"palt" 1;-webkit-user-select:none;user-select:none}
@@ -23,7 +32,7 @@
   .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
   .plist{display:flex;flex-direction:column;gap:11px}
   .pcard{border:1px solid var(--line2);border-radius:16px;padding:18px 20px;cursor:pointer;display:flex;align-items:center;gap:14px}
-  .pcard:active{background:#f4f5f7}
+  .pcard:active{background:var(--hover)}
   .pcard .id{font-size:13px;font-weight:600;color:var(--accent);width:20px}
   .pcard .nm{flex:1}
   .pcard .nm b{display:block;font-size:15px;font-weight:600}
@@ -68,12 +77,12 @@
   .yb:active{opacity:.5}
   .yb.seek{width:46px;height:46px}
   .yb.seek .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;padding-top:2px}
-  .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:#fff}
+  .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg)}
   .sub{display:flex;align-items:center;justify-content:center;gap:10px}
   .navb,.spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 18px;border-radius:22px;cursor:pointer;white-space:nowrap}
   .spd{font-variant-numeric:tabular-nums;padding:9px 15px}
 
-  .flash{position:fixed;top:42%;font-size:12.5px;color:var(--ink);font-weight:600;opacity:0;transition:opacity .15s;pointer-events:none;z-index:6;background:rgba(0,0,0,.05);padding:8px 13px;border-radius:20px}
+  .flash{position:fixed;top:42%;font-size:12.5px;color:var(--ink);font-weight:600;opacity:0;transition:opacity .15s;pointer-events:none;z-index:6;background:var(--flashbg);padding:8px 13px;border-radius:20px}
   .flash.l{left:11%}.flash.r{right:11%}.flash.on{opacity:1}
   .hint{position:fixed;left:0;right:0;top:50%;text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
@@ -83,8 +92,13 @@
   .head{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:5}
   .back{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 14px;border-radius:24px;cursor:pointer}
   .htitle{font-size:12.5px;color:var(--ink);font-weight:600}
-  .auto{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 15px;border-radius:24px;cursor:pointer;white-space:nowrap}
-  .auto.on{color:var(--ink);border-color:var(--faint)}
+  .hbtns{display:flex;align-items:center;gap:6px}
+  /* 自動送り：小さく目立たない文字トグル */
+  .auto{border:0;background:none;color:var(--faint);font:inherit;font-size:11px;padding:6px 4px;cursor:pointer;white-space:nowrap;letter-spacing:.02em}
+  .auto.on{color:var(--sub)}
+  /* テーマ切替：小さいアイコンボタン */
+  .themeb{border:1px solid var(--line2);background:none;color:var(--sub);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .themeb svg{width:16px;height:16px;display:block}
 </style>
 </head>
 <body>
@@ -100,7 +114,10 @@
   <div class="head">
     <button class="back" id="back">講座</button>
     <div class="htitle" id="htitle"></div>
-    <button class="auto on" id="mAuto">自動送り</button>
+    <div class="hbtns">
+      <button class="auto on" id="mAuto">自動送り</button>
+      <button class="themeb" id="mTheme" aria-label="表示モード"></button>
+    </div>
   </div>
   <div id="feed"></div>
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
@@ -118,6 +135,15 @@ const IC_RW='<svg viewBox="0 0 24 24" width="30" height="30">'+ARROW+'</svg><spa
 const IC_FW='<svg viewBox="0 0 24 24" width="30" height="30"><g transform="translate(24,0) scale(-1,1)">'+ARROW+'</g></svg><span class="num">10</span>';
 const IC_PLAY='<svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
 const IC_PAUSE='<svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
+const IC_SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.3 1.3M17.8 17.8l1.3 1.3M2 12h2M20 12h2M4.9 19.1l1.3-1.3M17.8 6.2l1.3-1.3"/></svg>';
+const IC_MOON='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+
+// ===== テーマ（OS追従＋手動切替・保存） =====
+function isDark(){const t=document.documentElement.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;}
+function setThemeIcon(){const b=document.getElementById('mTheme');if(b)b.innerHTML=isDark()?IC_SUN:IC_MOON;}
+(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s);setThemeIcon();})();
+document.getElementById('mTheme').onclick=()=>{const d=!isDark();document.documentElement.setAttribute('data-theme',d?'dark':'light');localStorage.setItem('theme',d?'dark':'light');setThemeIcon();};
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(!localStorage.getItem('theme'))setThemeIcon();});}catch(e){}
 
 boot();
 function boot(){
