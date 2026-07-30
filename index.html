@@ -92,13 +92,40 @@
   .head{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:5}
   .back{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 14px;border-radius:24px;cursor:pointer}
   .htitle{font-size:12.5px;color:var(--ink);font-weight:600}
-  .hbtns{display:flex;align-items:center;gap:6px}
-  /* 自動送り：小さく目立たない文字トグル */
-  .auto{border:0;background:none;color:var(--faint);font:inherit;font-size:11px;padding:6px 4px;cursor:pointer;white-space:nowrap;letter-spacing:.02em}
-  .auto.on{color:var(--sub)}
-  /* テーマ切替：小さいアイコンボタン */
-  .themeb{border:1px solid var(--line2);background:none;color:var(--sub);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-  .themeb svg{width:16px;height:16px;display:block}
+  /* 右上は設定ボタンだけ（基本は自動送り。切替は設定シートの中） */
+  .gearb{border:1px solid var(--line2);background:none;color:var(--sub);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .gearb svg{width:17px;height:17px;display:block}
+
+  /* ===== 設定シート ===== */
+  .sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+  .sheetbg.on{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);border-radius:20px 20px 0 0;
+    padding:22px 24px calc(env(safe-area-inset-bottom) + 24px);transform:translateY(101%);transition:transform .25s cubic-bezier(.2,.8,.2,1);z-index:21}
+  .sheet.on{transform:translateY(0)}
+  .sheet h3{font-size:15px;font-weight:600;margin-bottom:6px}
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
+  .setrow:first-of-type{border-top:0;margin-top:8px}
+  .setrow .lb b{display:block;font-size:14px;font-weight:500}
+  .setrow .lb span{font-size:12px;color:var(--sub)}
+  .sw{width:46px;height:28px;border-radius:16px;border:1px solid var(--line2);background:var(--hover);position:relative;cursor:pointer;flex:none;transition:.2s}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:1px solid var(--line2);transition:.2s}
+  .sw.on{background:var(--accent);border-color:var(--accent)}
+  .sw.on::after{left:20px;border-color:var(--accent)}
+  .seg{display:flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden;flex:none}
+  .seg button{border:0;background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:7px 13px;cursor:pointer;border-left:1px solid var(--line2)}
+  .seg button:first-child{border-left:0}
+  .seg button.on{background:var(--accent);color:var(--bg)}
+  .sheet .done{margin-top:22px;width:100%;border:1px solid var(--line2);background:none;color:var(--ink);font:inherit;font-size:14px;font-weight:500;padding:13px;border-radius:12px;cursor:pointer}
+
+  /* ===== ホーム：はじめての案内・おすすめ・目安 ===== */
+  .guide{border:1px solid var(--line2);border-radius:14px;padding:14px 16px;margin-bottom:22px;font-size:13px;line-height:1.75;color:var(--sub)}
+  .guide b{color:var(--ink);font-weight:600}
+  .guide .x{float:right;color:var(--faint);cursor:pointer;font-size:15px;line-height:1;margin:0 -4px 0 8px}
+  .pcard{position:relative}
+  .pcard.rec{border-color:var(--accent)}
+  /* おすすめ印は塗りバッジにせず、カード上辺の罫線を割るアクセント文字だけ */
+  .rec-badge{position:absolute;top:-8px;left:16px;background:var(--bg);color:var(--accent);font-size:11px;font-weight:600;padding:0 7px;letter-spacing:.02em}
+  .pcard .lv{font-size:11px;color:var(--faint);margin-top:3px}
 </style>
 </head>
 <body>
@@ -106,23 +133,38 @@
 <div id="home">
   <div class="brand">Versant 練習</div>
   <div class="tag">本番と同じ例題を、耳で無限反復</div>
+  <div class="guide" id="guide"><span class="x" id="guideX">×</span><b>はじめての方へ。</b>Versantは6つのパートに分かれた試験です。まずは <b>Part B「聞いて繰り返す」</b>から始めると、耳が慣れて楽に入れます。</div>
   <div class="plist" id="plist"></div>
 </div>
 
 <!-- フィード -->
 <div id="app">
   <div class="head">
-    <button class="back" id="back">講座</button>
+    <button class="back" id="back">ホーム</button>
     <div class="htitle" id="htitle"></div>
-    <div class="hbtns">
-      <button class="auto on" id="mAuto">自動送り</button>
-      <button class="themeb" id="mTheme" aria-label="表示モード"></button>
-    </div>
+    <button class="gearb" id="mGear" aria-label="設定"></button>
   </div>
   <div id="feed"></div>
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
   <div class="flash l" id="flashL">− 10秒</div>
   <div class="flash r" id="flashR">＋ 10秒</div>
+</div>
+
+<!-- 設定シート（右上の歯車から開く。基本は自動送りON） -->
+<div class="sheetbg" id="sheetbg"></div>
+<div class="sheet" id="sheet">
+  <h3>設定</h3>
+  <div class="setrow">
+    <div class="lb"><b>自動送り</b><span>1問終わると次の問題へ自動で進む</span></div>
+    <div class="sw on" id="swAuto" role="switch" aria-checked="true"></div>
+  </div>
+  <div class="setrow">
+    <div class="lb"><b>表示モード</b><span>寝る前はダークが目に優しい</span></div>
+    <div class="seg" id="segTheme">
+      <button data-th="auto">自動</button><button data-th="light">ライト</button><button data-th="dark">ダーク</button>
+    </div>
+  </div>
+  <button class="done" id="setDone">閉じる</button>
 </div>
 <audio id="au" preload="auto"></audio>
 
@@ -135,15 +177,36 @@ const IC_RW='<svg viewBox="0 0 24 24" width="30" height="30">'+ARROW+'</svg><spa
 const IC_FW='<svg viewBox="0 0 24 24" width="30" height="30"><g transform="translate(24,0) scale(-1,1)">'+ARROW+'</g></svg><span class="num">10</span>';
 const IC_PLAY='<svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
 const IC_PAUSE='<svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
-const IC_SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.3 1.3M17.8 17.8l1.3 1.3M2 12h2M20 12h2M4.9 19.1l1.3-1.3M17.8 6.2l1.3-1.3"/></svg>';
-const IC_MOON='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+const IC_GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+document.getElementById('mGear').innerHTML=IC_GEAR;
 
-// ===== テーマ（OS追従＋手動切替・保存） =====
-function isDark(){const t=document.documentElement.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;}
-function setThemeIcon(){const b=document.getElementById('mTheme');if(b)b.innerHTML=isDark()?IC_SUN:IC_MOON;}
-(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s);setThemeIcon();})();
-document.getElementById('mTheme').onclick=()=>{const d=!isDark();document.documentElement.setAttribute('data-theme',d?'dark':'light');localStorage.setItem('theme',d?'dark':'light');setThemeIcon();};
-try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(!localStorage.getItem('theme'))setThemeIcon();});}catch(e){}
+// ===== テーマ（自動=端末に合わせる / ライト / ダーク・保存） =====
+function applyTheme(){const s=localStorage.getItem('theme');
+  if(s==='light'||s==='dark')document.documentElement.setAttribute('data-theme',s);
+  else document.documentElement.removeAttribute('data-theme');
+  document.querySelectorAll('#segTheme button').forEach(b=>b.classList.toggle('on',b.dataset.th===(s||'auto')));}
+applyTheme();
+document.querySelectorAll('#segTheme button').forEach(b=>b.onclick=()=>{
+  const th=b.dataset.th; if(th==='auto')localStorage.removeItem('theme'); else localStorage.setItem('theme',th); applyTheme();});
+
+// ===== 設定シート開閉 =====
+const SHEET=document.getElementById('sheet'),SHEETBG=document.getElementById('sheetbg');
+function openSet(){SHEET.classList.add('on');SHEETBG.classList.add('on');}
+function closeSet(){SHEET.classList.remove('on');SHEETBG.classList.remove('on');}
+document.getElementById('mGear').onclick=openSet;
+document.getElementById('setDone').onclick=closeSet;
+SHEETBG.onclick=closeSet;
+
+// ===== 自動送り（基本ON・保存） =====
+const SW=document.getElementById('swAuto');
+auto=localStorage.getItem('auto')!=='0';
+SW.classList.toggle('on',auto);SW.setAttribute('aria-checked',auto);
+SW.onclick=()=>{auto=!auto;SW.classList.toggle('on',auto);SW.setAttribute('aria-checked',auto);localStorage.setItem('auto',auto?'1':'0');};
+
+// ===== ホームの「はじめての方へ」案内（×で閉じたら記憶） =====
+(function(){const g=document.getElementById('guide');if(!g)return;
+  if(localStorage.getItem('guideHidden'))g.style.display='none';
+  document.getElementById('guideX').onclick=()=>{g.style.display='none';localStorage.setItem('guideHidden','1');};})();
 
 boot();
 function boot(){
@@ -152,10 +215,17 @@ function boot(){
        .catch(()=>{document.getElementById('plist').innerHTML='<div class="tag">データが読めません</div>';});
 }
 
+const REC='B';                                                 // 初学者に最初に勧めるパート
+const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい'};   // 入門者から見た目安
 function renderHome(){
   document.getElementById('plist').innerHTML=DATA.parts.map((p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
-    return `<div class="pcard" data-p="${i}"><div class="id">${p.id}</div><div class="nm"><b>${p.title}</b><span>${TASK[p.id]||''}</span></div><div class="ct">${n}問</div></div>`;
+    const rec=p.id===REC;
+    return `<div class="pcard${rec?' rec':''}" data-p="${i}">`
+      +(rec?'<span class="rec-badge">はじめはここ</span>':'')
+      +`<div class="id">${p.id}</div>`
+      +`<div class="nm"><b>${p.title}</b><span>${TASK[p.id]||''}</span><div class="lv">${LV[p.id]||''}</div></div>`
+      +`<div class="ct">${n}問</div></div>`;
   }).join('');
   document.querySelectorAll('.pcard').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
 }
@@ -242,7 +312,6 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   el.innerHTML=h;
 }
 
-document.getElementById('mAuto').onclick=function(){auto=!auto;this.classList.toggle('on',auto);this.textContent=auto?'自動送り':'手動';};
 
 if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('nexttrack',()=>goCard(active+1));
