@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Versant 練習</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee; --line2:#d6d8dd;
+    --accent:#1f4fd8; --bg:#fbfbfc;
+    --ui:"Inter","Noto Sans JP",-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;background:var(--bg)}
+  body{font-family:var(--ui);color:var(--ink);font-feature-settings:"palt" 1;-webkit-user-select:none;user-select:none}
+
+  /* ===== ホーム ===== */
+  #home{height:100dvh;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 40px)}
+  #home::-webkit-scrollbar{display:none}
+  .brand{font-size:26px;font-weight:600;letter-spacing:-.02em}
+  .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
+  .plist{display:flex;flex-direction:column;gap:11px}
+  .pcard{border:1px solid var(--line2);border-radius:16px;padding:18px 20px;cursor:pointer;display:flex;align-items:center;gap:14px}
+  .pcard:active{background:#f4f5f7}
+  .pcard .id{font-size:13px;font-weight:600;color:var(--accent);width:20px}
+  .pcard .nm{flex:1}
+  .pcard .nm b{display:block;font-size:15px;font-weight:600}
+  .pcard .nm span{font-size:12.5px;color:var(--sub)}
+  .pcard .ct{font-size:12.5px;color:var(--sub);font-variant-numeric:tabular-nums}
+
+  /* ===== フィード ===== */
+  #app{display:none;height:100dvh}
+  #feed{height:100dvh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+  #feed::-webkit-scrollbar{display:none}
+  .card{height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top) + 64px) 24px calc(env(safe-area-inset-bottom) + 20px)}
+  .plabel{font-size:12.5px;color:var(--sub);font-weight:500;font-variant-numeric:tabular-nums}
+  .plabel b{color:var(--ink);font-weight:600}
+
+  .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;min-height:0}
+  .task{font-size:13px;color:var(--sub);font-weight:500;letter-spacing:.02em}
+  .wave{display:flex;gap:5px;align-items:center;height:44px}
+  .wave b{width:5px;height:12px;background:var(--line2);border-radius:3px;display:block}
+  .wave.on b{background:var(--accent);animation:w .9s ease-in-out infinite}
+  .wave.on b:nth-child(2){animation-delay:.1s}.wave.on b:nth-child(3){animation-delay:.2s}
+  .wave.on b:nth-child(4){animation-delay:.3s}.wave.on b:nth-child(5){animation-delay:.15s}.wave.on b:nth-child(6){animation-delay:.25s}
+  @keyframes w{0%,100%{height:11px}50%{height:38px}}
+
+  .text{border-top:1px solid var(--line);padding-top:16px;min-height:118px;max-height:44dvh;overflow-y:auto}
+  .text::-webkit-scrollbar{display:none}
+  .veil{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--sub);font-size:12.5px;padding:20px 0;cursor:pointer}
+  .veil span{font-size:14px;color:var(--ink);font-weight:500}
+  .en{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
+  .yaku{font-size:14px;color:var(--sub);margin-top:6px}
+  .row{display:flex;gap:8px;margin-top:12px;font-size:14px;padding-top:12px;border-top:1px solid var(--line)}
+  .row .k{color:var(--sub);white-space:nowrap;font-size:12px;padding-top:2px;min-width:3.6em}
+  .row .v{color:var(--ink)}
+  .row .v b{font-weight:600}
+  .dlg div{font-size:14px;margin-bottom:3px}
+  .dlg span{color:var(--sub);font-size:11.5px;margin-right:6px}
+  .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 1.5em}
+
+  .bot{margin-top:14px}
+  .yt{display:flex;align-items:center;justify-content:center;gap:36px;margin-bottom:16px}
+  .yb{border:0;background:none;color:var(--ink);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;position:relative}
+  .yb:active{opacity:.5}
+  .yb.seek{width:46px;height:46px}
+  .yb.seek .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;padding-top:2px}
+  .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:#fff}
+  .sub{display:flex;align-items:center;justify-content:center;gap:10px}
+  .navb,.spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 18px;border-radius:22px;cursor:pointer;white-space:nowrap}
+  .spd{font-variant-numeric:tabular-nums;padding:9px 15px}
+
+  .flash{position:fixed;top:42%;font-size:12.5px;color:var(--ink);font-weight:600;opacity:0;transition:opacity .15s;pointer-events:none;z-index:6;background:rgba(0,0,0,.05);padding:8px 13px;border-radius:20px}
+  .flash.l{left:11%}.flash.r{right:11%}.flash.on{opacity:1}
+  .hint{position:fixed;left:0;right:0;top:50%;text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
+  .hint.hide{opacity:0}
+  .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+  .head{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+  .back{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 14px;border-radius:24px;cursor:pointer}
+  .htitle{font-size:12.5px;color:var(--ink);font-weight:600}
+  .auto{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 15px;border-radius:24px;cursor:pointer;white-space:nowrap}
+  .auto.on{color:var(--ink);border-color:var(--faint)}
+</style>
+</head>
+<body>
+<!-- ホーム -->
+<div id="home">
+  <div class="brand">Versant 練習</div>
+  <div class="tag">本番と同じ例題を、耳で無限反復</div>
+  <div class="plist" id="plist"></div>
+</div>
+
+<!-- フィード -->
+<div id="app">
+  <div class="head">
+    <button class="back" id="back">講座</button>
+    <div class="htitle" id="htitle"></div>
+    <button class="auto on" id="mAuto">自動送り</button>
+  </div>
+  <div id="feed"></div>
+  <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
+  <div class="flash l" id="flashL">− 10秒</div>
+  <div class="flash r" id="flashR">＋ 10秒</div>
+</div>
+<audio id="au" preload="auto"></audio>
+
+<script>
+const AU=document.getElementById('au');
+const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる'};
+let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,lastTap=0;
+const ARROW='<path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/>';
+const IC_RW='<svg viewBox="0 0 24 24" width="30" height="30">'+ARROW+'</svg><span class="num">10</span>';
+const IC_FW='<svg viewBox="0 0 24 24" width="30" height="30"><g transform="translate(24,0) scale(-1,1)">'+ARROW+'</g></svg><span class="num">10</span>';
+const IC_PLAY='<svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+const IC_PAUSE='<svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
+
+boot();
+function boot(){
+  if(window.EMBED){ DATA=window.EMBED; renderHome(); }
+  else fetch('player_data.json').then(r=>r.json()).then(d=>{DATA=d;renderHome();})
+       .catch(()=>{document.getElementById('plist').innerHTML='<div class="tag">データが読めません</div>';});
+}
+
+function renderHome(){
+  document.getElementById('plist').innerHTML=DATA.parts.map((p,i)=>{
+    const n=p.chapters.filter(c=>!c.tail).length;
+    return `<div class="pcard" data-p="${i}"><div class="id">${p.id}</div><div class="nm"><b>${p.title}</b><span>${TASK[p.id]||''}</span></div><div class="ct">${n}問</div></div>`;
+  }).join('');
+  document.querySelectorAll('.pcard').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
+}
+
+function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
+
+function openPart(pi){
+  PART=DATA.parts[pi]; CARDS=PART.chapters.filter(c=>!c.tail); active=0; revealed={};
+  document.getElementById('home').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('htitle').textContent=PART.title;
+  AU.src=partAudio(PART); AU.playbackRate=speed;
+  renderFeed();
+  document.getElementById('feed').scrollTo({top:0});
+  playCard(0);
+  document.getElementById('hint').classList.remove('hide');
+}
+document.getElementById('back').onclick=()=>{AU.pause();document.getElementById('app').style.display='none';document.getElementById('home').style.display='block';};
+
+function renderFeed(){
+  const feed=document.getElementById('feed');
+  feed.innerHTML=CARDS.map((c,i)=>`
+    <section class="card" data-i="${i}">
+      <div class="plabel"><b>${c.n}</b> / ${CARDS.length}</div>
+      <div class="mid">
+        <div class="task">${TASK[PART.id]||''}</div>
+        <div class="wave" id="wave${i}"><b></b><b></b><b></b><b></b><b></b><b></b></div>
+      </div>
+      <div class="text" id="text${i}"><div class="veil" data-rev="${i}"><span>${PART.id==='B'?'英文を見る':'答えを見る'}</span>まず耳だけで挑戦</div></div>
+      <div class="bot">
+        <div class="yt">
+          <button class="yb seek" data-seek="-10">${IC_RW}</button>
+          <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
+          <button class="yb seek" data-seek="10">${IC_FW}</button>
+        </div>
+        <div class="sub">
+          <button class="navb" data-nav="prev">前へ</button>
+          <button class="spd" data-spd>${speed.toFixed(2).replace(/0$/,'')}x</button>
+          <button class="navb" data-nav="next">次へ</button>
+        </div>
+      </div>
+    </section>`).join('');
+
+  feed.querySelectorAll('.card').forEach(card=>card.addEventListener('click',e=>{
+    if(e.target.closest('.veil')){const i=+e.target.closest('.veil').dataset.rev;revealed[i]=true;paintText(i);return;}
+    if(e.target.closest('[data-spd]')){const a=[1,0.85,0.7,1.15];speed=a[(a.indexOf(speed)+1)%a.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=speed+'x');return;}
+    if(e.target.closest('[data-nav]')){goCard(e.target.closest('[data-nav]').dataset.nav==='next'?active+1:active-1);return;}
+    if(e.target.closest('[data-seek]')){const s=+e.target.closest('[data-seek]').dataset.seek;seek(s,s<0?'l':'r');return;}
+    if(e.target.closest('[data-play]')){AU.paused?AU.play():AU.pause();return;}
+    const now=Date.now();
+    if(now-lastTap<300){clearTimeout(window.__st);lastTap=0;const l=e.clientX<window.innerWidth/2;seek(l?-10:10,l?'l':'r');}
+    else{lastTap=now;window.__st=setTimeout(()=>{AU.paused?AU.play():AU.pause();},300);}
+  }));
+
+  let tmr;
+  feed.onscroll=()=>{clearTimeout(tmr);tmr=setTimeout(()=>{
+    const i=Math.round(feed.scrollTop/window.innerHeight);
+    if(i!==active){active=i;document.getElementById('hint').classList.add('hide');playCard(i);}
+  },90);};
+}
+
+function playCard(i){const c=CARDS[i];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});
+  document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));document.getElementById('wave'+i)?.classList.add('on');
+  revealed[i]=revealed[i]||false;paintText(i);}
+function goCard(i){if(i<0||i>=CARDS.length)return;document.getElementById('feed').scrollTo({top:i*window.innerHeight,behavior:'smooth'});}
+function seek(sec,side){const c=CARDS[active];if(!c)return;AU.currentTime=Math.max(c.start,Math.min(c.end-0.1,AU.currentTime+sec));if(AU.paused)AU.play();
+  const f=document.getElementById(side==='l'?'flashL':'flashR');if(f){f.classList.add('on');clearTimeout(f.__t);f.__t=setTimeout(()=>f.classList.remove('on'),450);}}
+
+AU.addEventListener('timeupdate',()=>{const c=CARDS[active];if(!c)return;
+  if(AU.currentTime>=c.end-0.05){if(auto&&active<CARDS.length-1)goCard(active+1);else AU.pause();}});
+AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');});
+AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});
+
+function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
+  if(!revealed[i]){el.innerHTML=`<div class="veil" data-rev="${i}"><span>${PART.id==='B'?'英文を見る':'答えを見る'}</span>まず耳だけで挑戦</div>`;return;}
+  document.getElementById('hint')?.classList.add('hide');
+  let h='';
+  if(c.dialogue&&c.dialogue.length){h+='<div class="dlg">'+c.dialogue.map(d=>`<div><span>${d.speaker}</span>${d.text}</div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';}
+  else if(c.en){h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
+  if(c.bone&&c.bone.length)h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;
+  if(c.answer&&PART.id!=='B')h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
+  if(c.target)h+=`<div class="row"><span class="k">聞き比べ</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.memo?'　'+c.memo:''}</span></div>`;
+  else if(c.memo)h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.memo}</span></div>`;
+  el.innerHTML=h;
+}
+
+document.getElementById('mAuto').onclick=function(){auto=!auto;this.classList.toggle('on',auto);this.textContent=auto?'自動送り':'手動';};
+
+if('mediaSession' in navigator){
+  navigator.mediaSession.setActionHandler('nexttrack',()=>goCard(active+1));
+  navigator.mediaSession.setActionHandler('previoustrack',()=>goCard(active-1));
+  navigator.mediaSession.setActionHandler('seekbackward',()=>seek(-10,'l'));
+  navigator.mediaSession.setActionHandler('seekforward',()=>seek(10,'r'));
+}
+</script>
+</body>
+</html>
