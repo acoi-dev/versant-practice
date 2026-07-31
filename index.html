@@ -76,8 +76,10 @@
   .hidebtn svg{width:15px;height:15px}
   /* 会話を全部見る（Part C・畳んでおく） */
   .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px}
+  .kana{font-size:13px;color:var(--sub);margin-bottom:5px;letter-spacing:.02em;line-height:1.5}  /* 英文の上・どう聞こえるか */
   .en{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
   .yaku{font-size:14px;color:var(--sub);margin-top:6px}
+  .tip{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65}  /* 解説の一言 */
   .row{display:flex;gap:8px;margin-top:15px;font-size:14px}
   .row .k{color:var(--sub);white-space:nowrap;font-size:12px;padding-top:2px;min-width:3.6em}
   .row .v{color:var(--ink)}
@@ -157,7 +159,7 @@
   .guide b{color:var(--ink);font-weight:600}
   .guide .x{float:right;color:var(--faint);cursor:pointer;font-size:15px;line-height:1;margin:0 -4px 0 8px}
   .pcard{position:relative}
-  .pcard.rec{border-color:var(--accent)}
+  .pcard.current{border-color:var(--accent)}   /* 今いるパートだけ枠線(選択中の意味)。おすすめはバッジのみ */
   /* おすすめ印は塗りバッジにせず、カード上辺の罫線を割るアクセント文字だけ */
   .rec-badge{position:absolute;top:-8px;left:16px;background:var(--bg);color:var(--accent);font-size:11px;font-weight:600;padding:0 7px;letter-spacing:.02em}
   .pcard .lv{font-size:11px;color:var(--faint);margin-top:3px}
@@ -316,11 +318,18 @@ function saveState(){try{localStorage.setItem('st',JSON.stringify({p:partIdx,c:a
 function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}catch(e){}
   if(st&&st.p!=null&&DATA.parts&&DATA.parts[st.p]){
     openPart(st.p, st.c||0);
-    if(st.h)document.getElementById('home').classList.remove('off');   // 一覧を開いた状態だったら開いたまま戻す
+    if(st.h){document.getElementById('home').classList.remove('off');markCurrent();}   // 一覧を開いた状態だったら開いたまま戻す
   }}
 
 const REC='B';                                                 // 初学者に最初に勧めるパート
 const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい'};   // 入門者から見た目安
+// 崩れの種類ごとの平易な解説(音声学の専門用語は出さない)
+const TIP={form:'2語がくっついて短く言われます。かたまりで覚えると聞き取れます。',
+  yod:'前の語と you などが溶け合って「デュ／ヂュ」のように聞こえます。',
+  flap:'t や d が軽い「ら行」のように濁って聞こえます。',
+  link:'語尾と次の語の頭がつながって、ひとつの音に聞こえます。',
+  drop_t:'t の音がほとんど消えて聞こえます。',
+  drop_h:'h の音が消えて前の語とくっつきます。'};
 function renderHome(){
   document.getElementById('plist').innerHTML=DATA.parts.map((p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
@@ -359,7 +368,8 @@ function openPart(pi, startCard){
 }
 // ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
 // ホームはプレイヤーの上にかぶせて開く(画面遷移でなく)。プレイヤーはそのまま裏で継続
-document.getElementById('back').onclick=()=>{closeSet();document.getElementById('home').classList.remove('off');saveState();};
+function markCurrent(){document.querySelectorAll('.pcard').forEach(el=>el.classList.toggle('current',+el.dataset.p===partIdx));}  // 今いるパートに枠線
+document.getElementById('back').onclick=()=>{closeSet();markCurrent();document.getElementById('home').classList.remove('off');saveState();};
 // ×で閉じると、さっきのプレイヤーに位置そのまま・音も止めずに戻る
 document.getElementById('homeClose').onclick=()=>{document.getElementById('home').classList.add('off');saveState();};
 
@@ -433,11 +443,11 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   const isDlg=c.dialogue&&c.dialogue.length;
   let h='';
   if(isDlg){ if(c.question){h+=`<div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }
-  else if(c.en){h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
+  else if(c.en){if(c.kana)h+=`<div class="kana">${c.kana}</div>`; h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
   if(c.bone&&c.bone.length)h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;
   if(c.answer&&PART.id!=='B')h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
   if(c.answer_full&&PART.id!=='B')h+=`<div class="row"><span class="k">回答例</span><span class="v">${c.answer_full}</span></div>`;
-  if(c.target)h+=`<div class="row"><span class="k">聞き比べ</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.memo?'　'+c.memo:''}</span></div>`;
+  if(c.target)h+=`<div class="row"><span class="k">解説</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.kind&&TIP[c.kind]?`<div class="tip">${TIP[c.kind]}</div>`:''}</span></div>`;
   else if(c.memo)h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.memo}</span></div>`;
   if(c.retell)h+=`<div class="row"><span class="k">再話例</span><span class="v">${c.retell}${c.retell_yaku?'　'+c.retell_yaku:''}</span></div>`;        // Part E
   if(c.retell_min)h+=`<div class="row"><span class="k">最低限</span><span class="v">${c.retell_min}${c.retell_min_yaku?'　'+c.retell_min_yaku:''}</span></div>`;  // Part E: これだけ言えば0点回避
