@@ -57,6 +57,14 @@
   #feed::-webkit-scrollbar{display:none}
   .card{height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;
     padding:calc(env(safe-area-inset-top) + 60px) 24px calc(env(safe-area-inset-bottom) + 88px)}
+  /* パート末の番兵カード＝スワイプ/タップで次パートへ */
+  .nextcard{justify-content:center;align-items:center;text-align:center}
+  .nextwrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .nextlabel{font-size:12.5px;color:var(--faint);letter-spacing:.04em}
+  .nextbtn{font:inherit;font-size:16px;font-weight:600;color:var(--accent);background:none;
+    border:1px solid var(--line2);border-radius:14px;padding:16px 30px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:5px}
+  .nextbtn small{font-size:12px;color:var(--sub);font-weight:400;letter-spacing:.01em}
   .plabel{font-size:12.5px;color:var(--sub);font-weight:500;font-variant-numeric:tabular-nums}
   .plabel b{color:var(--ink);font-weight:600}
 
@@ -79,7 +87,8 @@
   .hidebtn svg{width:15px;height:15px}
   /* 会話を全部見る（Part C・畳んでおく） */
   .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px}
-  .kana{font-size:13px;color:var(--sub);margin-bottom:5px;letter-spacing:.02em;line-height:1.5}  /* 英文の上・どう聞こえるか */
+  .kana{font-size:13px;color:var(--sub);margin-bottom:5px;letter-spacing:.02em;line-height:1.6}  /* 英文の上・どう聞こえるか。かたまりで区切る */
+  .kana b{color:var(--ink);font-weight:700}  /* 強く・高く読むかたまり=抑揚 */
   .en{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
   .yaku{font-size:14px;color:var(--sub);margin-top:6px}
   .tip{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65}  /* 解説の一言 */
@@ -401,9 +410,17 @@ function renderFeed(){
           <button class="spd" data-spd>${speed.toFixed(2).replace(/0$/,'')}x</button>
         </div>
       </div>
-    </section>`).join('');
+    </section>`).join('')
+    + (()=>{const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;return `
+    <section class="card nextcard" data-i="${CARDS.length}">
+      <div class="nextwrap">
+        <div class="nextlabel">${PART.title} おわり</div>
+        <button class="nextbtn" data-next>次のパートへ<small>${DATA.parts[np].title}</small></button>
+      </div>
+    </section>`;})();
 
   feed.querySelectorAll('.card').forEach(card=>card.addEventListener('click',e=>{
+    if(e.target.closest('.nextcard')){goNextPart();return;}   // 番兵カードはどこを押しても次パートへ
     if(e.target.closest('.veil')){const i=+e.target.closest('.veil').dataset.rev;revealed[i]=true;paintText(i);return;}
     if(e.target.closest('[data-hide]')){const i=+e.target.closest('[data-hide]').dataset.hide;revealed[i]=false;paintText(i);return;}
     if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
@@ -416,6 +433,7 @@ function renderFeed(){
   let tmr;
   feed.onscroll=()=>{clearTimeout(tmr);tmr=setTimeout(()=>{
     const i=Math.round(feed.scrollTop/window.innerHeight);
+    if(i>=CARDS.length){goNextPart();return;}   // 番兵カードまでスワイプ=次パートへ
     if(i!==active){active=i;document.getElementById('hint').classList.add('hide');playCard(i);saveState();}
   },90);};
 }
@@ -424,6 +442,7 @@ function playCard(i){const c=CARDS[i];if(!c)return;AU.currentTime=c.start+0.02;A
   document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));document.getElementById('wave'+i)?.classList.add('on');
   revealed[i]=revealed[i]||false;paintText(i);updateEye();}
 function goCard(i){if(i<0||i>=CARDS.length)return;document.getElementById('feed').scrollTo({top:i*window.innerHeight,behavior:'smooth'});}
+function goNextPart(){const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;openPart(np,0);}  // パート末→次パート(Eの次はAに戻る)
 function replay(){const c=CARDS[active];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});}  // 頭からもう一回
 function seek(sec,side){const c=CARDS[active];if(!c)return;AU.currentTime=Math.max(c.start,Math.min(c.end-0.1,AU.currentTime+sec));if(AU.paused)AU.play();
   const f=document.getElementById(side==='l'?'flashL':'flashR');if(f){f.classList.add('on');clearTimeout(f.__t);f.__t=setTimeout(()=>f.classList.remove('on'),450);}}
