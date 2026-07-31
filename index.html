@@ -117,7 +117,7 @@
   .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg);justify-self:center}
   .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 15px;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
 
-  .hint{position:fixed;left:0;right:0;top:50%;text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
+  .hint{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
@@ -520,6 +520,22 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
 if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('nexttrack',()=>goCard(active+1));       // 送り＝次の文
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
+}
+
+const BUILD='0801-4';
+// ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
+if(location.href.indexOf('debug')>=0){
+  const dbg=document.createElement('div');
+  dbg.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(0,0,0,.88);color:#0f0;font:13px/1.5 ui-monospace,monospace;padding:8px 10px;pointer-events:none;white-space:pre-wrap';
+  document.body.appendChild(dbg);
+  const audioCard=()=>{ if(!CARDS.length)return '-'; for(let i=0;i<CARDS.length;i++){ if(AU.currentTime>=CARDS[i].start-0.3 && AU.currentTime<CARDS[i].end) return i; } return '?'; };
+  setInterval(()=>{
+    const ac=audioCard(), f=document.getElementById('feed');
+    dbg.textContent='build '+BUILD+'   part='+partIdx+'\n'
+      +'表示カード='+active+'    音声カード='+ac+(ac===active?'   ✅一致':'   ❌ズレ')+'\n'
+      +'t='+(AU.currentTime||0).toFixed(1)+'  paused='+AU.paused+'  rs='+AU.readyState+'  seek='+(AU.seekable&&AU.seekable.length?AU.seekable.end(0).toFixed(0):0)+'\n'
+      +'scrollTop='+(f?Math.round(f.scrollTop):'-')+'  switching='+switching;
+  },200);
 }
 </script>
 </body>
