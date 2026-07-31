@@ -26,7 +26,9 @@
   body{font-family:var(--ui);color:var(--ink);font-feature-settings:"palt" 1;-webkit-user-select:none;user-select:none}
 
   /* ===== ホーム ===== */
-  #home{height:100dvh;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 40px)}
+  /* ホーム/パートは画面遷移でなくクロスフェード（.offで消す側） */
+  #home{position:fixed;inset:0;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 40px);transition:opacity .22s ease,transform .22s ease}
+  #home.off{opacity:0;transform:scale(.985);pointer-events:none}
   #home::-webkit-scrollbar{display:none}
   .brand{font-size:26px;font-weight:600;letter-spacing:-.02em}
   .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
@@ -40,7 +42,8 @@
   .pcard .ct{font-size:12.5px;color:var(--sub);font-variant-numeric:tabular-nums}
 
   /* ===== フィード ===== */
-  #app{display:none;height:100dvh}
+  #app{position:fixed;inset:0;transition:opacity .22s ease,transform .22s ease}
+  #app.off{opacity:0;transform:translateY(10px);pointer-events:none}
   #feed{height:100dvh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
   #feed::-webkit-scrollbar{display:none}
   .card{height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;
@@ -79,7 +82,7 @@
   .yb.seek .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;padding-top:2px}
   .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg)}
   .sub{display:flex;align-items:center;justify-content:center;gap:10px}
-  .navb,.spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 18px;border-radius:22px;cursor:pointer;white-space:nowrap}
+  .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 18px;border-radius:22px;cursor:pointer;white-space:nowrap}
   .spd{font-variant-numeric:tabular-nums;padding:9px 15px}
 
   .flash{position:fixed;top:42%;font-size:12.5px;color:var(--ink);font-weight:600;opacity:0;transition:opacity .15s;pointer-events:none;z-index:6;background:var(--flashbg);padding:8px 13px;border-radius:20px}
@@ -97,25 +100,27 @@
   .gearb svg{width:17px;height:17px;display:block}
 
   /* ===== 設定シート ===== */
-  .sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
-  .sheetbg.on{opacity:1;pointer-events:auto}
-  .sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);border-radius:20px 20px 0 0;
-    padding:22px 24px calc(env(safe-area-inset-bottom) + 24px);transform:translateY(101%);transition:transform .25s cubic-bezier(.2,.8,.2,1);z-index:21}
-  .sheet.on{transform:translateY(0)}
-  .sheet h3{font-size:15px;font-weight:600;margin-bottom:6px}
-  .setrow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
-  .setrow:first-of-type{border-top:0;margin-top:8px}
-  .setrow .lb b{display:block;font-size:14px;font-weight:500}
-  .setrow .lb span{font-size:12px;color:var(--sub)}
-  .sw{width:46px;height:28px;border-radius:16px;border:1px solid var(--line2);background:var(--hover);position:relative;cursor:pointer;flex:none;transition:.2s}
-  .sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:1px solid var(--line2);transition:.2s}
+  /* ===== 設定ポップオーバー（歯車の直下にその場で・画面遷移なし） ===== */
+  .popbg{position:fixed;inset:0;z-index:20;display:none}
+  .popbg.on{display:block}
+  .pop{position:fixed;top:calc(env(safe-area-inset-top) + 50px);right:16px;width:min(280px,84vw);
+    background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:4px 16px 12px;z-index:21;
+    opacity:0;transform:translateY(-6px) scale(.97);transform-origin:top right;transition:opacity .13s ease,transform .13s ease;pointer-events:none}
+  .pop.on{opacity:1;transform:none;pointer-events:auto}
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+  .setrow:first-child{border-top:0}
+  .setrow.col{flex-direction:column;align-items:stretch;gap:9px}
+  .setrow .lb b{display:block;font-size:13.5px;font-weight:500}
+  .setrow .lb span{font-size:11.5px;color:var(--sub)}
+  .sw{width:44px;height:26px;border-radius:15px;border:1px solid var(--line2);background:var(--hover);position:relative;cursor:pointer;flex:none;transition:.2s}
+  .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--line2);transition:.2s}
   .sw.on{background:var(--accent);border-color:var(--accent)}
-  .sw.on::after{left:20px;border-color:var(--accent)}
-  .seg{display:flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden;flex:none}
-  .seg button{border:0;background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:7px 13px;cursor:pointer;border-left:1px solid var(--line2)}
+  .sw.on::after{left:19px;border-color:var(--accent)}
+  .seg{display:flex;border:1px solid var(--line2);border-radius:9px;overflow:hidden}
+  .seg button{flex:1;border:0;background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 0;cursor:pointer;border-left:1px solid var(--line2)}
   .seg button:first-child{border-left:0}
   .seg button.on{background:var(--accent);color:var(--bg)}
-  .sheet .done{margin-top:22px;width:100%;border:1px solid var(--line2);background:none;color:var(--ink);font:inherit;font-size:14px;font-weight:500;padding:13px;border-radius:12px;cursor:pointer}
+  .pophint{font-size:11px;color:var(--faint);line-height:1.6;padding-top:12px;border-top:1px solid var(--line)}
 
   /* ===== ホーム：はじめての案内・おすすめ・目安 ===== */
   .guide{border:1px solid var(--line2);border-radius:14px;padding:14px 16px;margin-bottom:22px;font-size:13px;line-height:1.75;color:var(--sub)}
@@ -138,7 +143,7 @@
 </div>
 
 <!-- フィード -->
-<div id="app">
+<div id="app" class="off">
   <div class="head">
     <button class="back" id="back">ホーム</button>
     <div class="htitle" id="htitle"></div>
@@ -150,21 +155,20 @@
   <div class="flash r" id="flashR">＋ 10秒</div>
 </div>
 
-<!-- 設定シート（右上の歯車から開く。基本は自動送りON） -->
-<div class="sheetbg" id="sheetbg"></div>
-<div class="sheet" id="sheet">
-  <h3>設定</h3>
+<!-- 設定ポップ（右上の歯車の直下にその場で開く。画面遷移なし） -->
+<div class="popbg" id="popbg"></div>
+<div class="pop" id="pop">
   <div class="setrow">
-    <div class="lb"><b>自動送り</b><span>1問終わると次の問題へ自動で進む</span></div>
+    <div class="lb"><b>自動送り</b><span>終わると次へ自動で進む</span></div>
     <div class="sw on" id="swAuto" role="switch" aria-checked="true"></div>
   </div>
-  <div class="setrow">
-    <div class="lb"><b>表示モード</b><span>寝る前はダークが目に優しい</span></div>
+  <div class="setrow col">
+    <div class="lb"><b>表示モード</b></div>
     <div class="seg" id="segTheme">
       <button data-th="auto">自動</button><button data-th="light">ライト</button><button data-th="dark">ダーク</button>
     </div>
   </div>
-  <button class="done" id="setDone">閉じる</button>
+  <div class="pophint">イヤホン操作：送り＝次の文 ／ 戻し＝もう一回</div>
 </div>
 <audio id="au" preload="auto"></audio>
 
@@ -175,6 +179,7 @@ let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,lastTap=
 const ARROW='<path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/>';
 const IC_RW='<svg viewBox="0 0 24 24" width="30" height="30">'+ARROW+'</svg><span class="num">10</span>';
 const IC_FW='<svg viewBox="0 0 24 24" width="30" height="30"><g transform="translate(24,0) scale(-1,1)">'+ARROW+'</g></svg><span class="num">10</span>';
+const IC_REPLAY='<svg viewBox="0 0 24 24" width="26" height="26">'+ARROW+'</svg>';
 const IC_PLAY='<svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
 const IC_PAUSE='<svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
 const IC_GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
@@ -190,12 +195,11 @@ document.querySelectorAll('#segTheme button').forEach(b=>b.onclick=()=>{
   const th=b.dataset.th; if(th==='auto')localStorage.removeItem('theme'); else localStorage.setItem('theme',th); applyTheme();});
 
 // ===== 設定シート開閉 =====
-const SHEET=document.getElementById('sheet'),SHEETBG=document.getElementById('sheetbg');
-function openSet(){SHEET.classList.add('on');SHEETBG.classList.add('on');}
-function closeSet(){SHEET.classList.remove('on');SHEETBG.classList.remove('on');}
-document.getElementById('mGear').onclick=openSet;
-document.getElementById('setDone').onclick=closeSet;
-SHEETBG.onclick=closeSet;
+const POP=document.getElementById('pop'),POPBG=document.getElementById('popbg');
+function openSet(){POPBG.classList.add('on');requestAnimationFrame(()=>POP.classList.add('on'));}
+function closeSet(){POP.classList.remove('on');POPBG.classList.remove('on');}
+document.getElementById('mGear').onclick=openSet;   // 歯車の直下にその場で出す
+POPBG.onclick=closeSet;                             // 外側タップで閉じる(画面遷移なし)
 
 // ===== 自動送り（基本ON・保存） =====
 const SW=document.getElementById('swAuto');
@@ -234,16 +238,16 @@ function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時�
 
 function openPart(pi){
   PART=DATA.parts[pi]; CARDS=PART.chapters.filter(c=>!c.tail); active=0; revealed={};
-  document.getElementById('home').style.display='none';
-  document.getElementById('app').style.display='block';
   document.getElementById('htitle').textContent=PART.title;
   AU.src=partAudio(PART); AU.playbackRate=speed;
   renderFeed();
   document.getElementById('feed').scrollTo({top:0});
+  document.getElementById('home').classList.add('off');   // ホームをフェードアウト
+  document.getElementById('app').classList.remove('off'); // フィードをフェードイン(画面遷移でなく)
   playCard(0);
   document.getElementById('hint').classList.remove('hide');
 }
-document.getElementById('back').onclick=()=>{AU.pause();document.getElementById('app').style.display='none';document.getElementById('home').style.display='block';};
+document.getElementById('back').onclick=()=>{AU.pause();closeSet();document.getElementById('app').classList.add('off');document.getElementById('home').classList.remove('off');};
 
 function renderFeed(){
   const feed=document.getElementById('feed');
@@ -257,14 +261,11 @@ function renderFeed(){
       <div class="text" id="text${i}"><div class="veil" data-rev="${i}"><span>${PART.id==='B'?'英文を見る':'答えを見る'}</span>まず耳だけで挑戦</div></div>
       <div class="bot">
         <div class="yt">
-          <button class="yb seek" data-seek="-10">${IC_RW}</button>
+          <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
-          <button class="yb seek" data-seek="10">${IC_FW}</button>
         </div>
         <div class="sub">
-          <button class="navb" data-nav="prev">前へ</button>
           <button class="spd" data-spd>${speed.toFixed(2).replace(/0$/,'')}x</button>
-          <button class="navb" data-nav="next">次へ</button>
         </div>
       </div>
     </section>`).join('');
@@ -272,8 +273,7 @@ function renderFeed(){
   feed.querySelectorAll('.card').forEach(card=>card.addEventListener('click',e=>{
     if(e.target.closest('.veil')){const i=+e.target.closest('.veil').dataset.rev;revealed[i]=true;paintText(i);return;}
     if(e.target.closest('[data-spd]')){const a=[1,0.85,0.7,1.15];speed=a[(a.indexOf(speed)+1)%a.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=speed+'x');return;}
-    if(e.target.closest('[data-nav]')){goCard(e.target.closest('[data-nav]').dataset.nav==='next'?active+1:active-1);return;}
-    if(e.target.closest('[data-seek]')){const s=+e.target.closest('[data-seek]').dataset.seek;seek(s,s<0?'l':'r');return;}
+    if(e.target.closest('[data-rep]')){replay();return;}
     if(e.target.closest('[data-play]')){AU.paused?AU.play():AU.pause();return;}
     const now=Date.now();
     if(now-lastTap<300){clearTimeout(window.__st);lastTap=0;const l=e.clientX<window.innerWidth/2;seek(l?-10:10,l?'l':'r');}
@@ -291,6 +291,7 @@ function playCard(i){const c=CARDS[i];if(!c)return;AU.currentTime=c.start+0.02;A
   document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));document.getElementById('wave'+i)?.classList.add('on');
   revealed[i]=revealed[i]||false;paintText(i);}
 function goCard(i){if(i<0||i>=CARDS.length)return;document.getElementById('feed').scrollTo({top:i*window.innerHeight,behavior:'smooth'});}
+function replay(){const c=CARDS[active];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});}  // 頭からもう一回
 function seek(sec,side){const c=CARDS[active];if(!c)return;AU.currentTime=Math.max(c.start,Math.min(c.end-0.1,AU.currentTime+sec));if(AU.paused)AU.play();
   const f=document.getElementById(side==='l'?'flashL':'flashR');if(f){f.classList.add('on');clearTimeout(f.__t);f.__t=setTimeout(()=>f.classList.remove('on'),450);}}
 
@@ -314,8 +315,8 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
 
 
 if('mediaSession' in navigator){
-  navigator.mediaSession.setActionHandler('nexttrack',()=>goCard(active+1));
-  navigator.mediaSession.setActionHandler('previoustrack',()=>goCard(active-1));
+  navigator.mediaSession.setActionHandler('nexttrack',()=>goCard(active+1));       // 送り＝次の文
+  navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
   navigator.mediaSession.setActionHandler('seekbackward',()=>seek(-10,'l'));
   navigator.mediaSession.setActionHandler('seekforward',()=>seek(10,'r'));
 }
