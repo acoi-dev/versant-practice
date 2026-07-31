@@ -42,6 +42,8 @@
   .brand{font-size:26px;font-weight:600;letter-spacing:-.02em}
   .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
   .plist{display:flex;flex-direction:column;gap:11px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.75;margin-top:28px;text-align:center;padding:0 4px}  /* 非公式の免責 */
+  .disc .r{font-size:8px;vertical-align:super}
   .pcard{border:1px solid var(--line2);border-radius:16px;padding:15px 20px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
   .pcard:active{background:var(--hover)}
   .pcard .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
@@ -115,8 +117,6 @@
   .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg);justify-self:center}
   .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 15px;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
 
-  .flash{position:fixed;top:42%;font-size:12.5px;color:var(--ink);font-weight:600;opacity:0;transition:opacity .15s;pointer-events:none;z-index:6;background:var(--flashbg);padding:8px 13px;border-radius:20px}
-  .flash.l{left:11%}.flash.r{right:11%}.flash.on{opacity:1}
   .hint{position:fixed;left:0;right:0;top:50%;text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
@@ -184,6 +184,7 @@
   <div class="tag">本番と同じ例題を、耳で無限反復</div>
   <div class="guide" id="guide"><span class="x" id="guideX">×</span><b>はじめての方へ。</b>Versantは6つのパートに分かれた試験です。まずは <b>Part B「聞いて繰り返す」</b>から始めると、耳が慣れて楽に入れます。</div>
   <div class="plist" id="plist"></div>
+  <p class="disc">非公式の練習アプリです。Versant<span class="r">®</span> は Pearson Education 社の商標で、本アプリは Pearson 社および Versant と関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
 </div>
 
 <!-- フィード -->
@@ -194,8 +195,6 @@
   <button class="topgear" id="mGear" aria-label="設定"></button>
   <div id="feed"></div>
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
-  <div class="flash l" id="flashL">− 10秒</div>
-  <div class="flash r" id="flashR">＋ 10秒</div>
   <!-- 片手操作バー（よく使う「答えを見る/隠す」は中央、ホームは右下） -->
   <div class="navbar">
     <button class="navb eye" id="eyeToggle"></button>
@@ -246,6 +245,8 @@
 const AU=document.getElementById('au');
 const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる'};
 let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true,dlgShown={},partIdx=null;
+const SPEEDS=[1,0.85,0.7];                                   // 速度は3段(設定パネルと同じ)。カードのタップもこの順で回す
+const spdTxt=s=>s.toFixed(2).replace(/0$/,'')+'x';          // 速度表示を統一(1.0x/0.85x/0.7x)。初期もタップも設定も同じ表記に
 const ARROW='<path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/>';
 const IC_REPLAY='<svg viewBox="0 0 24 24" width="26" height="26">'+ARROW+'</svg>';
 const IC_EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -295,7 +296,7 @@ function syncSpeedSeg(){document.querySelectorAll('#segSpeed button').forEach(b=
 syncSpeedSeg();
 document.querySelectorAll('#segSpeed button').forEach(b=>b.onclick=()=>{
   speed=parseFloat(b.dataset.sp);localStorage.setItem('spd',speed);AU.playbackRate=speed;syncSpeedSeg();
-  document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=speed+'x');});
+  document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=spdTxt(speed));});
 
 // ===== 文字を大きく（基本OFF・保存） =====
 let bigText=localStorage.getItem('big')==='1';
@@ -417,7 +418,7 @@ function renderFeed(){
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
-          <button class="spd" data-spd>${speed.toFixed(2).replace(/0$/,'')}x</button>
+          <button class="spd" data-spd>${spdTxt(speed)}</button>
         </div>
       </div>
     </section>`).join('')
@@ -435,7 +436,7 @@ function renderFeed(){
     if(e.target.closest('.veil')){const i=+e.target.closest('.veil').dataset.rev;revealed[i]=true;paintText(i);return;}
     if(e.target.closest('[data-hide]')){const i=+e.target.closest('[data-hide]').dataset.hide;revealed[i]=false;paintText(i);return;}
     if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
-    if(e.target.closest('[data-spd]')){const a=[1,0.85,0.7,1.15];speed=a[(a.indexOf(speed)+1)%a.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=speed+'x');return;}
+    if(e.target.closest('[data-spd]')){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=spdTxt(speed));if(typeof syncSpeedSeg==='function')syncSpeedSeg();return;}
     if(e.target.closest('[data-rep]')){replay();return;}
     if(e.target.closest('[data-play]')){AU.paused?AU.play():AU.pause();return;}
     AU.paused?AU.play():AU.pause();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
@@ -466,8 +467,6 @@ function goCard(i){if(i<0||i>=CARDS.length)return;document.getElementById('feed'
 function goNextPart(){const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;openPart(np,0);}  // パート末→次パート(Eの次はAに戻る)
 function goPrevPart(){const pp=(partIdx-1+DATA.parts.length)%DATA.parts.length;const last=DATA.parts[pp].chapters.filter(c=>!c.tail).length-1;openPart(pp,Math.max(0,last));}  // パート頭→前パートの最終カードへ(Aの前はEへ)
 function replay(){const c=CARDS[active];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});}  // 頭からもう一回
-function seek(sec,side){const c=CARDS[active];if(!c)return;AU.currentTime=Math.max(c.start,Math.min(c.end-0.1,AU.currentTime+sec));if(AU.paused)AU.play();
-  const f=document.getElementById(side==='l'?'flashL':'flashR');if(f){f.classList.add('on');clearTimeout(f.__t);f.__t=setTimeout(()=>f.classList.remove('on'),450);}}
 
 function onClipEnd(){   // 1問終わった時の挙動
   if(repeat){replay();return;}                                  // 1問リピートON: 同じ問を繰り返す
@@ -489,6 +488,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   if(isDlg){ if(c.question){h+=`<div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }
   else if(c.en){if(c.kana)h+=`<div class="kana">${c.kana}</div>`; h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
   if(c.bone&&c.bone.length)h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;
+  if(c.bone_en&&c.bone_en.length)h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part E: 日本語→英語の橋
   if(c.answer&&PART.id!=='B')h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
   if(c.answer_full&&PART.id!=='B')h+=`<div class="row"><span class="k">回答例</span><span class="v">${c.answer_full}</span></div>`;
   if(c.target)h+=`<div class="row"><span class="k">解説</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.kind&&TIP[c.kind]?`<div class="tip">${TIP[c.kind]}</div>`:''}</span></div>`;
@@ -506,8 +506,6 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
 if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('nexttrack',()=>goCard(active+1));       // 送り＝次の文
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
-  navigator.mediaSession.setActionHandler('seekbackward',()=>seek(-10,'l'));
-  navigator.mediaSession.setActionHandler('seekforward',()=>seek(10,'r'));
 }
 </script>
 </body>
