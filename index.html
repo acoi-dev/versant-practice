@@ -23,7 +23,7 @@
            --accent:#1f4fd8; --bg:#fbfbfc; --hover:#f2f3f5; --flashbg:rgba(0,0,0,.05); }
   *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;overflow:hidden;background:var(--bg)}
-  body{font-family:var(--ui);color:var(--ink);font-feature-settings:"palt" 1;-webkit-user-select:none;user-select:none}
+  body{font-family:var(--ui);color:var(--ink);font-feature-settings:"palt" 1;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 
   /* ===== ホーム ===== */
   /* ホーム/パートは画面遷移でなくクロスフェード（.offで消す側） */
@@ -62,8 +62,9 @@
 
   .text{border-top:1px solid var(--line);padding-top:16px;min-height:118px;max-height:44dvh;overflow-y:auto}
   .text::-webkit-scrollbar{display:none}
-  .veil{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--sub);font-size:12.5px;padding:20px 0;cursor:pointer}
-  .veil span{font-size:14px;color:var(--ink);font-weight:500}
+  .veil{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--sub);padding:22px 0;cursor:pointer}
+  .veil svg{width:27px;height:27px;display:block;color:var(--sub)}
+  .veil span{font-size:12.5px;color:var(--sub)}
   .en{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
   .yaku{font-size:14px;color:var(--sub);margin-top:6px}
   .row{display:flex;gap:8px;margin-top:12px;font-size:14px;padding-top:12px;border-top:1px solid var(--line)}
@@ -75,15 +76,13 @@
   .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 1.5em}
 
   .bot{margin-top:14px}
-  .yt{display:flex;align-items:center;justify-content:center;gap:36px;margin-bottom:16px}
+  /* 再生/停止を画面中央に固定、もう一回と速度を左右に置く */
+  .yt{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:6px}
   .yb{border:0;background:none;color:var(--ink);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;position:relative}
   .yb:active{opacity:.5}
-  .yb.seek{width:46px;height:46px}
-  .yb.seek .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums;padding-top:2px}
-  .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg)}
-  .sub{display:flex;align-items:center;justify-content:center;gap:10px}
-  .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 18px;border-radius:22px;cursor:pointer;white-space:nowrap}
-  .spd{font-variant-numeric:tabular-nums;padding:9px 15px}
+  .yb.rep{width:46px;height:46px;justify-self:center}
+  .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg);justify-self:center}
+  .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 15px;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
 
   .flash{position:fixed;top:42%;font-size:12.5px;color:var(--ink);font-weight:600;opacity:0;transition:opacity .15s;pointer-events:none;z-index:6;background:var(--flashbg);padding:8px 13px;border-radius:20px}
   .flash.l{left:11%}.flash.r{right:11%}.flash.on{opacity:1}
@@ -162,24 +161,26 @@
     <div class="lb"><b>自動送り</b><span>終わると次へ自動で進む</span></div>
     <div class="sw on" id="swAuto" role="switch" aria-checked="true"></div>
   </div>
+  <div class="setrow">
+    <div class="lb"><b>答えを隠す</b><span>最初は耳だけで挑戦する</span></div>
+    <div class="sw on" id="swHide" role="switch" aria-checked="true"></div>
+  </div>
   <div class="setrow col">
     <div class="lb"><b>表示モード</b></div>
     <div class="seg" id="segTheme">
       <button data-th="auto">自動</button><button data-th="light">ライト</button><button data-th="dark">ダーク</button>
     </div>
   </div>
-  <div class="pophint">イヤホン操作：送り＝次の文 ／ 戻し＝もう一回</div>
 </div>
 <audio id="au" preload="auto"></audio>
 
 <script>
 const AU=document.getElementById('au');
 const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる'};
-let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,lastTap=0;
+let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true;
 const ARROW='<path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/>';
-const IC_RW='<svg viewBox="0 0 24 24" width="30" height="30">'+ARROW+'</svg><span class="num">10</span>';
-const IC_FW='<svg viewBox="0 0 24 24" width="30" height="30"><g transform="translate(24,0) scale(-1,1)">'+ARROW+'</g></svg><span class="num">10</span>';
 const IC_REPLAY='<svg viewBox="0 0 24 24" width="26" height="26">'+ARROW+'</svg>';
+const IC_EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
 const IC_PLAY='<svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
 const IC_PAUSE='<svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
 const IC_GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
@@ -206,6 +207,12 @@ const SW=document.getElementById('swAuto');
 auto=localStorage.getItem('auto')!=='0';
 SW.classList.toggle('on',auto);SW.setAttribute('aria-checked',auto);
 SW.onclick=()=>{auto=!auto;SW.classList.toggle('on',auto);SW.setAttribute('aria-checked',auto);localStorage.setItem('auto',auto?'1':'0');};
+
+// ===== 答えを隠す（基本ON・保存。オフなら最初から答えを表示） =====
+const SWH=document.getElementById('swHide');
+hideAns=localStorage.getItem('hide')!=='0';
+SWH.classList.toggle('on',hideAns);SWH.setAttribute('aria-checked',hideAns);
+SWH.onclick=()=>{hideAns=!hideAns;SWH.classList.toggle('on',hideAns);SWH.setAttribute('aria-checked',hideAns);localStorage.setItem('hide',hideAns?'1':'0');if(PART)paintText(active);};
 
 // ===== ホームの「はじめての方へ」案内（×で閉じたら記憶） =====
 (function(){const g=document.getElementById('guide');if(!g)return;
@@ -247,7 +254,8 @@ function openPart(pi){
   playCard(0);
   document.getElementById('hint').classList.remove('hide');
 }
-document.getElementById('back').onclick=()=>{AU.pause();closeSet();document.getElementById('app').classList.add('off');document.getElementById('home').classList.remove('off');};
+// ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
+document.getElementById('back').onclick=()=>{closeSet();document.getElementById('app').classList.add('off');document.getElementById('home').classList.remove('off');};
 
 function renderFeed(){
   const feed=document.getElementById('feed');
@@ -258,13 +266,11 @@ function renderFeed(){
         <div class="task">${TASK[PART.id]||''}</div>
         <div class="wave" id="wave${i}"><b></b><b></b><b></b><b></b><b></b><b></b></div>
       </div>
-      <div class="text" id="text${i}"><div class="veil" data-rev="${i}"><span>${PART.id==='B'?'英文を見る':'答えを見る'}</span>まず耳だけで挑戦</div></div>
+      <div class="text" id="text${i}">${veilHTML(i)}</div>
       <div class="bot">
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
-        </div>
-        <div class="sub">
           <button class="spd" data-spd>${speed.toFixed(2).replace(/0$/,'')}x</button>
         </div>
       </div>
@@ -275,9 +281,7 @@ function renderFeed(){
     if(e.target.closest('[data-spd]')){const a=[1,0.85,0.7,1.15];speed=a[(a.indexOf(speed)+1)%a.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=speed+'x');return;}
     if(e.target.closest('[data-rep]')){replay();return;}
     if(e.target.closest('[data-play]')){AU.paused?AU.play():AU.pause();return;}
-    const now=Date.now();
-    if(now-lastTap<300){clearTimeout(window.__st);lastTap=0;const l=e.clientX<window.innerWidth/2;seek(l?-10:10,l?'l':'r');}
-    else{lastTap=now;window.__st=setTimeout(()=>{AU.paused?AU.play():AU.pause();},300);}
+    AU.paused?AU.play():AU.pause();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
   }));
 
   let tmr;
@@ -300,8 +304,9 @@ AU.addEventListener('timeupdate',()=>{const c=CARDS[active];if(!c)return;
 AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');});
 AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});
 
+function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
-  if(!revealed[i]){el.innerHTML=`<div class="veil" data-rev="${i}"><span>${PART.id==='B'?'英文を見る':'答えを見る'}</span>まず耳だけで挑戦</div>`;return;}
+  if(!revealed[i] && hideAns){el.innerHTML=veilHTML(i);return;}   // 「答えを隠す」オフなら最初から表示
   document.getElementById('hint')?.classList.add('hide');
   let h='';
   if(c.dialogue&&c.dialogue.length){h+='<div class="dlg">'+c.dialogue.map(d=>`<div><span>${d.speaker}</span>${d.text}</div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';}
