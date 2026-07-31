@@ -415,8 +415,14 @@ function replay(){const c=CARDS[active];if(!c)return;AU.currentTime=c.start+0.02
 function seek(sec,side){const c=CARDS[active];if(!c)return;AU.currentTime=Math.max(c.start,Math.min(c.end-0.1,AU.currentTime+sec));if(AU.paused)AU.play();
   const f=document.getElementById(side==='l'?'flashL':'flashR');if(f){f.classList.add('on');clearTimeout(f.__t);f.__t=setTimeout(()=>f.classList.remove('on'),450);}}
 
+function onClipEnd(){   // 1問終わった時の挙動
+  if(repeat){replay();return;}                                  // 1問リピートON: 同じ問を繰り返す
+  if(auto&&active<CARDS.length-1){goCard(active+1);return;}      // 自動送り: 次の問へ
+  if(auto){openPart((partIdx+1)<DATA.parts.length?partIdx+1:0,0);return;}  // パート末→次パート(最後のEなら先頭Aへ戻り無限に回る)
+  AU.pause();                                                   // 自動送りOFF: 止める
+}
 AU.addEventListener('timeupdate',()=>{const c=CARDS[active];if(!c)return;
-  if(AU.currentTime>=c.end-0.05){if(repeat)replay();else if(auto&&active<CARDS.length-1)goCard(active+1);else AU.pause();}});
+  if(AU.currentTime>=c.end-0.05)onClipEnd();});
 AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');reqWake();});
 AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});
 
