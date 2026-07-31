@@ -456,11 +456,24 @@ function renderFeed(){
 }
 
 let seekSeq=0;
+function trySeek(start){   // seekable範囲が目標をカバーしていれば頭出し。効いたら true
+  try{
+    const s=AU.seekable;
+    if(s&&s.length&&s.end(s.length-1)>=start-0.5){AU.currentTime=start;return AU.currentTime>=start-1;}
+    if(AU.readyState>=1){AU.currentTime=start;return AU.currentTime>=start-1;}
+  }catch(e){}
+  return false;
+}
 function playCard(i){const c=CARDS[i];if(!c)return;
   const start=c.start+0.02, my=++seekSeq;
-  const go=()=>{if(my!==seekSeq)return;try{AU.currentTime=start;}catch(e){}AU.play().catch(()=>{});};
-  // src差し替え直後(readyState<1)はメタデータを待ってから頭出し。でないとシークが無視され0秒=1問目から鳴って画面とズレる
-  if(AU.readyState>=1)go(); else AU.addEventListener('loadedmetadata',go,{once:true});
+  // 各パートの1問目は先頭に約15〜22秒のイントロがあり、card開始は0秒でない。ここへ頭出しする
+  const run=()=>{if(my!==seekSeq)return;trySeek(start);AU.play().catch(()=>{});};
+  if(AU.readyState>=1)run(); else AU.addEventListener('loadedmetadata',run,{once:true});
+  // iOS対策: メタデータ後もseekableが0のことがあり頭出しが無視される→0秒(イントロ)から鳴って画面とズレる。
+  // 目標より手前で鳴っていたら、seekableが広がるまで数回リトライ(前進中の正常再生には触れない)
+  let tries=0;
+  const fix=()=>{if(my!==seekSeq)return; if(AU.currentTime<start-2)trySeek(start); if(++tries<12)setTimeout(fix,250);};
+  setTimeout(fix,200);
   document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));document.getElementById('wave'+i)?.classList.add('on');
   revealed[i]=revealed[i]||false;paintText(i);updateEye();}
 function goCard(i){if(i<0||i>=CARDS.length)return;document.getElementById('feed').scrollTo({top:(i+1)*window.innerHeight,behavior:'smooth'});}  // 先頭番兵ぶん+1
