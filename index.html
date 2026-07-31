@@ -402,7 +402,7 @@ function renderFeed(){
         <div class="task">${TASK[PART.id]||''}</div>
         <div class="wave" id="wave${i}"><b></b><b></b><b></b><b></b><b></b><b></b></div>
       </div>
-      <div class="text" id="text${i}">${veilHTML(i)}</div>
+      <div class="text" id="text${i}"></div>
       <div class="bot">
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
@@ -436,6 +436,8 @@ function renderFeed(){
     if(i>=CARDS.length){goNextPart();return;}   // 番兵カードまでスワイプ=次パートへ
     if(i!==active){active=i;document.getElementById('hint').classList.add('hide');playCard(i);saveState();}
   },90);};
+
+  CARDS.forEach((_,i)=>paintText(i));   // 全カードを最初から正しい状態に(隠す=空/常時表示=本文)。スワイプ中のveilチラつき防止
 }
 
 function playCard(i){const c=CARDS[i];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});
