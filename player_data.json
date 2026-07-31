@@ -1287,9 +1287,9 @@
      "n": 1,
      "start": 16.86,
      "end": 141.8,
-     "en": "The project manager asked the team to submit the report by the end of the week.",
+     "en": "Tom forgot his lunch at home. He asked his coworker to share some food with him.",
      "kana": "",
-     "yaku": "プロジェクトマネージャーはチームに週末までに報告書を提出するように頼みました。",
+     "yaku": "トムは家にお昼ご飯を忘れました。彼は同僚に食べ物を分けてもらうよう頼みました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -1301,23 +1301,23 @@
      "q_yaku": "",
      "dialogue": [],
      "bone": [
-      "プロジェクトマネージャーが",
-      "チームに",
-      "報告書を提出するよう頼んだ"
+      "トムが",
+      "お昼ご飯を",
+      "忘れた"
      ],
      "key_line": "",
-     "retell": "The project manager told the team to give the report by the week's end.",
-     "retell_yaku": "プロジェクトマネージャーはチームに週末までに報告書を提出するように言いました。",
-     "retell_min": "The manager asked for the report.",
-     "retell_min_yaku": "マネージャーが報告書を求めました。"
+     "retell": "Tom left his lunch at home and asked a coworker for food.",
+     "retell_yaku": "トムはお昼ご飯を家に忘れ、同僚に食べ物を頼みました。",
+     "retell_min": "Tom forgot lunch.",
+     "retell_min_yaku": "トムはお昼ご飯を忘れました。"
     },
     {
      "n": 2,
      "start": 141.8,
      "end": 265.06,
-     "en": "The HR department announced that the new policy will start next month.",
+     "en": "Mary finished her report early. She went to the park to relax after work.",
      "kana": "",
-     "yaku": "人事部は新しい方針が来月から始まると発表しました。",
+     "yaku": "メアリーはレポートを早く終えました。仕事の後、リラックスするために公園に行きました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -1329,23 +1329,23 @@
      "q_yaku": "",
      "dialogue": [],
      "bone": [
-      "人事部が",
-      "新しい方針を",
-      "来月から始めると発表した"
+      "メアリーが",
+      "レポートを",
+      "早く終えた"
      ],
      "key_line": "",
-     "retell": "The HR department said the new policy starts next month.",
-     "retell_yaku": "人事部は新しい方針が来月から始まると言いました。",
-     "retell_min": "HR announced the new policy.",
-     "retell_min_yaku": "人事が新しい方針を発表しました。"
+     "retell": "Mary completed her report early and visited the park to relax.",
+     "retell_yaku": "メアリーはレポートを早く終え、公園にリラックスしに行きました。",
+     "retell_min": "Mary finished early.",
+     "retell_min_yaku": "メアリーは早く終えました。"
     },
     {
      "n": 3,
      "start": 265.06,
      "end": 384.95,
-     "en": "The client requested a meeting to discuss the project details further.",
+     "en": "John's meeting was canceled. He used the extra time to read a book.",
      "kana": "",
-     "yaku": "クライアントはプロジェクトの詳細をさらに話し合うための会議を要求しました。",
+     "yaku": "ジョンの会議はキャンセルされました。彼は余った時間を本を読むのに使いました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -1357,15 +1357,15 @@
      "q_yaku": "",
      "dialogue": [],
      "bone": [
-      "クライアントが",
-      "会議を",
-      "詳細を話し合うために要求した"
+      "ジョンの",
+      "会議が",
+      "キャンセルされた"
      ],
      "key_line": "",
-     "retell": "The client asked for a meeting to talk more about the project.",
-     "retell_yaku": "クライアントはプロジェクトについてもっと話すために会議を求めました。",
-     "retell_min": "The client asked for a meeting.",
-     "retell_min_yaku": "クライアントが会議を要求しました。"
+     "retell": "John's meeting got canceled, so he read a book with the free time.",
+     "retell_yaku": "ジョンの会議がキャンセルされたので、彼は空いた時間で本を読みました。",
+     "retell_min": "Meeting was canceled.",
+     "retell_min_yaku": "会議がキャンセルされました。"
     }
    ]
   }
