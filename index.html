@@ -329,7 +329,7 @@ function boot(){
 function saveState(){try{localStorage.setItem('st',JSON.stringify({p:partIdx,c:active,h:!document.getElementById('home').classList.contains('off')}));}catch(e){}}
 function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}catch(e){}
   if(st&&st.p!=null&&DATA.parts&&DATA.parts[st.p]){
-    openPart(st.p, st.c||0);
+    openPart(st.p, st.c||0, true);   // 復元時は自動再生しない(iOSは無操作で鳴らせない→▶表示・1タップで頭出し位置から再生)
     if(st.h){document.getElementById('home').classList.remove('off');markCurrent();}   // 一覧を開いた状態だったら開いたまま戻す
   }}
 
@@ -359,7 +359,7 @@ function renderHome(){
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
 
 let switching=false;   // パート切替中は前/次パート発火を止める
-function openPart(pi, startCard){
+function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iOSは無操作で自動再生できないので鳴らさず頭出しだけ
   startCard = startCard || 0;
   switching=true;   // 切替の自動スクロール中は前/次パート発火を止める
   PART=DATA.parts[pi]; partIdx=pi; CARDS=PART.chapters.filter(c=>!c.tail); active=startCard; revealed={}; dlgShown={};
@@ -377,7 +377,7 @@ function openPart(pi, startCard){
     requestAnimationFrame(()=>{ _feed.style.scrollSnapType=''; });
   }));
   setTimeout(()=>{ switching=false; }, 600);   // 保険: 目標に着地できなくても必ず解除
-  playCard(startCard);
+  playCard(startCard, noPlay);
   document.getElementById('hint').classList.remove('hide');
   saveState();
 }
@@ -467,17 +467,19 @@ function trySeek(start){   // seekable範囲が目標をカバーしていれば
   }catch(e){}
   return false;
 }
-function playCard(i){const c=CARDS[i];if(!c)return;
+function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
   const start=c.start+0.02, my=++seekSeq;
   // 各パートの1問目は先頭に約15〜22秒のイントロがあり、card開始は0秒でない。ここへ頭出しする
-  const run=()=>{if(my!==seekSeq)return;trySeek(start);AU.play().catch(()=>{});};
+  const run=()=>{if(my!==seekSeq)return;trySeek(start);
+    if(noPlay){AU.pause();} else {AU.play().catch(()=>{const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});}};
   if(AU.readyState>=1)run(); else AU.addEventListener('loadedmetadata',run,{once:true});
   // iOS対策: メタデータ後もseekableが0のことがあり頭出しが無視される→0秒(イントロ)から鳴って画面とズレる。
   // 目標より手前で鳴っていたら、seekableが広がるまで数回リトライ(前進中の正常再生には触れない)
   let tries=0;
   const fix=()=>{if(my!==seekSeq)return; if(AU.currentTime<start-2)trySeek(start); if(++tries<12)setTimeout(fix,250);};
   setTimeout(fix,200);
-  document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));document.getElementById('wave'+i)?.classList.add('on');
+  document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));if(!noPlay)document.getElementById('wave'+i)?.classList.add('on');
+  if(noPlay){const b=document.getElementById('play'+i);if(b)b.innerHTML=IC_PLAY;}   // 復元時は自動再生せず▶(停止中)表示。1タップで頭出し位置から鳴る
   revealed[i]=revealed[i]||false;paintText(i);updateEye();}
 function goCard(i){if(i<0||i>=CARDS.length)return;const f=document.getElementById('feed'),el=f.querySelector('.card[data-i="'+i+'"]');if(el)f.scrollTo({top:el.offsetTop,behavior:'smooth'});}  // 対象カードのoffsetTopへ
 function goNextPart(){const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;openPart(np,0);}  // パート末→次パート(Eの次はAに戻る)
@@ -522,7 +524,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-4';
+const BUILD='0801-5';
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
 if(location.href.indexOf('debug')>=0){
   const dbg=document.createElement('div');
