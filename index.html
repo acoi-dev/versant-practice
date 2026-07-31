@@ -320,7 +320,7 @@ function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}ca
   }}
 
 const REC='B';                                                 // 初学者に最初に勧めるパート
-const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい'};   // 入門者から見た目安
+const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい'};   // 入門者から見た目安
 function renderHome(){
   document.getElementById('plist').innerHTML=DATA.parts.map((p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
@@ -433,6 +433,8 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   if(c.answer_full&&PART.id!=='B')h+=`<div class="row"><span class="k">回答例</span><span class="v">${c.answer_full}</span></div>`;
   if(c.target)h+=`<div class="row"><span class="k">聞き比べ</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.memo?'　'+c.memo:''}</span></div>`;
   else if(c.memo)h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.memo}</span></div>`;
+  if(c.retell)h+=`<div class="row"><span class="k">再話例</span><span class="v">${c.retell}${c.retell_yaku?'　'+c.retell_yaku:''}</span></div>`;        // Part E
+  if(c.retell_min)h+=`<div class="row"><span class="k">最低限</span><span class="v">${c.retell_min}${c.retell_min_yaku?'　'+c.retell_min_yaku:''}</span></div>`;  // Part E: これだけ言えば0点回避
   if(isDlg){   // 会話全文は畳んでおく(内部スクロール＝縦スワイプ阻害を避ける)。開いたら表示
     if(dlgShown[i])h+='<div class="dlg">'+c.dialogue.map(d=>`<div><span>${d.speaker}</span>${d.text}</div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';
     else h+=`<div class="dlgtoggle" data-dlg="${i}">会話を全部見る</div>`;
