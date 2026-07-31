@@ -76,7 +76,7 @@
   .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px}
   .en{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
   .yaku{font-size:14px;color:var(--sub);margin-top:6px}
-  .row{display:flex;gap:8px;margin-top:12px;font-size:14px;padding-top:12px;border-top:1px solid var(--line)}
+  .row{display:flex;gap:8px;margin-top:15px;font-size:14px}
   .row .k{color:var(--sub);white-space:nowrap;font-size:12px;padding-top:2px;min-width:3.6em}
   .row .v{color:var(--ink)}
   .row .v b{font-weight:600}
@@ -106,31 +106,33 @@
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 
-  /* 上部はタイトルだけ（操作は片手で届く下バーに集約） */
-  .head{position:fixed;top:calc(env(safe-area-inset-top) + 14px);left:0;right:0;padding:0 56px;display:flex;justify-content:center;align-items:center;z-index:5}
+  /* 上部：タイトル中央＋設定は右上（あまり使わないので親指圏外でOK） */
+  .head{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:0;right:0;padding:0 64px;display:flex;justify-content:center;align-items:center;z-index:5}
   .htitle{text-align:center;font-size:13px;color:var(--ink);font-weight:600}
+  .topgear{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:16px;z-index:9;border:1px solid var(--line2);background:none;color:var(--sub);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .topgear svg{width:22px;height:22px;display:block}
 
   /* ===== 下部の片手操作バー（ホーム／答え表示／設定） ===== */
-  .navbar{position:fixed;left:0;right:0;bottom:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:10px 20px calc(env(safe-area-inset-bottom) + 12px);background:var(--bg);border-top:1px solid var(--line)}
+  /* 3カラムgridで中央ボタンを画面ど真ん中に固定（幅差でずれない） */
+  .navbar{position:fixed;left:0;right:0;bottom:0;z-index:8;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:10px 20px calc(env(safe-area-inset-bottom) + 12px);background:var(--bg)}
   .navb{border:1px solid var(--line2);background:none;color:var(--sub);cursor:pointer;font:inherit;
     display:flex;align-items:center;justify-content:center;gap:7px}
   .navb:active{background:var(--hover)}
-  .navb.home{font-size:14px;padding:12px 20px;border-radius:26px}
-  .navb.gear{width:48px;height:48px;border-radius:50%;padding:0;flex:none}
-  .navb.gear svg{width:23px;height:23px;display:block}
-  .navb.eye{font-size:14px;color:var(--ink);padding:12px 20px;border-radius:26px}
+  /* よく使う「答えを見る/隠す」は中央、ホームは右下 */
+  .navb.eye{grid-column:2;justify-self:center;font-size:14px;color:var(--ink);padding:12px 20px;border-radius:26px}
   .navb.eye svg{width:20px;height:20px;display:block}
   .navb.eye[hidden]{display:none}
+  .navb.home{grid-column:3;justify-self:end;font-size:14px;padding:12px 20px;border-radius:26px}
 
   /* ===== 設定シート ===== */
   /* ===== 設定ポップオーバー（歯車の直下にその場で・画面遷移なし） ===== */
   .popbg{position:fixed;inset:0;z-index:20;display:none}
   .popbg.on{display:block}
-  .pop{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 78px);right:16px;width:min(288px,86vw);
+  .pop{position:fixed;top:calc(env(safe-area-inset-top) + 56px);right:16px;width:min(288px,86vw);
     background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:4px 16px 12px;z-index:21;
-    max-height:calc(100dvh - 160px);overflow-y:auto;
-    opacity:0;transform:translateY(6px) scale(.97);transform-origin:bottom right;transition:opacity .13s ease,transform .13s ease;pointer-events:none}
+    max-height:calc(100dvh - 100px);overflow-y:auto;
+    opacity:0;transform:translateY(-6px) scale(.97);transform-origin:top right;transition:opacity .13s ease,transform .13s ease;pointer-events:none}
   .pop::-webkit-scrollbar{display:none}
   .pop.on{opacity:1;transform:none;pointer-events:auto}
   .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
@@ -174,15 +176,15 @@
   <div class="head">
     <div class="htitle" id="htitle"></div>
   </div>
+  <button class="topgear" id="mGear" aria-label="設定"></button>
   <div id="feed"></div>
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
   <div class="flash l" id="flashL">− 10秒</div>
   <div class="flash r" id="flashR">＋ 10秒</div>
-  <!-- 片手操作バー（親指の届く下部にホーム／答え表示／設定） -->
+  <!-- 片手操作バー（よく使う「答えを見る/隠す」は中央、ホームは右下） -->
   <div class="navbar">
-    <button class="navb home" id="back">ホーム</button>
     <button class="navb eye" id="eyeToggle"></button>
-    <button class="navb gear" id="mGear" aria-label="設定"></button>
+    <button class="navb home" id="back">ホーム</button>
   </div>
 </div>
 
