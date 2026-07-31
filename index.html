@@ -31,7 +31,7 @@
   #home.off{opacity:0;transform:scale(.99);pointer-events:none}
   #home::-webkit-scrollbar{display:none}
   /* 右上の閉じる×（ホーム・設定 共通） */
-  .closex{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:16px;z-index:12;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;line-height:1}
+  .closex{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:16px;z-index:12;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-size:24px;line-height:1}
   .closex[hidden]{display:none}
   .pop .closex{position:absolute;top:10px;right:12px}
   .brand{font-size:26px;font-weight:600;letter-spacing:-.02em}
@@ -51,7 +51,7 @@
   #feed{height:100dvh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
   #feed::-webkit-scrollbar{display:none}
   .card{height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top) + 64px) 24px calc(env(safe-area-inset-bottom) + 20px)}
+    padding:calc(env(safe-area-inset-top) + 60px) 24px calc(env(safe-area-inset-bottom) + 88px)}
   .plabel{font-size:12.5px;color:var(--sub);font-weight:500;font-variant-numeric:tabular-nums}
   .plabel b{color:var(--ink);font-weight:600}
 
@@ -106,21 +106,31 @@
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 
-  .head{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:5}
-  .back{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 14px;border-radius:24px;cursor:pointer}
-  .htitle{font-size:12.5px;color:var(--ink);font-weight:600}
-  /* 右上は設定ボタンだけ（基本は自動送り。切替は設定シートの中） */
-  .gearb{border:1px solid var(--line2);background:none;color:var(--sub);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-  .gearb svg{width:17px;height:17px;display:block}
+  /* 上部はタイトルだけ（操作は片手で届く下バーに集約） */
+  .head{position:fixed;top:calc(env(safe-area-inset-top) + 14px);left:0;right:0;padding:0 56px;display:flex;justify-content:center;align-items:center;z-index:5}
+  .htitle{text-align:center;font-size:13px;color:var(--ink);font-weight:600}
+
+  /* ===== 下部の片手操作バー（ホーム／答え表示／設定） ===== */
+  .navbar{position:fixed;left:0;right:0;bottom:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 20px calc(env(safe-area-inset-bottom) + 12px);background:var(--bg);border-top:1px solid var(--line)}
+  .navb{border:1px solid var(--line2);background:none;color:var(--sub);cursor:pointer;font:inherit;
+    display:flex;align-items:center;justify-content:center;gap:7px}
+  .navb:active{background:var(--hover)}
+  .navb.home{font-size:14px;padding:12px 20px;border-radius:26px}
+  .navb.gear{width:48px;height:48px;border-radius:50%;padding:0;flex:none}
+  .navb.gear svg{width:23px;height:23px;display:block}
+  .navb.eye{font-size:14px;color:var(--ink);padding:12px 20px;border-radius:26px}
+  .navb.eye svg{width:20px;height:20px;display:block}
+  .navb.eye[hidden]{display:none}
 
   /* ===== 設定シート ===== */
   /* ===== 設定ポップオーバー（歯車の直下にその場で・画面遷移なし） ===== */
   .popbg{position:fixed;inset:0;z-index:20;display:none}
   .popbg.on{display:block}
-  .pop{position:fixed;top:calc(env(safe-area-inset-top) + 50px);right:16px;width:min(288px,86vw);
+  .pop{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 78px);right:16px;width:min(288px,86vw);
     background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:4px 16px 12px;z-index:21;
-    max-height:calc(100dvh - 80px);overflow-y:auto;
-    opacity:0;transform:translateY(-6px) scale(.97);transform-origin:top right;transition:opacity .13s ease,transform .13s ease;pointer-events:none}
+    max-height:calc(100dvh - 160px);overflow-y:auto;
+    opacity:0;transform:translateY(6px) scale(.97);transform-origin:bottom right;transition:opacity .13s ease,transform .13s ease;pointer-events:none}
   .pop::-webkit-scrollbar{display:none}
   .pop.on{opacity:1;transform:none;pointer-events:auto}
   .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
@@ -162,14 +172,18 @@
 <!-- フィード -->
 <div id="app" class="off">
   <div class="head">
-    <button class="back" id="back">ホーム</button>
     <div class="htitle" id="htitle"></div>
-    <button class="gearb" id="mGear" aria-label="設定"></button>
   </div>
   <div id="feed"></div>
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
   <div class="flash l" id="flashL">− 10秒</div>
   <div class="flash r" id="flashR">＋ 10秒</div>
+  <!-- 片手操作バー（親指の届く下部にホーム／答え表示／設定） -->
+  <div class="navbar">
+    <button class="navb home" id="back">ホーム</button>
+    <button class="navb eye" id="eyeToggle"></button>
+    <button class="navb gear" id="mGear" aria-label="設定"></button>
+  </div>
 </div>
 
 <!-- 設定ポップ（右上の歯車の直下にその場で開く。画面遷移なし） -->
@@ -250,7 +264,7 @@ SW.onclick=()=>{auto=!auto;SW.classList.toggle('on',auto);SW.setAttribute('aria-
 const SWH=document.getElementById('swHide');
 hideAns=localStorage.getItem('hide')!=='0';
 SWH.classList.toggle('on',hideAns);SWH.setAttribute('aria-checked',hideAns);
-SWH.onclick=()=>{hideAns=!hideAns;SWH.classList.toggle('on',hideAns);SWH.setAttribute('aria-checked',hideAns);localStorage.setItem('hide',hideAns?'1':'0');if(PART)paintText(active);};
+SWH.onclick=()=>{hideAns=!hideAns;SWH.classList.toggle('on',hideAns);SWH.setAttribute('aria-checked',hideAns);localStorage.setItem('hide',hideAns?'1':'0');if(PART)paintText(active);updateEye();};
 
 // ===== 1問リピート（基本OFF・保存。ONだと次に進まず同じ文を繰り返す） =====
 let repeat=localStorage.getItem('repeat')==='1';
@@ -328,6 +342,13 @@ function openPart(pi){
 document.getElementById('back').onclick=()=>{closeSet();document.getElementById('home').classList.remove('off');};
 // ×で閉じると、さっきのプレイヤーに位置そのまま・音も止めずに戻る
 document.getElementById('homeClose').onclick=()=>document.getElementById('home').classList.add('off');
+
+// 答え表示トグル（下バー中央・親指位置）。今のカードの表示/非表示を切り替える
+function updateEye(){const b=document.getElementById('eyeToggle');if(!b)return;
+  if(!hideAns){b.hidden=true;return;} b.hidden=false;
+  const shown=revealed[active];
+  b.innerHTML=(shown?IC_EYEOFF:IC_EYE)+'<span>'+(shown?'答えを隠す':(PART&&PART.id==='B'?'英文を見る':'答えを見る'))+'</span>';}
+document.getElementById('eyeToggle').onclick=()=>{revealed[active]=!revealed[active];paintText(active);updateEye();};
 document.getElementById('popClose').onclick=closeSet;
 
 function renderFeed(){
@@ -368,7 +389,7 @@ function renderFeed(){
 
 function playCard(i){const c=CARDS[i];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});
   document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));document.getElementById('wave'+i)?.classList.add('on');
-  revealed[i]=revealed[i]||false;paintText(i);}
+  revealed[i]=revealed[i]||false;paintText(i);updateEye();}
 function goCard(i){if(i<0||i>=CARDS.length)return;document.getElementById('feed').scrollTo({top:i*window.innerHeight,behavior:'smooth'});}
 function replay(){const c=CARDS[active];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});}  // 頭からもう一回
 function seek(sec,side){const c=CARDS[active];if(!c)return;AU.currentTime=Math.max(c.start,Math.min(c.end-0.1,AU.currentTime+sec));if(AU.paused)AU.play();
@@ -381,15 +402,15 @@ AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classLi
 
 function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
-  if(!revealed[i] && hideAns){el.innerHTML=veilHTML(i);return;}   // 「答えを隠す」オフなら最初から表示
+  if(!revealed[i] && hideAns){el.innerHTML='';updateEye();return;}   // 非表示中は本文を空に。表示は下バーの「答えを見る」で
   document.getElementById('hint')?.classList.add('hide');
   const isDlg=c.dialogue&&c.dialogue.length;
   let h='';
-  if(hideAns)h+=`<div class="hidebtn" data-hide="${i}">${IC_EYEOFF}<span>答えを隠す</span></div>`;   // もう一度隠せる
   if(isDlg){ if(c.question){h+=`<div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }
   else if(c.en){h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
   if(c.bone&&c.bone.length)h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;
   if(c.answer&&PART.id!=='B')h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
+  if(c.answer_full&&PART.id!=='B')h+=`<div class="row"><span class="k">回答例</span><span class="v">${c.answer_full}</span></div>`;
   if(c.target)h+=`<div class="row"><span class="k">聞き比べ</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.memo?'　'+c.memo:''}</span></div>`;
   else if(c.memo)h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.memo}</span></div>`;
   if(isDlg){   // 会話全文は畳んでおく(内部スクロール＝縦スワイプ阻害を避ける)。開いたら表示
@@ -397,6 +418,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
     else h+=`<div class="dlgtoggle" data-dlg="${i}">会話を全部見る</div>`;
   }
   el.innerHTML=h;
+  updateEye();   // 下バーの「答えを見る/隠す」を今の表示状態に合わせる
 }
 
 
