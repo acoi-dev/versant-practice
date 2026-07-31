@@ -184,7 +184,7 @@
   <!-- 片手操作バー（よく使う「答えを見る/隠す」は中央、ホームは右下） -->
   <div class="navbar">
     <button class="navb eye" id="eyeToggle"></button>
-    <button class="navb home" id="back">ホーム</button>
+    <button class="navb home" id="back">パート</button>
   </div>
 </div>
 
@@ -230,7 +230,7 @@
 <script>
 const AU=document.getElementById('au');
 const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる'};
-let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true,dlgShown={};
+let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true,dlgShown={},partIdx=null;
 const ARROW='<path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/>';
 const IC_REPLAY='<svg viewBox="0 0 24 24" width="26" height="26">'+ARROW+'</svg>';
 const IC_EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -305,10 +305,17 @@ SWW.onclick=()=>{wakeOn=!wakeOn;SWW.classList.toggle('on',wakeOn);SWW.setAttribu
 
 boot();
 function boot(){
-  if(window.EMBED){ DATA=window.EMBED; renderHome(); }
-  else fetch('player_data.json').then(r=>r.json()).then(d=>{DATA=d;renderHome();})
+  if(window.EMBED){ DATA=window.EMBED; renderHome(); restoreState(); }
+  else fetch('player_data.json').then(r=>r.json()).then(d=>{DATA=d;renderHome();restoreState();})
        .catch(()=>{document.getElementById('plist').innerHTML='<div class="tag">データが読めません</div>';});
 }
+// ===== リロードしても今の画面(どのパート・どのカード・一覧を開いていたか)を保つ =====
+function saveState(){try{localStorage.setItem('st',JSON.stringify({p:partIdx,c:active,h:!document.getElementById('home').classList.contains('off')}));}catch(e){}}
+function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}catch(e){}
+  if(st&&st.p!=null&&DATA.parts&&DATA.parts[st.p]){
+    openPart(st.p, st.c||0);
+    if(st.h)document.getElementById('home').classList.remove('off');   // 一覧を開いた状態だったら開いたまま戻す
+  }}
 
 const REC='B';                                                 // 初学者に最初に勧めるパート
 const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい'};   // 入門者から見た目安
@@ -327,29 +334,38 @@ function renderHome(){
 
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
 
-function openPart(pi){
-  PART=DATA.parts[pi]; CARDS=PART.chapters.filter(c=>!c.tail); active=0; revealed={}; dlgShown={};
-  document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後ホームは×で閉じてプレイヤーに戻れる
+function openPart(pi, startCard){
+  startCard = startCard || 0;
+  PART=DATA.parts[pi]; partIdx=pi; CARDS=PART.chapters.filter(c=>!c.tail); active=startCard; revealed={}; dlgShown={};
+  document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後一覧は×で閉じてプレイヤーに戻れる
   document.getElementById('htitle').textContent=PART.title;
   AU.src=partAudio(PART); AU.playbackRate=speed;
   renderFeed();
-  document.getElementById('feed').scrollTo({top:0});
-  document.getElementById('home').classList.add('off');   // ホームをフェードアウト
-  document.getElementById('app').classList.remove('off'); // フィードをフェードイン(画面遷移でなく)
-  playCard(0);
+  document.getElementById('home').classList.add('off');
+  document.getElementById('app').classList.remove('off');
+  const _feed=document.getElementById('feed');
+  if(startCard>0){  // 復元時は途中カードへ。mandatory snapがプログラム的スクロールを弾くので一時解除
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      _feed.style.scrollSnapType='none';
+      _feed.scrollTop=startCard*window.innerHeight;
+      requestAnimationFrame(()=>{ _feed.style.scrollSnapType=''; });
+    }));
+  } else _feed.scrollTop=0;
+  playCard(startCard);
   document.getElementById('hint').classList.remove('hide');
+  saveState();
 }
 // ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
 // ホームはプレイヤーの上にかぶせて開く(画面遷移でなく)。プレイヤーはそのまま裏で継続
-document.getElementById('back').onclick=()=>{closeSet();document.getElementById('home').classList.remove('off');};
+document.getElementById('back').onclick=()=>{closeSet();document.getElementById('home').classList.remove('off');saveState();};
 // ×で閉じると、さっきのプレイヤーに位置そのまま・音も止めずに戻る
-document.getElementById('homeClose').onclick=()=>document.getElementById('home').classList.add('off');
+document.getElementById('homeClose').onclick=()=>{document.getElementById('home').classList.add('off');saveState();};
 
 // 答え表示トグル（下バー中央・親指位置）。今のカードの表示/非表示を切り替える
 function updateEye(){const b=document.getElementById('eyeToggle');if(!b)return;
   if(!hideAns){b.hidden=true;return;} b.hidden=false;
   const shown=revealed[active];
-  b.innerHTML=(shown?IC_EYEOFF:IC_EYE)+'<span>'+(shown?'答えを隠す':(PART&&PART.id==='B'?'英文を見る':'答えを見る'))+'</span>';}
+  b.innerHTML=(shown?IC_EYEOFF:IC_EYE)+'<span>'+(shown?'隠す':'見る')+'</span>';}
 document.getElementById('eyeToggle').onclick=()=>{revealed[active]=!revealed[active];paintText(active);updateEye();};
 document.getElementById('popClose').onclick=closeSet;
 
@@ -385,7 +401,7 @@ function renderFeed(){
   let tmr;
   feed.onscroll=()=>{clearTimeout(tmr);tmr=setTimeout(()=>{
     const i=Math.round(feed.scrollTop/window.innerHeight);
-    if(i!==active){active=i;document.getElementById('hint').classList.add('hide');playCard(i);}
+    if(i!==active){active=i;document.getElementById('hint').classList.add('hide');playCard(i);saveState();}
   },90);};
 }
 
