@@ -74,6 +74,12 @@
   .dlg div{font-size:14px;margin-bottom:3px}
   .dlg span{color:var(--sub);font-size:11.5px;margin-right:6px}
   .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 1.5em}
+  /* 「文字を大きく」ON時 */
+  body.bigtext .en{font-size:23px}
+  body.bigtext .yaku{font-size:16px}
+  body.bigtext .row{font-size:15.5px}
+  body.bigtext .dlg div{font-size:16px}
+  body.bigtext .dlg .dy{font-size:14px}
 
   .bot{margin-top:14px}
   /* 再生/停止を画面中央に固定、もう一回と速度を左右に置く */
@@ -102,9 +108,11 @@
   /* ===== 設定ポップオーバー（歯車の直下にその場で・画面遷移なし） ===== */
   .popbg{position:fixed;inset:0;z-index:20;display:none}
   .popbg.on{display:block}
-  .pop{position:fixed;top:calc(env(safe-area-inset-top) + 50px);right:16px;width:min(280px,84vw);
+  .pop{position:fixed;top:calc(env(safe-area-inset-top) + 50px);right:16px;width:min(288px,86vw);
     background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:4px 16px 12px;z-index:21;
+    max-height:calc(100dvh - 80px);overflow-y:auto;
     opacity:0;transform:translateY(-6px) scale(.97);transform-origin:top right;transition:opacity .13s ease,transform .13s ease;pointer-events:none}
+  .pop::-webkit-scrollbar{display:none}
   .pop.on{opacity:1;transform:none;pointer-events:auto}
   .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
   .setrow:first-child{border-top:0}
@@ -162,14 +170,32 @@
     <div class="sw on" id="swAuto" role="switch" aria-checked="true"></div>
   </div>
   <div class="setrow">
+    <div class="lb"><b>1問リピート</b><span>次に進まず同じ文を繰り返す</span></div>
+    <div class="sw" id="swRepeat" role="switch" aria-checked="false"></div>
+  </div>
+  <div class="setrow">
     <div class="lb"><b>答えを隠す</b><span>最初は耳だけで挑戦する</span></div>
     <div class="sw on" id="swHide" role="switch" aria-checked="true"></div>
+  </div>
+  <div class="setrow col">
+    <div class="lb"><b>標準の速さ</b></div>
+    <div class="seg" id="segSpeed">
+      <button data-sp="1">1.0x</button><button data-sp="0.85">0.85x</button><button data-sp="0.7">0.7x</button>
+    </div>
+  </div>
+  <div class="setrow">
+    <div class="lb"><b>文字を大きく</b><span>英文・訳・解説を大きく表示</span></div>
+    <div class="sw" id="swBig" role="switch" aria-checked="false"></div>
   </div>
   <div class="setrow col">
     <div class="lb"><b>表示モード</b></div>
     <div class="seg" id="segTheme">
       <button data-th="auto">自動</button><button data-th="light">ライト</button><button data-th="dark">ダーク</button>
     </div>
+  </div>
+  <div class="setrow">
+    <div class="lb"><b>画面をスリープさせない</b><span>学習中は画面を消さない</span></div>
+    <div class="sw" id="swWake" role="switch" aria-checked="false"></div>
   </div>
 </div>
 <audio id="au" preload="auto"></audio>
@@ -213,6 +239,36 @@ const SWH=document.getElementById('swHide');
 hideAns=localStorage.getItem('hide')!=='0';
 SWH.classList.toggle('on',hideAns);SWH.setAttribute('aria-checked',hideAns);
 SWH.onclick=()=>{hideAns=!hideAns;SWH.classList.toggle('on',hideAns);SWH.setAttribute('aria-checked',hideAns);localStorage.setItem('hide',hideAns?'1':'0');if(PART)paintText(active);};
+
+// ===== 1問リピート（基本OFF・保存。ONだと次に進まず同じ文を繰り返す） =====
+let repeat=localStorage.getItem('repeat')==='1';
+const SWR=document.getElementById('swRepeat');
+SWR.classList.toggle('on',repeat);SWR.setAttribute('aria-checked',repeat);
+SWR.onclick=()=>{repeat=!repeat;SWR.classList.toggle('on',repeat);SWR.setAttribute('aria-checked',repeat);localStorage.setItem('repeat',repeat?'1':'0');};
+
+// ===== 標準の再生速度（保存。開いた時の既定速度） =====
+speed=parseFloat(localStorage.getItem('spd'))||1;
+function syncSpeedSeg(){document.querySelectorAll('#segSpeed button').forEach(b=>b.classList.toggle('on',parseFloat(b.dataset.sp)===speed));}
+syncSpeedSeg();
+document.querySelectorAll('#segSpeed button').forEach(b=>b.onclick=()=>{
+  speed=parseFloat(b.dataset.sp);localStorage.setItem('spd',speed);AU.playbackRate=speed;syncSpeedSeg();
+  document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=speed+'x');});
+
+// ===== 文字を大きく（基本OFF・保存） =====
+let bigText=localStorage.getItem('big')==='1';
+const SWB=document.getElementById('swBig');
+function applyBig(){document.body.classList.toggle('bigtext',bigText);SWB.classList.toggle('on',bigText);SWB.setAttribute('aria-checked',bigText);}
+applyBig();
+SWB.onclick=()=>{bigText=!bigText;localStorage.setItem('big',bigText?'1':'0');applyBig();};
+
+// ===== 画面をスリープさせない（Wake Lock・基本OFF・保存） =====
+let wakeOn=localStorage.getItem('wake')==='1',wakeLock=null;
+const SWW=document.getElementById('swWake');
+SWW.classList.toggle('on',wakeOn);SWW.setAttribute('aria-checked',wakeOn);
+async function reqWake(){if(wakeOn&&'wakeLock'in navigator&&document.visibilityState==='visible'){try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}}
+function relWake(){try{if(wakeLock)wakeLock.release();}catch(e){}wakeLock=null;}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wakeOn)reqWake();});
+SWW.onclick=()=>{wakeOn=!wakeOn;SWW.classList.toggle('on',wakeOn);SWW.setAttribute('aria-checked',wakeOn);localStorage.setItem('wake',wakeOn?'1':'0');wakeOn?reqWake():relWake();};
 
 // ===== ホームの「はじめての方へ」案内（×で閉じたら記憶） =====
 (function(){const g=document.getElementById('guide');if(!g)return;
@@ -300,8 +356,8 @@ function seek(sec,side){const c=CARDS[active];if(!c)return;AU.currentTime=Math.m
   const f=document.getElementById(side==='l'?'flashL':'flashR');if(f){f.classList.add('on');clearTimeout(f.__t);f.__t=setTimeout(()=>f.classList.remove('on'),450);}}
 
 AU.addEventListener('timeupdate',()=>{const c=CARDS[active];if(!c)return;
-  if(AU.currentTime>=c.end-0.05){if(auto&&active<CARDS.length-1)goCard(active+1);else AU.pause();}});
-AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');});
+  if(AU.currentTime>=c.end-0.05){if(repeat)replay();else if(auto&&active<CARDS.length-1)goCard(active+1);else AU.pause();}});
+AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');reqWake();});
 AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});
 
 function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
