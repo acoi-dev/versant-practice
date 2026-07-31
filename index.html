@@ -26,10 +26,14 @@
   body{font-family:var(--ui);color:var(--ink);font-feature-settings:"palt" 1;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 
   /* ===== ホーム ===== */
-  /* ホーム/パートは画面遷移でなくクロスフェード（.offで消す側） */
-  #home{position:fixed;inset:0;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 40px);transition:opacity .22s ease,transform .22s ease}
-  #home.off{opacity:0;transform:scale(.985);pointer-events:none}
+  /* ホームはプレイヤーの上にかぶさるオーバーレイ（画面遷移でなくその場で開閉） */
+  #home{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 40px);transition:opacity .18s ease,transform .18s ease}
+  #home.off{opacity:0;transform:scale(.99);pointer-events:none}
   #home::-webkit-scrollbar{display:none}
+  /* 右上の閉じる×（ホーム・設定 共通） */
+  .closex{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:16px;z-index:12;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;line-height:1}
+  .closex[hidden]{display:none}
+  .pop .closex{position:absolute;top:10px;right:12px}
   .brand{font-size:26px;font-weight:600;letter-spacing:-.02em}
   .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
   .plist{display:flex;flex-direction:column;gap:11px}
@@ -60,11 +64,16 @@
   .wave.on b:nth-child(4){animation-delay:.3s}.wave.on b:nth-child(5){animation-delay:.15s}.wave.on b:nth-child(6){animation-delay:.25s}
   @keyframes w{0%,100%{height:11px}50%{height:38px}}
 
-  .text{border-top:1px solid var(--line);padding-top:16px;min-height:118px;max-height:44dvh;overflow-y:auto}
+  .text{border-top:1px solid var(--line);padding-top:16px;min-height:118px;max-height:44dvh;overflow-y:auto;overscroll-behavior:contain}
   .text::-webkit-scrollbar{display:none}
   .veil{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--sub);padding:22px 0;cursor:pointer}
   .veil svg{width:27px;height:27px;display:block;color:var(--sub)}
   .veil span{font-size:12.5px;color:var(--sub)}
+  /* 答えを再度隠すボタン（表示中の先頭） */
+  .hidebtn{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;cursor:pointer;padding-bottom:11px;margin-bottom:3px;border-bottom:1px solid var(--line)}
+  .hidebtn svg{width:15px;height:15px}
+  /* 会話を全部見る（Part C・畳んでおく） */
+  .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px}
   .en{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
   .yaku{font-size:14px;color:var(--sub);margin-top:6px}
   .row{display:flex;gap:8px;margin-top:12px;font-size:14px;padding-top:12px;border-top:1px solid var(--line)}
@@ -115,7 +124,7 @@
   .pop::-webkit-scrollbar{display:none}
   .pop.on{opacity:1;transform:none;pointer-events:auto}
   .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
-  .setrow:first-child{border-top:0}
+  .setrow:first-of-type{border-top:0;margin-top:30px}
   .setrow.col{flex-direction:column;align-items:stretch;gap:9px}
   .setrow .lb b{display:block;font-size:13.5px;font-weight:500}
   .setrow .lb span{font-size:11.5px;color:var(--sub)}
@@ -143,6 +152,7 @@
 <body>
 <!-- ホーム -->
 <div id="home">
+  <button class="closex" id="homeClose" aria-label="閉じる" hidden>&times;</button>
   <div class="brand">Versant 練習</div>
   <div class="tag">本番と同じ例題を、耳で無限反復</div>
   <div class="guide" id="guide"><span class="x" id="guideX">×</span><b>はじめての方へ。</b>Versantは6つのパートに分かれた試験です。まずは <b>Part B「聞いて繰り返す」</b>から始めると、耳が慣れて楽に入れます。</div>
@@ -165,6 +175,7 @@
 <!-- 設定ポップ（右上の歯車の直下にその場で開く。画面遷移なし） -->
 <div class="popbg" id="popbg"></div>
 <div class="pop" id="pop">
+  <button class="closex" id="popClose" aria-label="閉じる">&times;</button>
   <div class="setrow">
     <div class="lb"><b>自動送り</b><span>終わると次へ自動で進む</span></div>
     <div class="sw on" id="swAuto" role="switch" aria-checked="true"></div>
@@ -203,10 +214,11 @@
 <script>
 const AU=document.getElementById('au');
 const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる'};
-let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true;
+let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true,dlgShown={};
 const ARROW='<path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/>';
 const IC_REPLAY='<svg viewBox="0 0 24 24" width="26" height="26">'+ARROW+'</svg>';
 const IC_EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+const IC_EYEOFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.1 10.1 0 0 1 12 20C5 20 2 12 2 12a18.5 18.5 0 0 1 5.1-6M9.9 4.2A9.1 9.1 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.2 3.2m-6.7-1.1a3 3 0 1 1-4.2-4.2"/><line x1="2" y1="2" x2="22" y2="22"/></svg>';
 const IC_PLAY='<svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
 const IC_PAUSE='<svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
 const IC_GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
@@ -300,7 +312,8 @@ function renderHome(){
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
 
 function openPart(pi){
-  PART=DATA.parts[pi]; CARDS=PART.chapters.filter(c=>!c.tail); active=0; revealed={};
+  PART=DATA.parts[pi]; CARDS=PART.chapters.filter(c=>!c.tail); active=0; revealed={}; dlgShown={};
+  document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後ホームは×で閉じてプレイヤーに戻れる
   document.getElementById('htitle').textContent=PART.title;
   AU.src=partAudio(PART); AU.playbackRate=speed;
   renderFeed();
@@ -311,7 +324,11 @@ function openPart(pi){
   document.getElementById('hint').classList.remove('hide');
 }
 // ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
-document.getElementById('back').onclick=()=>{closeSet();document.getElementById('app').classList.add('off');document.getElementById('home').classList.remove('off');};
+// ホームはプレイヤーの上にかぶせて開く(画面遷移でなく)。プレイヤーはそのまま裏で継続
+document.getElementById('back').onclick=()=>{closeSet();document.getElementById('home').classList.remove('off');};
+// ×で閉じると、さっきのプレイヤーに位置そのまま・音も止めずに戻る
+document.getElementById('homeClose').onclick=()=>document.getElementById('home').classList.add('off');
+document.getElementById('popClose').onclick=closeSet;
 
 function renderFeed(){
   const feed=document.getElementById('feed');
@@ -334,6 +351,8 @@ function renderFeed(){
 
   feed.querySelectorAll('.card').forEach(card=>card.addEventListener('click',e=>{
     if(e.target.closest('.veil')){const i=+e.target.closest('.veil').dataset.rev;revealed[i]=true;paintText(i);return;}
+    if(e.target.closest('[data-hide]')){const i=+e.target.closest('[data-hide]').dataset.hide;revealed[i]=false;paintText(i);return;}
+    if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
     if(e.target.closest('[data-spd]')){const a=[1,0.85,0.7,1.15];speed=a[(a.indexOf(speed)+1)%a.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=speed+'x');return;}
     if(e.target.closest('[data-rep]')){replay();return;}
     if(e.target.closest('[data-play]')){AU.paused?AU.play():AU.pause();return;}
@@ -364,13 +383,19 @@ function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
   if(!revealed[i] && hideAns){el.innerHTML=veilHTML(i);return;}   // 「答えを隠す」オフなら最初から表示
   document.getElementById('hint')?.classList.add('hide');
+  const isDlg=c.dialogue&&c.dialogue.length;
   let h='';
-  if(c.dialogue&&c.dialogue.length){h+='<div class="dlg">'+c.dialogue.map(d=>`<div><span>${d.speaker}</span>${d.text}</div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';}
+  if(hideAns)h+=`<div class="hidebtn" data-hide="${i}">${IC_EYEOFF}<span>答えを隠す</span></div>`;   // もう一度隠せる
+  if(isDlg){ if(c.question){h+=`<div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }
   else if(c.en){h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
   if(c.bone&&c.bone.length)h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;
   if(c.answer&&PART.id!=='B')h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
   if(c.target)h+=`<div class="row"><span class="k">聞き比べ</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.memo?'　'+c.memo:''}</span></div>`;
   else if(c.memo)h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.memo}</span></div>`;
+  if(isDlg){   // 会話全文は畳んでおく(内部スクロール＝縦スワイプ阻害を避ける)。開いたら表示
+    if(dlgShown[i])h+='<div class="dlg">'+c.dialogue.map(d=>`<div><span>${d.speaker}</span>${d.text}</div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';
+    else h+=`<div class="dlgtoggle" data-dlg="${i}">会話を全部見る</div>`;
+  }
   el.innerHTML=h;
 }
 
