@@ -27,13 +27,15 @@
 
   /* ===== ホーム ===== */
   /* ホームはプレイヤーの上にかぶさるオーバーレイ（画面遷移でなくその場で開閉） */
-  #home{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 40px);transition:opacity .18s ease,transform .18s ease}
+  #home{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 84px);transition:opacity .18s ease,transform .18s ease}
   #home.off{opacity:0;transform:scale(.99);pointer-events:none}
   #home::-webkit-scrollbar{display:none}
   /* 右上の閉じる×（ホーム・設定 共通） */
   .closex{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:16px;z-index:12;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-size:24px;line-height:1}
   .closex[hidden]{display:none}
   .pop .closex{position:absolute;top:10px;right:12px}
+  /* パートを閉じる×は右下（親指位置）。設定の×は上のまま */
+  #homeClose{top:auto;bottom:calc(env(safe-area-inset-bottom) + 16px);right:16px}
   .brand{font-size:26px;font-weight:600;letter-spacing:-.02em}
   .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
   .plist{display:flex;flex-direction:column;gap:11px}
