@@ -438,8 +438,8 @@ function renderFeed(){
     if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
     if(e.target.closest('[data-spd]')){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=spdTxt(speed));if(typeof syncSpeedSeg==='function')syncSpeedSeg();return;}
     if(e.target.closest('[data-rep]')){replay();return;}
-    if(e.target.closest('[data-play]')){AU.paused?AU.play():AU.pause();return;}
-    AU.paused?AU.play():AU.pause();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
+    if(e.target.closest('[data-play]')){togglePlay();return;}
+    togglePlay();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
   }));
 
   // 今どのカードかは、高さ計算(innerHeight≠100dvhでズレる)でなく「スクロール位置に一番近いカード」で決める
@@ -459,6 +459,14 @@ function renderFeed(){
 }
 
 let seekSeq=0;
+// 再生ボタン: 停止中に押されたら、音声位置が今のカードの範囲外(リロード直後は0秒=先頭)なら頭出しし直してから鳴らす。
+// iOSはこのタップが初めての操作なので、ここで初めて読み込み・シークが効く。カード内での一時停止からの再開は位置を触らない。
+function togglePlay(){
+  if(!AU.paused){AU.pause();return;}
+  const c=CARDS[active];
+  if(c && (AU.currentTime<c.start-1 || AU.currentTime>=c.end)) playCard(active);
+  else AU.play().catch(()=>{});
+}
 function trySeek(start){   // seekable範囲が目標をカバーしていれば頭出し。効いたら true
   try{
     const s=AU.seekable;
@@ -524,7 +532,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-5';
+const BUILD='0801-6';
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
 if(location.href.indexOf('debug')>=0){
   const dbg=document.createElement('div');
