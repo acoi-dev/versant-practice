@@ -358,10 +358,10 @@ function renderHome(){
 
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
 
-let switching=false, switchTarget=0;   // パート切替中はスクロール判定を止め、目標カードに着地するまで前/次パート発火を抑止(innerHTML差し替えやscrollTop=0の誤発火を防ぐ)
+let switching=false;   // パート切替中は前/次パート発火を止める
 function openPart(pi, startCard){
   startCard = startCard || 0;
-  switching=true; switchTarget=startCard+1;   // 先頭番兵ぶん+1が着地点
+  switching=true;   // 切替の自動スクロール中は前/次パート発火を止める
   PART=DATA.parts[pi]; partIdx=pi; CARDS=PART.chapters.filter(c=>!c.tail); active=startCard; revealed={}; dlgShown={};
   document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後一覧は×で閉じてプレイヤーに戻れる
   document.getElementById('htitle').textContent=PART.title;
@@ -373,7 +373,7 @@ function openPart(pi, startCard){
   // 先頭に「前パート」番兵があるので実カードは表示index+1。目的カードへ移動(mandatory snapは一時解除)
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     _feed.style.scrollSnapType='none';
-    _feed.scrollTop=(startCard+1)*window.innerHeight;
+    const t=_feed.querySelector('.card[data-i="'+startCard+'"]'); if(t)_feed.scrollTop=t.offsetTop;   // 高さ計算でなく対象カードのoffsetTopへ
     requestAnimationFrame(()=>{ _feed.style.scrollSnapType=''; });
   }));
   setTimeout(()=>{ switching=false; }, 600);   // 保険: 目標に着地できなくても必ず解除
@@ -442,14 +442,17 @@ function renderFeed(){
     AU.paused?AU.play():AU.pause();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
   }));
 
+  // 今どのカードかは、高さ計算(innerHeight≠100dvhでズレる)でなく「スクロール位置に一番近いカード」で決める
   let tmr;
   feed.onscroll=()=>{clearTimeout(tmr);tmr=setTimeout(()=>{
-    const di=Math.round(feed.scrollTop/window.innerHeight);   // 表示index(先頭に前パート番兵がある)
-    if(switching){ if(di===switchTarget)switching=false; return; }   // 切替の自動スクロール中は判定せず、目標カードに着いたら解除
-    if(di<=0){goPrevPart();return;}                           // 先頭番兵までスワイプ=前パートへ
-    const ri=di-1;                                            // 実カード番号
-    if(ri>=CARDS.length){goNextPart();return;}                // 末尾番兵までスワイプ=次パートへ
-    if(ri!==active){active=ri;document.getElementById('hint').classList.add('hide');playCard(ri);saveState();}
+    if(switching)return;                                       // パート切替の自動スクロール中は無視
+    const st=feed.scrollTop; let best=null,bd=1e9;
+    feed.querySelectorAll('.card').forEach(el=>{const d=Math.abs(el.offsetTop-st);if(d<bd){bd=d;best=el;}});
+    if(!best)return;
+    if(best.classList.contains('prevcard')){goPrevPart();return;}  // 先頭番兵=前パートへ
+    if(best.classList.contains('nextcard')){goNextPart();return;}  // 末尾番兵=次パートへ
+    const ri=+best.dataset.i;
+    if(ri!==active){active=ri;document.getElementById('hint')?.classList.add('hide');playCard(ri);saveState();}
   },90);};
 
   CARDS.forEach((_,i)=>paintText(i));   // 全カードを最初から正しい状態に(隠す=空/常時表示=本文)。スワイプ中のveilチラつき防止
@@ -476,7 +479,7 @@ function playCard(i){const c=CARDS[i];if(!c)return;
   setTimeout(fix,200);
   document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));document.getElementById('wave'+i)?.classList.add('on');
   revealed[i]=revealed[i]||false;paintText(i);updateEye();}
-function goCard(i){if(i<0||i>=CARDS.length)return;document.getElementById('feed').scrollTo({top:(i+1)*window.innerHeight,behavior:'smooth'});}  // 先頭番兵ぶん+1
+function goCard(i){if(i<0||i>=CARDS.length)return;const f=document.getElementById('feed'),el=f.querySelector('.card[data-i="'+i+'"]');if(el)f.scrollTo({top:el.offsetTop,behavior:'smooth'});}  // 対象カードのoffsetTopへ
 function goNextPart(){const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;openPart(np,0);}  // パート末→次パート(Eの次はAに戻る)
 function goPrevPart(){const pp=(partIdx-1+DATA.parts.length)%DATA.parts.length;const last=DATA.parts[pp].chapters.filter(c=>!c.tail).length-1;openPart(pp,Math.max(0,last));}  // パート頭→前パートの最終カードへ(Aの前はEへ)
 function replay(){const c=CARDS[active];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});}  // 頭からもう一回
