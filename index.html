@@ -496,14 +496,15 @@ function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
   const start=c.start+0.02, my=++seekSeq;
   // 各パートの1問目は先頭に約15〜22秒のイントロがあり、card開始は0秒でない。ここへ頭出しする
   const run=()=>{if(my!==seekSeq)return;
+    if(!srcReady()){AU.addEventListener('loadedmetadata',run,{once:true});return;}   // ★正しいパートの音源がまだ載っていない→ロード後に鳴らす(旧音源では絶対に鳴らさない=パート間音ズレ根絶)
     if(AU.currentTime<start-0.35 || AU.currentTime>=c.end) trySeek(start);   // 既にこのカード内で鳴っていれば頭出ししない(境界の巻き戻し/二度鳴り防止 Bug1a)
     try{AU.playbackRate=speed;AU.defaultPlaybackRate=speed;}catch(e){}        // 速度はロード後に適用(iOSがsrc差替時1.0xへ戻すため Bug5)
     if(noPlay){AU.pause();} else {AU.play().catch(()=>{const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});}};
-  if(AU.readyState>=1)run(); else AU.addEventListener('loadedmetadata',run,{once:true});
+  if(srcReady())run(); else AU.addEventListener('loadedmetadata',run,{once:true});   // ★readyState>=1だけを信用しない(旧音源がreadyState>=1で居残るiOS対策)
   // iOS対策: メタデータ後もseekableが0のことがあり頭出しが無視される→0秒(イントロ)から鳴って画面とズレる。
   // 目標より手前で鳴っていたら、seekableが広がるまで数回リトライ(前進中の正常再生には触れない)
   let tries=0;
-  const fix=()=>{if(my!==seekSeq)return; if(AU.currentTime<start-2)trySeek(start); if(++tries<12)setTimeout(fix,250);};
+  const fix=()=>{if(my!==seekSeq)return; if(srcReady() && AU.currentTime<start-2)trySeek(start); if(++tries<12)setTimeout(fix,250);};   // 旧音源にはシークしない
   setTimeout(fix,200);
   document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));if(!noPlay)document.getElementById('wave'+i)?.classList.add('on');
   if(noPlay){const b=document.getElementById('play'+i);if(b)b.innerHTML=IC_PLAY;}   // 復元時は自動再生せず▶(停止中)表示。1タップで頭出し位置から鳴る
@@ -527,15 +528,16 @@ function followAudioToCard(i){   // 表示だけ音声のカードへ合わせ�
 }
 // ★取り違え検知: 今のパートの音源(=尺)と、実際に載っている音声の尺が食い違っていたら別パートの音源が載っている
 function srcWrong(){ return !!PART && !isNaN(AU.duration) && AU.duration>0 && Math.abs(AU.duration - PART.total) > 3; }
+function srcReady(){ return !!PART && AU.currentSrc && AU.currentSrc.indexOf(partAudio(PART))>=0 && AU.readyState>=1 && !srcWrong(); }  // 今のパートの音源が本当に載って再生可能か(readyStateだけでなくURL・尺も一致)
 function reconcile(){   // 表示カードと鳴っている音声がズレていたら合わせる(自動送り/背景復帰/シーク失敗を自己修復)
-  if(!CARDS.length || switching) return;
-  if(srcWrong()){                                  // ★パート間の音ズレ根絶: 別パートの音源が載っていたら即座に正しい音源へ
+  if(!CARDS.length) return;
+  if(srcWrong()){                                  // ★パート間の音ズレ根絶: 別パートの音源が載っていたら switching中でも必ず即是正(切替中の自動送り・画面ロック中も封じない)
     const wasPlaying=!AU.paused; try{AU.pause();}catch(e){}
     ensureAudioSource();                            // 今のPARTの音源を確実にロードし直す
-    if(wasPlaying) playCard(active);                // 鳴っていたなら正しい音源で頭出しから鳴らし直す
+    if(wasPlaying) playCard(active);                // 鳴っていたなら正しい音源が載り次第、頭出しから鳴らし直す(playCardのゲートで旧音源は鳴らさない)
     return;
   }
-  if(AU.paused) return;
+  if(switching || AU.paused) return;
   const c=CARDS[active], ac=audioCardOf(AU.currentTime);
   if(Date.now()-lastSwipe < 1200){ if(c && ac!==active) trySeek(c.start+0.02); return; }  // 直近スワイプ直後は表示を正=音声を合わせる(イントロ0秒でも)
   if(ac<0 || ac===active) return;
@@ -549,7 +551,7 @@ AU.addEventListener('timeupdate',()=>{
 });
 AU.addEventListener('ended',()=>{ if(auto) goNextPart(); else AU.pause(); });   // パート音源の終端→次パート(Bug4: timeupdateが末尾閾値に届かず無音停止するのを防ぐ)
 setInterval(reconcile, 500);   // 予備: timeupdateが疎な時のズレも拾う
-document.addEventListener('visibilitychange',()=>{ if(!document.hidden) setTimeout(reconcile,60); });   // 画面復帰(ロック解除)で表示を音声へ合わせ直す
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ switching=false; setTimeout(reconcile,60); } });   // 画面復帰(ロック解除)でswitchingを解いて自己修復を空振りさせず、表示と音源を合わせ直す
 AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');reqWake();});
 AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});
 
@@ -589,7 +591,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-26';
+const BUILD='0801-27';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
