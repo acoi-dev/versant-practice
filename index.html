@@ -573,7 +573,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   if(c.bone_en&&c.bone_en.length&&PART.id!=='E')h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part Eは使える単語を廃止(最低限回答とイコール)。Part Fの言い出し表現は残す
   if(c.answer_full&&PART.id!=='B'){   // 答えと解答例を統一: 解答例の中の「最低限の答え」を太字に(太字だけでも正解)
     const ex=c.answer&&c.answer_full.indexOf(c.answer)>=0?c.answer_full.split(c.answer).join('<b>'+c.answer+'</b>'):c.answer_full;
-    h+=`<div class="row ex"><span class="k">解答例</span><span class="v">${ex}${(c.a_yaku||c.answer)?`<div class="tip">太字だけでも正解${c.a_yaku?'・'+c.a_yaku:''}</div>`:''}</span></div>`;
+    h+=`<div class="row ex"><span class="k">解答例</span><span class="v">${ex}${(PART.id!=='A'&&(c.a_yaku||c.answer))?`<div class="tip">太字だけでも正解${c.a_yaku?'・'+c.a_yaku:''}</div>`:''}</span></div>`;   // Part Aは答えが元々短いので「太字だけでも正解」は不要
   }else if(c.answer&&PART.id!=='B'){   // 解答例が無い時は答えだけ
     h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
   }
@@ -591,7 +591,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-27';
+const BUILD='0801-28';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
