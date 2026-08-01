@@ -80,7 +80,7 @@
   .wave.on b:nth-child(4){animation-delay:.3s}.wave.on b:nth-child(5){animation-delay:.15s}.wave.on b:nth-child(6){animation-delay:.25s}
   @keyframes w{0%,100%{height:11px}50%{height:38px}}
 
-  .text{padding-top:16px;min-height:118px;max-height:44dvh;overflow-y:auto;overscroll-behavior:contain}
+  .text{padding-top:16px;min-height:118px;max-height:48dvh;overflow-y:auto}  /* containを外し、答え欄の端まで来たらカード送りに繋がるように(答え表示中もスワイプで次へ) */
   .text::-webkit-scrollbar{display:none}
   .veil{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--sub);padding:22px 0;cursor:pointer}
   .veil svg{width:27px;height:27px;display:block;color:var(--sub)}
@@ -559,7 +559,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-12';
+const BUILD='0801-13';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
