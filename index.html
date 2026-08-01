@@ -174,14 +174,9 @@
   .seg button.on{background:var(--accent);color:var(--bg)}
   .pophint{font-size:11px;color:var(--faint);line-height:1.6;padding-top:12px;border-top:1px solid var(--line)}
 
-  /* ===== ホーム：はじめての案内・おすすめ・目安 ===== */
-  .guide{border:1px solid var(--line2);border-radius:14px;padding:14px 16px;margin-bottom:22px;font-size:13px;line-height:1.75;color:var(--sub)}
-  .guide b{color:var(--ink);font-weight:600}
-  .guide .x{float:right;color:var(--faint);cursor:pointer;font-size:15px;line-height:1;margin:0 -4px 0 8px}
+  /* ===== ホーム：目安 ===== */
   .pcard{position:relative}
-  .pcard.current{border-color:var(--accent)}   /* 今いるパートだけ枠線(選択中の意味)。おすすめはバッジのみ */
-  /* おすすめ印は塗りバッジにせず、カード上辺の罫線を割るアクセント文字だけ */
-  .rec-badge{position:absolute;top:-8px;left:16px;background:var(--bg);color:var(--accent);font-size:11px;font-weight:600;padding:0 7px;letter-spacing:.02em}
+  .pcard.current{border-color:var(--accent)}   /* 今いるパートだけ枠線(選択中の意味) */
 </style>
 </head>
 <body>
@@ -190,7 +185,6 @@
   <button class="closex" id="homeClose" aria-label="閉じる" hidden>&times;</button>
   <div class="brand">Versant 練習</div>
   <div class="tag">本番と同じ例題を、耳で無限反復</div>
-  <div class="guide" id="guide"><span class="x" id="guideX">×</span><b>はじめての方へ。</b>Versantは6つのパートに分かれた試験です。まずは <b>Part B「聞いて繰り返す」</b>から始めると、耳が慣れて楽に入れます。</div>
   <div class="plist" id="plist"></div>
   <p class="disc">非公式の練習アプリです。Versant<span class="r">®</span> は Pearson Education 社の商標で、本アプリは Pearson 社および Versant と関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
   <div id="build" class="build"></div>
@@ -323,11 +317,6 @@ function relWake(){try{if(wakeLock)wakeLock.release();}catch(e){}wakeLock=null;}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wakeOn)reqWake();});
 SWW.onclick=()=>{wakeOn=!wakeOn;SWW.classList.toggle('on',wakeOn);SWW.setAttribute('aria-checked',wakeOn);localStorage.setItem('wake',wakeOn?'1':'0');wakeOn?reqWake():relWake();};
 
-// ===== ホームの「はじめての方へ」案内（×で閉じたら記憶） =====
-(function(){const g=document.getElementById('guide');if(!g)return;
-  if(localStorage.getItem('guideHidden'))g.style.display='none';
-  document.getElementById('guideX').onclick=()=>{g.style.display='none';localStorage.setItem('guideHidden','1');};})();
-
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; renderHome(); restoreState(); }
@@ -342,7 +331,6 @@ function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}ca
     if(st.h){document.getElementById('home').classList.remove('off');markCurrent();}   // 一覧を開いた状態だったら開いたまま戻す
   }}
 
-const REC='B';                                                 // 初学者に最初に勧めるパート
 const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい'};   // 入門者から見た目安
 // 崩れの種類ごとの平易な解説(音声学の専門用語は出さない)
 const TIP={form:'2語がくっついて短く言われます。かたまりで覚えると聞き取れます。',
@@ -354,10 +342,8 @@ const TIP={form:'2語がくっついて短く言われます。かたまりで�
 function renderHome(){
   document.getElementById('plist').innerHTML=DATA.parts.map((p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
-    const rec=p.id===REC;
     const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"(先頭のPart Xは小見出しへ)
-    return `<div class="pcard${rec?' rec':''}" data-p="${i}">`
-      +(rec?'<span class="rec-badge">はじめはここ</span>':'')
+    return `<div class="pcard" data-p="${i}">`
       +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${n}問</span></div>`
       +`<div class="ttl">${name}</div>`
       +`<div class="desc">${TASK[p.id]||''}</div></div>`;
@@ -571,7 +557,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-14';
+const BUILD='0801-15';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
