@@ -511,7 +511,7 @@ function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
 function goCard(i){if(i<0||i>=CARDS.length)return;const f=document.getElementById('feed'),el=f.querySelector('.card[data-i="'+i+'"]');if(el)f.scrollTo({top:el.offsetTop,behavior:'smooth'});}  // 対象カードのoffsetTopへ
 function goNextPart(){const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;openPart(np,0);}  // パート末→次パート(Eの次はAに戻る)
 function goPrevPart(){const pp=(partIdx-1+DATA.parts.length)%DATA.parts.length;const last=DATA.parts[pp].chapters.filter(c=>!c.tail).length-1;openPart(pp,Math.max(0,last));}  // パート頭→前パートの最終カードへ(Aの前はEへ)
-function replay(){const c=CARDS[active];if(!c)return;lastSwipe=Date.now();trySeek(c.start+0.02);AU.play().catch(()=>{});}  // 頭からもう一回(seek安全化。効かなければreconcileが直近操作として合わせ直す Bug6)
+function replay(){const c=CARDS[active];if(!c)return;lastSwipe=Date.now();if(ensureAudioSource()){playCard(active);return;}trySeek(c.start+0.02);AU.play().catch(()=>{});}  // 頭からもう一回(音源が別パートなら載せ直してから。seek安全化・失敗はreconcileが補正 Bug6)
 
 // ===== 音声の位置を正として、表示(active/本文/スクロール)をそこへ追従させる =====
 // 旧: 自動送りが goCard(スクロール)経由でactiveを更新→背景/ロック中はscrollイベントが止まり表示が固まって音声とズレた。
@@ -525,8 +525,17 @@ function followAudioToCard(i){   // 表示だけ音声のカードへ合わせ�
   if(el && Math.abs(f.scrollTop-el.offsetTop)>10) f.scrollTo({top:el.offsetTop,behavior:'smooth'});
   document.getElementById('hint')?.classList.add('hide'); saveState();
 }
+// ★取り違え検知: 今のパートの音源(=尺)と、実際に載っている音声の尺が食い違っていたら別パートの音源が載っている
+function srcWrong(){ return !!PART && !isNaN(AU.duration) && AU.duration>0 && Math.abs(AU.duration - PART.total) > 3; }
 function reconcile(){   // 表示カードと鳴っている音声がズレていたら合わせる(自動送り/背景復帰/シーク失敗を自己修復)
-  if(!CARDS.length || AU.paused || switching) return;
+  if(!CARDS.length || switching) return;
+  if(srcWrong()){                                  // ★パート間の音ズレ根絶: 別パートの音源が載っていたら即座に正しい音源へ
+    const wasPlaying=!AU.paused; try{AU.pause();}catch(e){}
+    ensureAudioSource();                            // 今のPARTの音源を確実にロードし直す
+    if(wasPlaying) playCard(active);                // 鳴っていたなら正しい音源で頭出しから鳴らし直す
+    return;
+  }
+  if(AU.paused) return;
   const c=CARDS[active], ac=audioCardOf(AU.currentTime);
   if(Date.now()-lastSwipe < 1200){ if(c && ac!==active) trySeek(c.start+0.02); return; }  // 直近スワイプ直後は表示を正=音声を合わせる(イントロ0秒でも)
   if(ac<0 || ac===active) return;
@@ -550,14 +559,14 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   document.getElementById('hint')?.classList.add('hide');
   const isDlg=c.dialogue&&c.dialogue.length;
   let h='';
+  if(PART.id==='D'&&c.passage){   // Part D: 聞いた話の全文(本文)を先頭に。太字=答えの手がかり(要点リストは廃止)
+    const pe=c.key_line&&c.passage.indexOf(c.key_line)>=0?c.passage.split(c.key_line).join('<b>'+c.key_line+'</b>'):c.passage;
+    const py=c.passage_yaku&&c.key_line_yaku&&c.passage_yaku.indexOf(c.key_line_yaku)>=0?c.passage_yaku.split(c.key_line_yaku).join('<b>'+c.key_line_yaku+'</b>'):c.passage_yaku;
+    h+=`<div class="pass top"><div class="pk">本文<span>太字が答えの手がかり</span></div><div class="pen">${pe}</div>${py?`<div class="pyaku">${py}</div>`:''}</div>`;
+  }
   if(isDlg){ if(c.question){h+=`<div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;}
     h+='<div class="dlg">'+c.dialogue.map(d=>`<div><span>${d.speaker}</span>${d.text}</div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>'; }   // 会話は質問の直下に全文表示(下に埋もれないように)
   else if(c.en){if(c.kana)h+=`<div class="kana">${c.kana}</div>`; h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
-  if(PART.id==='D'&&c.passage){   // Part D: 聞いた話の全文を見せ、答えの手がかりの一文を太字で強調(要点リストは廃止)
-    const pe=c.key_line&&c.passage.indexOf(c.key_line)>=0?c.passage.split(c.key_line).join('<b>'+c.key_line+'</b>'):c.passage;
-    const py=c.passage_yaku&&c.key_line_yaku&&c.passage_yaku.indexOf(c.key_line_yaku)>=0?c.passage_yaku.split(c.key_line_yaku).join('<b>'+c.key_line_yaku+'</b>'):c.passage_yaku;
-    h+=`<div class="pass"><div class="pk">本文<span>太字が答えの手がかり</span></div><div class="pen">${pe}</div>${py?`<div class="pyaku">${py}</div>`:''}</div>`;
-  }
   if(c.bone&&c.bone.length&&PART.id!=='D'&&PART.id!=='E')h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;   // Part Eは要点を廃止(最低限とほぼ同義)。Part Fの要点(意見→理由)は残す
   if(c.bone_en&&c.bone_en.length&&PART.id!=='E')h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part Eは使える単語を廃止(最低限回答とイコール)。Part Fの言い出し表現は残す
   if(c.answer_full&&PART.id!=='B'){   // 答えと解答例を統一: 解答例の中の「最低限の答え」を太字に(太字だけでも正解)
@@ -580,7 +589,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-25';
+const BUILD='0801-26';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
