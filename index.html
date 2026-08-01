@@ -558,8 +558,12 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   }
   if(c.bone&&c.bone.length&&PART.id!=='D')h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;
   if(c.bone_en&&c.bone_en.length)h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part E: 日本語→英語の橋
-  if(c.answer&&PART.id!=='B')h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
-  if(c.answer_full&&PART.id!=='B')h+=`<div class="row"><span class="k">回答例</span><span class="v">${c.answer_full}</span></div>`;
+  if(c.answer_full&&PART.id!=='B'){   // 答えと解答例を統一: 解答例の中の「最低限の答え」を太字に(太字だけでも正解)
+    const ex=c.answer&&c.answer_full.indexOf(c.answer)>=0?c.answer_full.split(c.answer).join('<b>'+c.answer+'</b>'):c.answer_full;
+    h+=`<div class="row"><span class="k">解答例</span><span class="v">${ex}${(c.a_yaku||c.answer)?`<div class="tip">太字だけでも正解${c.a_yaku?'・'+c.a_yaku:''}</div>`:''}</span></div>`;
+  }else if(c.answer&&PART.id!=='B'){   // 解答例が無い時は答えだけ
+    h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
+  }
   if(c.target)h+=`<div class="row"><span class="k">解説</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.kotsu?`<div class="tip">${c.kotsu}</div>`:(c.kind&&TIP[c.kind]?`<div class="tip">${TIP[c.kind]}</div>`:'')}</span></div>`;   // kotsuがあれば「どこを聞くか」を優先表示、無ければ崩れ種別の一言
   else if(c.memo&&PART.id!=='D')h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.memo}</span></div>`;   // Part Dは本文の太字が手がかりを兼ねる
   if(c.retell)h+=`<div class="row"><span class="k">再話例</span><span class="v">${c.retell}${c.retell_yaku?'　'+c.retell_yaku:''}</span></div>`;        // Part E
@@ -574,7 +578,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-20';
+const BUILD='0801-21';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
