@@ -374,9 +374,9 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     _feed.style.scrollSnapType='none';
     const t=_feed.querySelector('.card[data-i="'+startCard+'"]'); if(t)_feed.scrollTop=t.offsetTop;   // 高さ計算でなく対象カードのoffsetTopへ
-    requestAnimationFrame(()=>{ _feed.style.scrollSnapType=''; });
+    requestAnimationFrame(()=>{ _feed.style.scrollSnapType=''; switching=false; });   // 着地したら即解除(直後のスワイプを取りこぼさない)
   }));
-  setTimeout(()=>{ switching=false; }, 600);   // 保険: 目標に着地できなくても必ず解除
+  setTimeout(()=>{ switching=false; }, 300);   // 保険: rAFが来なくても必ず解除
   playCard(startCard, noPlay);
   document.getElementById('hint').classList.remove('hide');
   saveState();
@@ -532,7 +532,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-6';
+const BUILD='0801-7';
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
 if(location.href.indexOf('debug')>=0){
   const dbg=document.createElement('div');
