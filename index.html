@@ -545,7 +545,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   if(c.bone_en&&c.bone_en.length)h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part E: 日本語→英語の橋
   if(c.answer&&PART.id!=='B')h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
   if(c.answer_full&&PART.id!=='B')h+=`<div class="row"><span class="k">回答例</span><span class="v">${c.answer_full}</span></div>`;
-  if(c.target)h+=`<div class="row"><span class="k">解説</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.kind&&TIP[c.kind]?`<div class="tip">${TIP[c.kind]}</div>`:''}</span></div>`;
+  if(c.target)h+=`<div class="row"><span class="k">解説</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.kotsu?`<div class="tip">${c.kotsu}</div>`:(c.kind&&TIP[c.kind]?`<div class="tip">${TIP[c.kind]}</div>`:'')}</span></div>`;   // kotsuがあれば「どこを聞くか」を優先表示、無ければ崩れ種別の一言
   else if(c.memo)h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.memo}</span></div>`;
   if(c.retell)h+=`<div class="row"><span class="k">再話例</span><span class="v">${c.retell}${c.retell_yaku?'　'+c.retell_yaku:''}</span></div>`;        // Part E
   if(c.retell_min)h+=`<div class="row"><span class="k">最低限</span><span class="v">${c.retell_min}${c.retell_min_yaku?'　'+c.retell_min_yaku:''}</span></div>`;  // Part E: これだけ言えば0点回避
@@ -559,7 +559,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-10';
+const BUILD='0801-11';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
