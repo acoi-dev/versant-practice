@@ -1459,6 +1459,109 @@
      "retell_min_yaku": "会議がキャンセルされました。"
     }
    ]
+  },
+  {
+   "id": "F",
+   "title": "Part F 自由回答",
+   "sub": "質問に自分の意見を答える",
+   "mp3": "partF.mp3",
+   "total": 135.52,
+   "chapters": [
+    {
+     "n": 1,
+     "start": 26.99,
+     "end": 76.81,
+     "en": "Do you prefer living in the city or the countryside?",
+     "kana": "",
+     "yaku": "あなたは都会と田舎、どちらに住みたいですか？",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "",
+     "answer": "I prefer living in the city.",
+     "answer_full": "I prefer living in the city. There are more things to do. For example, there are many shops and restaurants.",
+     "a_yaku": "私は都会に住みたいです。",
+     "question": "Do you prefer living in the city or the countryside?",
+     "q_yaku": "あなたは都会と田舎、どちらに住みたいですか？",
+     "dialogue": [],
+     "bone": [
+      "まず自分の意見",
+      "次に理由を一つ",
+      "短い例か気持ち"
+     ],
+     "bone_en": [
+      "I think ...",
+      "because ...",
+      "For example ..."
+     ],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": ""
+    },
+    {
+     "n": 2,
+     "start": 76.81,
+     "end": 125.12,
+     "en": "Do you like to wake up early or stay up late?",
+     "kana": "",
+     "yaku": "あなたは早起きが好きですか、それとも夜更かしが好きですか？",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "",
+     "answer": "I like to wake up early.",
+     "answer_full": "I like to wake up early. I feel more energetic in the morning. For example, I enjoy a quiet breakfast.",
+     "a_yaku": "私は早起きが好きです。",
+     "question": "Do you like to wake up early or stay up late?",
+     "q_yaku": "あなたは早起きが好きですか、それとも夜更かしが好きですか？",
+     "dialogue": [],
+     "bone": [
+      "まず自分の意見",
+      "次に理由を一つ",
+      "短い例か気持ち"
+     ],
+     "bone_en": [
+      "I think ...",
+      "because ...",
+      "For example ..."
+     ],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": ""
+    },
+    {
+     "n": 0,
+     "start": 125.12,
+     "end": 135.52,
+     "en": "",
+     "kana": "",
+     "yaku": "",
+     "target": "",
+     "target_kana": "",
+     "memo": "",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "bone": [],
+     "key_line": "",
+     "tail": true
+    }
+   ]
   }
  ]
 }

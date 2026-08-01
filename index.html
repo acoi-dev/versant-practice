@@ -331,7 +331,7 @@ function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}ca
     if(st.h){document.getElementById('home').classList.remove('off');markCurrent();}   // 一覧を開いた状態だったら開いたまま戻す
   }}
 
-const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい'};   // 入門者から見た目安
+const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい',F:'難しい'};   // 入門者から見た目安
 // 崩れの種類ごとの平易な解説(音声学の専門用語は出さない)
 const TIP={form:'2語がくっついて短く言われます。かたまりで覚えると聞き取れます。',
   yod:'前の語と you などが溶け合って「デュ／ヂュ」のように聞こえます。',
@@ -578,7 +578,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-21';
+const BUILD='0801-22';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
