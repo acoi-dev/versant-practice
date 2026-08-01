@@ -558,8 +558,8 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
     const py=c.passage_yaku&&c.key_line_yaku&&c.passage_yaku.indexOf(c.key_line_yaku)>=0?c.passage_yaku.split(c.key_line_yaku).join('<b>'+c.key_line_yaku+'</b>'):c.passage_yaku;
     h+=`<div class="pass"><div class="pk">本文<span>太字が答えの手がかり</span></div><div class="pen">${pe}</div>${py?`<div class="pyaku">${py}</div>`:''}</div>`;
   }
-  if(c.bone&&c.bone.length&&PART.id!=='D')h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;
-  if(c.bone_en&&c.bone_en.length)h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part E: 日本語→英語の橋
+  if(c.bone&&c.bone.length&&PART.id!=='D'&&PART.id!=='E')h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;   // Part Eは要点を廃止(最低限とほぼ同義)。Part Fの要点(意見→理由)は残す
+  if(c.bone_en&&c.bone_en.length&&PART.id!=='E')h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part Eは使える単語を廃止(最低限回答とイコール)。Part Fの言い出し表現は残す
   if(c.answer_full&&PART.id!=='B'){   // 答えと解答例を統一: 解答例の中の「最低限の答え」を太字に(太字だけでも正解)
     const ex=c.answer&&c.answer_full.indexOf(c.answer)>=0?c.answer_full.split(c.answer).join('<b>'+c.answer+'</b>'):c.answer_full;
     h+=`<div class="row ex"><span class="k">解答例</span><span class="v">${ex}${(c.a_yaku||c.answer)?`<div class="tip">太字だけでも正解${c.a_yaku?'・'+c.a_yaku:''}</div>`:''}</span></div>`;
@@ -580,7 +580,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-24';
+const BUILD='0801-25';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
