@@ -106,6 +106,8 @@
   .row .k{color:var(--sub);white-space:nowrap;font-size:12px;padding-top:2px;min-width:3.6em}
   .row .v{color:var(--ink)}
   .row .v b{font-weight:600}
+  .row.ex .v b{font-weight:700;font-size:15.5px}   /* 解答例の「最低限の答え」は気持ち大きく・濃く(周囲14px→15.5px) */
+  body.bigtext .row.ex .v b{font-size:17px}
   .dlg div{font-size:14px;margin-bottom:3px}
   .dlg span{color:var(--sub);font-size:11.5px;margin-right:6px}
   .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 1.5em}
@@ -560,7 +562,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   if(c.bone_en&&c.bone_en.length)h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part E: 日本語→英語の橋
   if(c.answer_full&&PART.id!=='B'){   // 答えと解答例を統一: 解答例の中の「最低限の答え」を太字に(太字だけでも正解)
     const ex=c.answer&&c.answer_full.indexOf(c.answer)>=0?c.answer_full.split(c.answer).join('<b>'+c.answer+'</b>'):c.answer_full;
-    h+=`<div class="row"><span class="k">解答例</span><span class="v">${ex}${(c.a_yaku||c.answer)?`<div class="tip">太字だけでも正解${c.a_yaku?'・'+c.a_yaku:''}</div>`:''}</span></div>`;
+    h+=`<div class="row ex"><span class="k">解答例</span><span class="v">${ex}${(c.a_yaku||c.answer)?`<div class="tip">太字だけでも正解${c.a_yaku?'・'+c.a_yaku:''}</div>`:''}</span></div>`;
   }else if(c.answer&&PART.id!=='B'){   // 解答例が無い時は答えだけ
     h+=`<div class="row"><span class="k">答え</span><span class="v"><b>${c.answer}</b>${c.a_yaku?'　'+c.a_yaku:''}</span></div>`;
   }
@@ -578,7 +580,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-22';
+const BUILD='0801-23';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
