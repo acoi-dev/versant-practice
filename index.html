@@ -360,11 +360,14 @@ function renderHome(){
 
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
 
-let switching=false;   // パート切替中は前/次パート発火を止める
+let switching=false, switchTarget=0;   // パート切替中は判定停止。目標カード(switchTarget)に着地するまで前/次パート発火を抑止(scrollTop=0の一瞬で番兵を拾う誤発火を防ぐ)
+let lastSwipe=0;       // 直近にユーザーがスワイプして表示カードを変えた時刻。この直後は表示を正=音声を合わせる
 function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iOSは無操作で自動再生できないので鳴らさず頭出しだけ
   startCard = startCard || 0;
-  switching=true;   // 切替の自動スクロール中は前/次パート発火を止める
-  PART=DATA.parts[pi]; partIdx=pi; CARDS=PART.chapters.filter(c=>!c.tail); active=startCard; revealed={}; dlgShown={};
+  switching=true;   // 目標カードに着地するまで判定停止(switchTargetは下でclamp後に設定)
+  PART=DATA.parts[pi]; partIdx=pi; CARDS=PART.chapters.filter(c=>!c.tail);
+  startCard=Math.min(Math.max(0,startCard|0), Math.max(0,CARDS.length-1));   // 教材再生成でカードが減った時など、保存indexが範囲外でも安全に(Bug7)
+  active=startCard; switchTarget=startCard; revealed={}; dlgShown={};
   document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後一覧は×で閉じてプレイヤーに戻れる
   document.getElementById('htitle').textContent=PART.title;
   AU.src=partAudio(PART); AU.playbackRate=speed;
@@ -376,9 +379,9 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     _feed.style.scrollSnapType='none';
     const t=_feed.querySelector('.card[data-i="'+startCard+'"]'); if(t)_feed.scrollTop=t.offsetTop;   // 高さ計算でなく対象カードのoffsetTopへ
-    requestAnimationFrame(()=>{ _feed.style.scrollSnapType=''; switching=false; });   // 着地したら即解除(直後のスワイプを取りこぼさない)
+    requestAnimationFrame(()=>{ _feed.style.scrollSnapType=''; });   // switchingはonscrollが目標カード着地で解除(番兵誤発火防止)
   }));
-  setTimeout(()=>{ switching=false; }, 300);   // 保険: rAFが来なくても必ず解除
+  setTimeout(()=>{ switching=false; }, 800);   // 保険: 着地イベントが来なくても必ず解除
   playCard(startCard, noPlay);
   document.getElementById('hint').classList.remove('hide');
   saveState();
@@ -447,14 +450,14 @@ function renderFeed(){
   // 今どのカードかは、高さ計算(innerHeight≠100dvhでズレる)でなく「スクロール位置に一番近いカード」で決める
   let tmr;
   feed.onscroll=()=>{clearTimeout(tmr);tmr=setTimeout(()=>{
-    if(switching)return;                                       // パート切替の自動スクロール中は無視
     const st=feed.scrollTop; let best=null,bd=1e9;
     feed.querySelectorAll('.card').forEach(el=>{const d=Math.abs(el.offsetTop-st);if(d<bd){bd=d;best=el;}});
     if(!best)return;
-    if(best.classList.contains('prevcard')){goPrevPart();return;}  // 先頭番兵=前パートへ
-    if(best.classList.contains('nextcard')){goNextPart();return;}  // 末尾番兵=次パートへ
-    const ri=+best.dataset.i;
-    if(ri!==active){active=ri;document.getElementById('hint')?.classList.add('hide');playCard(ri);saveState();}
+    const ri=best.classList.contains('prevcard')?-1:(best.classList.contains('nextcard')?CARDS.length:(+best.dataset.i));
+    if(switching){ if(ri===switchTarget)switching=false; return; }   // 切替の自動スクロール中は、目標カードに着地するまで一切判定しない(scrollTop=0の一瞬で番兵を拾う誤発火を防ぐ)
+    if(ri<0){goPrevPart();return;}                              // 先頭番兵=前パートへ
+    if(ri>=CARDS.length){goNextPart();return;}                  // 末尾番兵=次パートへ
+    if(ri!==active){active=ri;lastSwipe=Date.now();document.getElementById('hint')?.classList.add('hide');playCard(ri);saveState();}   // ユーザーが手で送った=この後1.2秒は表示を正とする
   },90);};
 
   CARDS.forEach((_,i)=>paintText(i));   // 全カードを最初から正しい状態に(隠す=空/常時表示=本文)。スワイプ中のveilチラつき防止
@@ -466,8 +469,8 @@ let seekSeq=0;
 function togglePlay(){
   if(!AU.paused){AU.pause();return;}
   const c=CARDS[active];
-  if(c && (AU.currentTime<c.start-1 || AU.currentTime>=c.end)) playCard(active);
-  else AU.play().catch(()=>{});
+  if(c && (AU.currentTime<c.start-1 || AU.currentTime>=c.end-0.2)) replay();   // 位置がカード外/終端際=頭出しして再生(replayが強制シーク、失敗はreconcileが補正 Bug2/Bug6)
+  else AU.play().catch(()=>{});                                                // カード内での一時停止→続きから再開
 }
 function trySeek(start){   // seekable範囲が目標をカバーしていれば頭出し。効いたら true
   try{
@@ -480,7 +483,9 @@ function trySeek(start){   // seekable範囲が目標をカバーしていれば
 function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
   const start=c.start+0.02, my=++seekSeq;
   // 各パートの1問目は先頭に約15〜22秒のイントロがあり、card開始は0秒でない。ここへ頭出しする
-  const run=()=>{if(my!==seekSeq)return;trySeek(start);
+  const run=()=>{if(my!==seekSeq)return;
+    if(AU.currentTime<start-0.35 || AU.currentTime>=c.end) trySeek(start);   // 既にこのカード内で鳴っていれば頭出ししない(境界の巻き戻し/二度鳴り防止 Bug1a)
+    try{AU.playbackRate=speed;AU.defaultPlaybackRate=speed;}catch(e){}        // 速度はロード後に適用(iOSがsrc差替時1.0xへ戻すため Bug5)
     if(noPlay){AU.pause();} else {AU.play().catch(()=>{const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});}};
   if(AU.readyState>=1)run(); else AU.addEventListener('loadedmetadata',run,{once:true});
   // iOS対策: メタデータ後もseekableが0のことがあり頭出しが無視される→0秒(イントロ)から鳴って画面とズレる。
@@ -494,16 +499,36 @@ function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
 function goCard(i){if(i<0||i>=CARDS.length)return;const f=document.getElementById('feed'),el=f.querySelector('.card[data-i="'+i+'"]');if(el)f.scrollTo({top:el.offsetTop,behavior:'smooth'});}  // 対象カードのoffsetTopへ
 function goNextPart(){const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;openPart(np,0);}  // パート末→次パート(Eの次はAに戻る)
 function goPrevPart(){const pp=(partIdx-1+DATA.parts.length)%DATA.parts.length;const last=DATA.parts[pp].chapters.filter(c=>!c.tail).length-1;openPart(pp,Math.max(0,last));}  // パート頭→前パートの最終カードへ(Aの前はEへ)
-function replay(){const c=CARDS[active];if(!c)return;AU.currentTime=c.start+0.02;AU.play().catch(()=>{});}  // 頭からもう一回
+function replay(){const c=CARDS[active];if(!c)return;lastSwipe=Date.now();trySeek(c.start+0.02);AU.play().catch(()=>{});}  // 頭からもう一回(seek安全化。効かなければreconcileが直近操作として合わせ直す Bug6)
 
-function onClipEnd(){   // 1問終わった時の挙動
-  if(repeat){replay();return;}                                  // 1問リピートON: 同じ問を繰り返す
-  if(auto&&active<CARDS.length-1){goCard(active+1);return;}      // 自動送り: 次の問へ
-  if(auto){openPart((partIdx+1)<DATA.parts.length?partIdx+1:0,0);return;}  // パート末→次パート(最後のEなら先頭Aへ戻り無限に回る)
-  AU.pause();                                                   // 自動送りOFF: 止める
+// ===== 音声の位置を正として、表示(active/本文/スクロール)をそこへ追従させる =====
+// 旧: 自動送りが goCard(スクロール)経由でactiveを更新→背景/ロック中はscrollイベントが止まり表示が固まって音声とズレた。
+function audioCardOf(t){ for(let i=0;i<CARDS.length;i++){ if(t>=CARDS[i].start-0.05 && t<CARDS[i].end) return i; } return -1; }
+function followAudioToCard(i){   // 表示だけ音声のカードへ合わせる(seekしない=音声はもうそこに居る)
+  active=i;
+  document.querySelectorAll('.wave').forEach(w=>w.classList.remove('on'));
+  if(!AU.paused)document.getElementById('wave'+i)?.classList.add('on');
+  revealed[i]=revealed[i]||false; paintText(i); updateEye();
+  const f=document.getElementById('feed'), el=f.querySelector('.card[data-i="'+i+'"]');
+  if(el && Math.abs(f.scrollTop-el.offsetTop)>10) f.scrollTo({top:el.offsetTop,behavior:'smooth'});
+  document.getElementById('hint')?.classList.add('hide'); saveState();
 }
-AU.addEventListener('timeupdate',()=>{const c=CARDS[active];if(!c)return;
-  if(AU.currentTime>=c.end-0.05)onClipEnd();});
+function reconcile(){   // 表示カードと鳴っている音声がズレていたら合わせる(自動送り/背景復帰/シーク失敗を自己修復)
+  if(!CARDS.length || AU.paused || switching) return;
+  const c=CARDS[active], ac=audioCardOf(AU.currentTime);
+  if(Date.now()-lastSwipe < 1200){ if(c && ac!==active) trySeek(c.start+0.02); return; }  // 直近スワイプ直後は表示を正=音声を合わせる(イントロ0秒でも)
+  if(ac<0 || ac===active) return;
+  if(!auto && ac>active){ AU.pause(); return; }                 // 自動送りOFF: 次に進めず現カードで止める
+  followAudioToCard(ac);                                        // 通常: 音声を正=表示を追従(スクロールが止まる背景でも復帰時に合う)
+}
+AU.addEventListener('timeupdate',()=>{
+  const c=CARDS[active];
+  if(repeat && c && AU.currentTime>=c.end-0.05){ replay(); return; }   // 1問リピート
+  reconcile();
+});
+AU.addEventListener('ended',()=>{ if(auto) goNextPart(); else AU.pause(); });   // パート音源の終端→次パート(Bug4: timeupdateが末尾閾値に届かず無音停止するのを防ぐ)
+setInterval(reconcile, 500);   // 予備: timeupdateが疎な時のズレも拾う
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) setTimeout(reconcile,60); });   // 画面復帰(ロック解除)で表示を音声へ合わせ直す
 AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');reqWake();});
 AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});
 
@@ -534,17 +559,8 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-9';
+const BUILD='0801-10';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
-
-// ===== ズレ監視 watchdog =====
-// スワイプしたのに音声がついてこない(表示カードより手前に取り残された)時だけ、音声を表示カードへ頭出しし直す。
-// ※上向き(終端越え)は見ない。自動送りの前進を"ズレ"と誤検知して巻き戻す事故を防ぐため。
-setInterval(()=>{
-  if(!CARDS.length || AU.paused || switching) return;
-  const c=CARDS[active]; if(!c) return;
-  if(AU.currentTime < c.start-1.5){ trySeek(c.start+0.02); }   // 表示カードより明確に手前=ズレ。前進中(終端側)には触れない
-},500);
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
 if(location.href.indexOf('debug')>=0){
