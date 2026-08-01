@@ -363,7 +363,7 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   active=startCard; switchTarget=startCard; revealed={}; dlgShown={};
   document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後一覧は×で閉じてプレイヤーに戻れる
   document.getElementById('htitle').textContent=PART.title;
-  AU.src=partAudio(PART); AU.playbackRate=speed;
+  ensureAudioSource(); AU.playbackRate=speed;   // ★前パートの音源が残らないよう必ずロードし直す(パート間の音ズレ根治)
   renderFeed();
   document.getElementById('home').classList.add('off');
   document.getElementById('app').classList.remove('off');
@@ -456,11 +456,25 @@ function renderFeed(){
   CARDS.forEach((_,i)=>paintText(i));   // 全カードを最初から正しい状態に(隠す=空/常時表示=本文)。スワイプ中のveilチラつき防止
 }
 
-let seekSeq=0;
+let seekSeq=0, srcPartId=null;
+// ===== 音源の取り違え防止(重要) =====
+// iOSは <audio> の .src を差し替えても .load() しないと前パートの音源が残ることがある。
+// すると表示はEなのに AU にはCの音源が載ったまま→trySeekがCをEのタイムにシークし、
+// 「Part Eを表示しながらPart Cの会話が鳴る」パート間ズレになる。ここで必ず今のPARTの音源を載せる。
+function ensureAudioSource(){
+  if(!PART) return false;
+  const nsrc=partAudio(PART);
+  const ok = srcPartId===PART.id && AU.currentSrc && AU.currentSrc.indexOf(nsrc)>=0
+             && AU.readyState>=1 && (isNaN(AU.duration) || Math.abs(AU.duration-PART.total)<3);
+  if(ok) return false;                          // 既に正しい音源が載っている
+  AU.src=nsrc; AU.load(); srcPartId=PART.id;     // 別パート/未ロード→確実に差し替えてロード
+  return true;                                   // 差し替えた(currentTimeは0に戻る)
+}
 // 再生ボタン: 停止中に押されたら、音声位置が今のカードの範囲外(リロード直後は0秒=先頭)なら頭出しし直してから鳴らす。
 // iOSはこのタップが初めての操作なので、ここで初めて読み込み・シークが効く。カード内での一時停止からの再開は位置を触らない。
 function togglePlay(){
   if(!AU.paused){AU.pause();return;}
+  if(ensureAudioSource()){ playCard(active); return; }   // 音源が別パートだった→正しい音源を載せて頭出し再生(取り違え自己修復)
   const c=CARDS[active];
   if(c && (AU.currentTime<c.start-1 || AU.currentTime>=c.end-0.2)) replay();   // 位置がカード外/終端際=頭出しして再生(replayが強制シーク、失敗はreconcileが補正 Bug2/Bug6)
   else AU.play().catch(()=>{});                                                // カード内での一時停止→続きから再開
@@ -557,7 +571,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-15';
+const BUILD='0801-16';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
@@ -568,8 +582,11 @@ if(location.href.indexOf('debug')>=0){
   const audioCard=()=>{ if(!CARDS.length)return '-'; for(let i=0;i<CARDS.length;i++){ if(AU.currentTime>=CARDS[i].start-0.3 && AU.currentTime<CARDS[i].end) return i; } return '?'; };
   setInterval(()=>{
     const ac=audioCard(), f=document.getElementById('feed');
+    const want=PART?partAudio(PART):'-', got=(AU.currentSrc||'').split('/').pop()||'-';
+    const srcOk=PART&&got.indexOf(want)>=0;
     dbg.textContent='build '+BUILD+'   part='+partIdx+'\n'
       +'表示カード='+active+'    音声カード='+ac+(ac===active?'   ✅一致':'   ❌ズレ')+'\n'
+      +'音源 got='+got+(srcOk?'  ✅':'  ❌ want='+want)+'  dur='+(isNaN(AU.duration)?'-':AU.duration.toFixed(0))+'/'+(PART?PART.total.toFixed(0):'-')+'\n'
       +'t='+(AU.currentTime||0).toFixed(1)+'  paused='+AU.paused+'  rs='+AU.readyState+'  seek='+(AU.seekable&&AU.seekable.length?AU.seekable.end(0).toFixed(0):0)+'\n'
       +'scrollTop='+(f?Math.round(f.scrollTop):'-')+'  switching='+switching;
   },200);
