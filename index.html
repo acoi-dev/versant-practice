@@ -534,18 +534,17 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-8';
+const BUILD='0801-9';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== ズレ監視 watchdog =====
-// 表示カードと音声位置がズレていたら(再生中のみ)、音声を表示カードへ強制頭出しする最終防衛ライン。
-// 表示(スワイプ先)を正とする。原因が何であれズレたら0.4秒以内に自動で合わせ直す。
+// スワイプしたのに音声がついてこない(表示カードより手前に取り残された)時だけ、音声を表示カードへ頭出しし直す。
+// ※上向き(終端越え)は見ない。自動送りの前進を"ズレ"と誤検知して巻き戻す事故を防ぐため。
 setInterval(()=>{
   if(!CARDS.length || AU.paused || switching) return;
   const c=CARDS[active]; if(!c) return;
-  // 音声が表示カードより1.2秒以上手前、または終端を1秒以上越えている=ズレ → 頭出しし直す
-  if(AU.currentTime < c.start-1.2 || AU.currentTime > c.end+1.0){ trySeek(c.start+0.02); }
-},400);
+  if(AU.currentTime < c.start-1.5){ trySeek(c.start+0.02); }   // 表示カードより明確に手前=ズレ。前進中(終端側)には触れない
+},500);
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
 if(location.href.indexOf('debug')>=0){
