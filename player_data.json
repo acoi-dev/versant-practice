@@ -295,7 +295,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "I have to leave now.",
+       "w": [
+        [
+         32.998,
+         34.798
+        ],
+        [
+         35.638,
+         37.438
+        ],
+        [
+         65.153,
+         66.953
+        ],
+        [
+         67.653,
+         69.453
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 2,
@@ -324,7 +347,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Do you want to join us?",
+       "w": [
+        [
+         72.343,
+         73.903
+        ],
+        [
+         74.743,
+         76.303
+        ],
+        [
+         102.915,
+         104.475
+        ],
+        [
+         105.175,
+         106.735
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 3,
@@ -353,7 +399,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Can you give me a hand?",
+       "w": [
+        [
+         109.625,
+         111.329
+        ],
+        [
+         112.169,
+         113.873
+        ],
+        [
+         141.225,
+         142.929
+        ],
+        [
+         143.629,
+         145.333
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 4,
@@ -382,7 +451,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Did you watch the film yesterday?",
+       "w": [
+        [
+         148.223,
+         151.079
+        ],
+        [
+         151.919,
+         154.775
+        ],
+        [
+         188.537,
+         191.393
+        ],
+        [
+         192.093,
+         194.949
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 5,
@@ -411,7 +503,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Please take it to the office tomorrow morning.",
+       "w": [
+        [
+         197.839,
+         200.599
+        ],
+        [
+         201.439,
+         204.199
+        ],
+        [
+         240.548,
+         243.308
+        ],
+        [
+         244.008,
+         246.768
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 6,
@@ -440,7 +555,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "I will send it to you by email soon.",
+       "w": [
+        [
+         249.658,
+         252.778
+        ],
+        [
+         253.618,
+         256.738
+        ],
+        [
+         294.86,
+         297.98
+        ],
+        [
+         298.68,
+         301.8
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 7,
@@ -469,7 +607,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "It was kind of boring at the meeting yesterday.",
+       "w": [
+        [
+         304.69,
+         308.602
+        ],
+        [
+         309.442,
+         313.354
+        ],
+        [
+         358.412,
+         362.324
+        ],
+        [
+         363.024,
+         366.936
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 8,
@@ -498,7 +659,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "I am going to meet them at the park later.",
+       "w": [
+        [
+         369.826,
+         372.49
+        ],
+        [
+         373.33,
+         375.994
+        ],
+        [
+         412.946,
+         415.61
+        ],
+        [
+         416.31,
+         418.974
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 9,
@@ -527,7 +711,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Would you help me move this when you have some time?",
+       "w": [
+        [
+         421.864,
+         424.816
+        ],
+        [
+         425.656,
+         428.608
+        ],
+        [
+         468.328,
+         471.28
+        ],
+        [
+         471.98,
+         474.932
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 10,
@@ -556,7 +763,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "We are out of paper because nobody ordered more last week.",
+       "w": [
+        [
+         477.822,
+         481.878
+        ],
+        [
+         482.718,
+         486.774
+        ],
+        [
+         536.551,
+         540.607
+        ],
+        [
+         541.307,
+         545.363
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 11,
@@ -585,7 +815,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Can you tell him to call me back if he is free?",
+       "w": [
+        [
+         548.253,
+         550.965
+        ],
+        [
+         551.805,
+         554.517
+        ],
+        [
+         591.511,
+         594.223
+        ],
+        [
+         594.923,
+         597.635
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 12,
@@ -614,7 +867,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "I used to play soccer with my friends when I was a child.",
+       "w": [
+        [
+         600.525,
+         604.893
+        ],
+        [
+         605.733,
+         610.101
+        ],
+        [
+         652.368,
+         656.736
+        ],
+        [
+         657.436,
+         661.804
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 13,
@@ -643,7 +919,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Please call me as soon as you get to the station tomorrow morning.",
+       "w": [
+        [
+         664.694,
+         668.846
+        ],
+        [
+         669.686,
+         673.838
+        ],
+        [
+         731.832,
+         735.984
+        ],
+        [
+         736.684,
+         740.836
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 14,
@@ -672,7 +971,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "I should have taken an umbrella yesterday because it rained all day long.",
+       "w": [
+        [
+         743.726,
+         748.574
+        ],
+        [
+         749.414,
+         754.262
+        ],
+        [
+         808.824,
+         813.672
+        ],
+        [
+         814.372,
+         819.22
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 15,
@@ -701,7 +1023,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "We have a lot of apples, and we eat them every morning at home.",
+       "w": [
+        [
+         822.11,
+         826.214
+        ],
+        [
+         827.054,
+         831.158
+        ],
+        [
+         877.884,
+         881.988
+        ],
+        [
+         882.688,
+         886.792
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 16,
@@ -730,7 +1075,30 @@
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
-     "retell_min_yaku": ""
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "She is one of the best singers in our town, without any doubt at all.",
+       "w": [
+        [
+         889.682,
+         895.034
+        ],
+        [
+         895.874,
+         901.226
+        ],
+        [
+         952.05,
+         957.402
+        ],
+        [
+         958.102,
+         963.454
+        ]
+       ]
+      }
+     ]
     },
     {
      "n": 0,

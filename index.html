@@ -96,6 +96,7 @@
   .yaku{font-size:14px;color:var(--sub);margin-top:6px}
   .tip{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65}  /* 解説の一言 */
   .pass{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}  /* Part D 本文全文 */
+  .pass.top{margin-top:0;padding-top:0;border-top:none}   /* 本文を先頭に置く時は上罫線・余白を消す(へんな線対策) */
   .pass .pk{font-size:12px;color:var(--sub);margin-bottom:7px}
   .pass .pk span{margin-left:8px;color:var(--faint);font-size:11px}
   .pass .pen{font-size:15px;line-height:1.75;color:var(--ink)}
@@ -586,7 +587,9 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   if(isDlg){   // Part C: 会話(リスニング本文)を先頭に、質問はそのあと(Part Dの本文先頭と同じ並び)
     h+='<div class="dlg first">'+c.dialogue.map((d,di)=>`<div><span>${d.speaker}</span><span class="seg" data-seg="${di}">${d.text}</span></div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';   // 各台詞をseg化(再生中の行を青くなぞる)
     if(c.question){h+=`<div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }
-  else if(c.en){if(c.kana)h+=`<div class="kana">${c.kana}</div>`; h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
+  else if(c.en){if(c.kana)h+=`<div class="kana">${c.kana}</div>`;
+    const enh=(c.hl&&c.hl.length&&c.hl[0].s)?c.hl.map((x,si)=>`<span class="seg" data-seg="${si}">${x.s}</span>`).join(' '):c.en;   // B/E: 文/話をseg化(再生中を青くなぞる)
+    h+=`<div class="en">${enh}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
   if(c.bone&&c.bone.length&&PART.id!=='D'&&PART.id!=='E')h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;   // Part Eは要点を廃止(最低限とほぼ同義)。Part Fの要点(意見→理由)は残す
   if(c.bone_en&&c.bone_en.length&&PART.id!=='E')h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part Eは使える単語を廃止(最低限回答とイコール)。Part Fの言い出し表現は残す
   if(c.answer_full&&PART.id!=='B'){   // 答えと解答例を統一: 解答例の中の「最低限の答え」を太字に(太字だけでも正解)
@@ -609,7 +612,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-30';
+const BUILD='0801-31';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
