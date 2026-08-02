@@ -102,6 +102,9 @@
   .pass .pen b{font-weight:700}          /* 答えの手がかりの一文は太字で強調(色は付けず濃淡で) */
   .pass .pyaku{font-size:13px;line-height:1.75;color:var(--sub);margin-top:8px}
   .pass .pyaku b{font-weight:700;color:var(--ink)}
+  .seg{transition:color .1s ease}
+  .seg.lit{color:var(--accent)}          /* 再生中のリスニング本文をなぞる青 */
+  .pass .pen .seg.key{font-weight:700}    /* Part D 答えの手がかりの一文(太字) */
   .row{display:flex;gap:8px;margin-top:15px;font-size:14px}
   .row .k{color:var(--sub);white-space:nowrap;font-size:12px;padding-top:2px;min-width:3.6em}
   .row .v{color:var(--ink)}
@@ -546,16 +549,27 @@ function reconcile(){   // 表示カードと鳴っている音声がズレて�
   if(!auto && ac>active){ AU.pause(); return; }                 // 自動送りOFF: 次に進めず現カードで止める
   followAudioToCard(ac);                                        // 通常: 音声を正=表示を追従(スクロールが止まる背景でも復帰時に合う)
 }
+// ===== リスニング本文を音に合わせて青くなぞる(文/行ごと) =====
+function updateHighlight(){
+  const el=document.getElementById('text'+active); if(!el)return;
+  const segs=el.querySelectorAll('.seg'); if(!segs.length)return;
+  const c=CARDS[active], t=AU.currentTime; let cur=-1;
+  if(!AU.paused && c && c.hl && c.hl.length){
+    for(let i=0;i<c.hl.length;i++){ const w=c.hl[i].w||[]; if(w.some(x=>t>=x[0] && t<x[1])){cur=i;break;} }
+  }
+  segs.forEach(s=>s.classList.toggle('lit', (+s.dataset.seg)===cur));   // 今読まれているセグメントだけ青
+}
 AU.addEventListener('timeupdate',()=>{
   const c=CARDS[active];
   if(repeat && c && AU.currentTime>=c.end-0.05){ replay(); return; }   // 1問リピート
   reconcile();
+  updateHighlight();
 });
 AU.addEventListener('ended',()=>{ if(auto) goNextPart(); else AU.pause(); });   // パート音源の終端→次パート(Bug4: timeupdateが末尾閾値に届かず無音停止するのを防ぐ)
 setInterval(reconcile, 500);   // 予備: timeupdateが疎な時のズレも拾う
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ switching=false; setTimeout(reconcile,60); } });   // 画面復帰(ロック解除)でswitchingを解いて自己修復を空振りさせず、表示と音源を合わせ直す
 AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');reqWake();});
-AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;});
+AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;updateHighlight();});   // 停止でなぞりを消す
 
 function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
@@ -563,13 +577,14 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   document.getElementById('hint')?.classList.add('hide');
   const isDlg=c.dialogue&&c.dialogue.length;
   let h='';
-  if(PART.id==='D'&&c.passage){   // Part D: 聞いた話の全文(本文)を先頭に。太字=答えの手がかり(要点リストは廃止)
-    const pe=c.key_line&&c.passage.indexOf(c.key_line)>=0?c.passage.split(c.key_line).join('<b>'+c.key_line+'</b>'):c.passage;
+  if(PART.id==='D'&&c.passage){   // Part D: 本文を文ごとのspanに分けて表示(再生中の文を青くなぞる)。太字=答えの手がかり
+    const sents=(c.hl&&c.hl.length&&c.hl[0].s)?c.hl.map(x=>x.s):[c.passage];
+    const pe=sents.map((s,si)=>`<span class="seg${c.key_line&&s.trim()===c.key_line.trim()?' key':''}" data-seg="${si}">${s}</span>`).join(' ');
     const py=c.passage_yaku&&c.key_line_yaku&&c.passage_yaku.indexOf(c.key_line_yaku)>=0?c.passage_yaku.split(c.key_line_yaku).join('<b>'+c.key_line_yaku+'</b>'):c.passage_yaku;
     h+=`<div class="pass top"><div class="pk">本文<span>太字が答えの手がかり</span></div><div class="pen">${pe}</div>${py?`<div class="pyaku">${py}</div>`:''}</div>`;
   }
   if(isDlg){   // Part C: 会話(リスニング本文)を先頭に、質問はそのあと(Part Dの本文先頭と同じ並び)
-    h+='<div class="dlg first">'+c.dialogue.map(d=>`<div><span>${d.speaker}</span>${d.text}</div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';
+    h+='<div class="dlg first">'+c.dialogue.map((d,di)=>`<div><span>${d.speaker}</span><span class="seg" data-seg="${di}">${d.text}</span></div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';   // 各台詞をseg化(再生中の行を青くなぞる)
     if(c.question){h+=`<div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }
   else if(c.en){if(c.kana)h+=`<div class="kana">${c.kana}</div>`; h+=`<div class="en">${c.en}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
   if(c.bone&&c.bone.length&&PART.id!=='D'&&PART.id!=='E')h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;   // Part Eは要点を廃止(最低限とほぼ同義)。Part Fの要点(意見→理由)は残す
@@ -594,7 +609,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-29';
+const BUILD='0801-30';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
