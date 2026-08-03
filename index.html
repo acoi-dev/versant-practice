@@ -92,6 +92,7 @@
   .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px}
   .kana{font-size:13px;color:var(--sub);margin-bottom:5px;letter-spacing:.02em;line-height:1.6}  /* 英文の上・どう聞こえるか。かたまりで区切る */
   .kana b{color:var(--ink);font-weight:700}  /* 強く・高く読むかたまり=抑揚 */
+  .enlab{font-size:12px;color:var(--sub);margin-bottom:6px}   /* 大きな英文が「質問」なのか「話(聞く本文)」なのかを示す小見出し(本文ラベルと同じ濃さ) */
   .en{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
   .yaku{font-size:14px;color:var(--sub);margin-top:6px}
   .tip{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65}  /* 解説の一言 */
@@ -113,7 +114,7 @@
   .row.ex .v b{font-weight:700;font-size:15.5px}   /* 解答例の「最低限の答え」は気持ち大きく・濃く(周囲14px→15.5px) */
   body.bigtext .row.ex .v b{font-size:17px}
   .dlg.first{padding-bottom:15px;margin-bottom:15px;border-bottom:1px solid var(--line)}  /* Part C: 会話を先頭に置き、質問との間に区切り */
-  .dlg.first + .en{margin-top:0}
+  .dlg.first + .enlab{margin-top:0}   /* Part C: 会話の直後は質問ラベル。会話とラベルを詰める(enlabを挟んだので隣接対象を.enから.enlabへ) */
   .dlg div{font-size:14px;margin-bottom:3px}
   .dlg span:not(.lseg){color:var(--sub);font-size:11.5px;margin-right:6px}   /* 話者ラベル(A/B)だけを小さく灰色に。台詞本文の.lsegには当てない(会話が11.5px灰色に潰れ・bigtext無効になる回帰を防ぐ) */
   .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 1.5em}
@@ -347,6 +348,8 @@ const TIP={form:'2語がくっついて短く言われます。かたまりで�
   link:'語尾と次の語の頭がつながって、ひとつの音に聞こえます。',
   drop_t:'t の音がほとんど消えて聞こえます。',
   drop_h:'h の音が消えて前の語とくっつきます。'};
+// 大きな英文が何なのかを示す小見出し(C/D=会話・本文の後に来る質問、E=聞いて再話する話そのもの、A/F=質問、B=復唱する英文)
+const ENLAB={A:'質問',B:'英文',C:'質問',D:'質問',E:'話',F:'質問'};
 function renderHome(){
   document.getElementById('plist').innerHTML=DATA.parts.map((p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
@@ -561,6 +564,7 @@ function reconcile(){   // 表示カードと鳴っている音声がズレて�
   followAudioToCard(ac);                                        // 通常: 音声を正=表示を追従(スクロールが止まる背景でも復帰時に合う)
 }
 // ===== リスニング本文を音に合わせて青くなぞる(文/行ごと) =====
+let _litSeg=-1, _litCard=-1;   // 直近に自動スクロールしたなぞりセグメント(同じ行で何度もスクロールしない)
 function updateHighlight(){
   const el=document.getElementById('text'+active); if(!el)return;
   const segs=el.querySelectorAll('.lseg'); if(!segs.length)return;
@@ -569,6 +573,14 @@ function updateHighlight(){
     for(let i=0;i<c.hl.length;i++){ const w=c.hl[i].w||[]; if(w.some(x=>t>=x[0] && t<x[1])){cur=i;break;} }
   }
   segs.forEach(s=>s.classList.toggle('lit', (+s.dataset.seg)===cur));   // 今読まれているセグメントだけ青
+  if(cur>=0 && (cur!==_litSeg || active!==_litCard)){   // なぞる行が変わった時だけ、本文枠(.text)内で青い行を見える位置へスクロール(#feedのカードスナップは触らない)
+    _litSeg=cur; _litCard=active;
+    const seg=el.querySelector('.lseg[data-seg="'+cur+'"]');
+    if(seg){ const cr=el.getBoundingClientRect(), sr=seg.getBoundingClientRect();
+      if(sr.top<cr.top+6 || sr.bottom>cr.bottom-6)   // 枠の外(上/下)に出ていたら
+        el.scrollTo({top: el.scrollTop + (sr.top-cr.top) - cr.height*0.32, behavior:'smooth'});   // 枠の上から約1/3の位置へ寄せる
+    }
+  }
 }
 AU.addEventListener('timeupdate',()=>{
   const c=CARDS[active];
@@ -584,6 +596,7 @@ AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classLi
 
 function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
+  if(i===active)_litSeg=-1;   // 表示カードを描き直すと.textのscrollTopが0に戻るので、なぞり自動スクロールの記憶をリセットし次tickで再追従させる(答えの表示/非表示トグル後になぞり中の行が枠外に残るのを防ぐ)
   if(!revealed[i] && hideAns){el.innerHTML='';updateEye();return;}   // 非表示中は本文を空に。表示は下バーの「答えを見る」で
   document.getElementById('hint')?.classList.add('hide');
   const isDlg=c.dialogue&&c.dialogue.length;
@@ -596,8 +609,9 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   }
   if(isDlg){   // Part C: 会話(リスニング本文)を先頭に、質問はそのあと(Part Dの本文先頭と同じ並び)
     h+='<div class="dlg first">'+c.dialogue.map((d,di)=>`<div><span>${d.speaker}</span><span class="lseg" data-seg="${di}">${d.text}</span></div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';   // 各台詞をlseg化(再生中の行を青くなぞる)
-    if(c.question){h+=`<div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }
-  else if(c.en){if(c.kana)h+=`<div class="kana">${c.kana}</div>`;
+    if(c.question){h+=`<div class="enlab">${ENLAB[PART.id]||'質問'}</div><div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }   // 会話の後の大きな英文が「質問」だと分かるようにラベルを付ける
+  else if(c.en){if(ENLAB[PART.id])h+=`<div class="enlab">${ENLAB[PART.id]}</div>`;   // 大きな英文が質問(A/D/F)か・聞いて再話する話(E)か・復唱する英文(B)かを示す
+    if(c.kana)h+=`<div class="kana">${c.kana}</div>`;
     const enh=((PART.id==='B'||PART.id==='E')&&c.hl&&c.hl.length&&c.hl[0].s)?c.hl.map((x,si)=>`<span class="lseg" data-seg="${si}">${x.s}</span>`).join(' '):c.en;   // B/E だけ 文/話をlseg化(再生中を青くなぞる)。Dのenは質問なのでそのまま(本文の二重表示を防ぐ)
     h+=`<div class="en">${enh}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
   if(c.bone&&c.bone.length&&PART.id!=='D'&&PART.id!=='E')h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;   // Part Eは要点を廃止(最低限とほぼ同義)。Part Fの要点(意見→理由)は残す
@@ -611,7 +625,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   }
   if(c.target)h+=`<div class="row"><span class="k">解説</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.kotsu?`<div class="tip">${c.kotsu}</div>`:(c.kind&&TIP[c.kind]?`<div class="tip">${TIP[c.kind]}</div>`:'')}</span></div>`;   // kotsuがあれば「どこを聞くか」を優先表示、無ければ崩れ種別の一言
   else if((c.kotsu||c.memo)&&PART.id!=='D')h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.kotsu||c.memo}</span></div>`;   // Part C: 難所解説(kotsu)があればそれを手がかりに(答えの位置＋拾う語句)。Part Dは本文の太字が兼ねる
-  if(c.retell)h+=`<div class="row"><span class="k">再話例</span><span class="v">${c.retell}${c.retell_yaku?'　'+c.retell_yaku:''}</span></div>`;        // Part E
+  if(c.retell)h+=`<div class="row"><span class="k">解答例</span><span class="v">${c.retell}${c.retell_yaku?'　'+c.retell_yaku:''}</span></div>`;        // Part E(再話の解答例。他パートと表記統一)
   if(c.retell_min)h+=`<div class="row"><span class="k">最低限</span><span class="v">${c.retell_min}${c.retell_min_yaku?'　'+c.retell_min_yaku:''}</span></div>`;  // Part E: これだけ言えば0点回避
   el.innerHTML=h;
   updateEye();   // 下バーの「答えを見る/隠す」を今の表示状態に合わせる
@@ -623,7 +637,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
 }
 
-const BUILD='0801-35';
+const BUILD='0801-37';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
