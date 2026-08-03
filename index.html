@@ -525,6 +525,15 @@ function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
   if(noPlay){const b=document.getElementById('play'+i);if(b)b.innerHTML=IC_PLAY;}   // 復元時は自動再生せず▶(停止中)表示。1タップで頭出し位置から鳴る
   revealed[i]=revealed[i]||false;paintText(i);updateEye();}
 function goCard(i){if(i<0||i>=CARDS.length)return;const f=document.getElementById('feed'),el=f.querySelector('.card[data-i="'+i+'"]');if(el)f.scrollTo({top:el.offsetTop,behavior:'smooth'});}  // 対象カードのoffsetTopへ
+function stepCard(delta){   // ロック画面/イヤホンの 戻る・進む = パート内の問題番号を1つ送る。パートは跨がない
+  if(!CARDS.length) return;
+  const i=active+delta;
+  if(i<0 || i>=CARDS.length) return;   // パートの範囲内に留める(番号送り)
+  active=i; lastSwipe=Date.now();
+  goCard(i);      // 画面が見えていればスクロールも合わせる(activeは先に更新済なのでonscrollは二重再生しない)
+  playCard(i);    // ★ロック中はscrollイベントが来ないので、スクロールに頼らず直接頭出し再生する(ロック中も番号送りが効く)
+  saveState();
+}
 function goNextPart(){const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;openPart(np,0);}  // パート末→次パート(Eの次はAに戻る)
 function goPrevPart(){const pp=(partIdx-1+DATA.parts.length)%DATA.parts.length;const last=DATA.parts[pp].chapters.filter(c=>!c.tail).length-1;openPart(pp,Math.max(0,last));}  // パート頭→前パートの最終カードへ(Aの前はEへ)
 function replay(){const c=CARDS[active];if(!c)return;lastSwipe=Date.now();if(ensureAudioSource()){playCard(active);return;}trySeek(c.start+0.02);AU.play().catch(()=>{});}  // 頭からもう一回(音源が別パートなら載せ直してから。seek安全化・失敗はreconcileが補正 Bug6)
@@ -596,7 +605,7 @@ AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classLi
 
 function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
-  if(i===active)_litSeg=-1;   // 表示カードを描き直すと.textのscrollTopが0に戻るので、なぞり自動スクロールの記憶をリセットし次tickで再追従させる(答えの表示/非表示トグル後になぞり中の行が枠外に残るのを防ぐ)
+  if(i===active){_litSeg=-1; updateMediaMeta();}   // 表示カードを描き直すと.textのscrollTopが0に戻るので、なぞり自動スクロールの記憶をリセット(次tickで再追従)。ロック画面の問題番号も更新
   if(!revealed[i] && hideAns){el.innerHTML='';updateEye();return;}   // 非表示中は本文を空に。表示は下バーの「答えを見る」で
   document.getElementById('hint')?.classList.add('hide');
   const isDlg=c.dialogue&&c.dialogue.length;
@@ -632,12 +641,21 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
 }
 
 
+// ロック画面/イヤホンの 戻る・進む = パート内の問題番号送り(もう一回は画面内の⟲ボタン)
+function updateMediaMeta(){   // ロック画面に「今どの問題か」を出す
+  if(!('mediaSession' in navigator) || !PART || !CARDS.length) return;
+  try{ navigator.mediaSession.metadata = new MediaMetadata({
+    title: '問題 '+((CARDS[active]&&CARDS[active].n)||active+1)+' / '+CARDS.length,   // カード面ラベルと同じ c.n を使う(将来tailが中間に入っても番号がズレない)
+    artist: PART.title,
+    album: 'Versant練習',
+  }); }catch(e){}
+}
 if('mediaSession' in navigator){
-  navigator.mediaSession.setActionHandler('nexttrack',()=>goCard(active+1));       // 送り＝次の文
-  navigator.mediaSession.setActionHandler('previoustrack',()=>replay());           // 戻し＝もう一回
+  navigator.mediaSession.setActionHandler('nexttrack',()=>stepCard(1));       // 進む＝次の問題番号
+  navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0801-37';
+const BUILD='0801-39';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
