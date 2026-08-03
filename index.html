@@ -487,6 +487,7 @@ function ensureAudioSource(){
   const ok = srcPartId===PART.id && AU.currentSrc && AU.currentSrc.indexOf(nsrc)>=0
              && (isNaN(AU.duration) || Math.abs(AU.duration-PART.total)<3);   // ★readyStateは条件に入れない: 正しい音源をロード中(readyState<1)にタップすると誤って再ロードし、進行中の読込を捨てて無音になる(連打で永久に鳴らない)。成熟待ちはplayCard側のsrcReady()ゲートに委ねる
   if(ok) return false;                          // 既に正しい音源が載っている(尺未確定=ロード中も、URL/パート一致なら再ロードしない)
+  try{AU.pause();}catch(e){}                     // ★差し替え前に必ず止める: iOSは.load()するまで旧音源(前パート/別の話)が鳴り続けることがあり、Part E表示中に別パートの音声が漏れる原因になる
   AU.src=nsrc; AU.load(); srcPartId=PART.id;     // 別パート/未ロード→確実に差し替えてロード
   return true;                                   // 差し替えた(currentTimeは0に戻る)
 }
@@ -655,7 +656,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0801-39';
+const BUILD='0801-40';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
