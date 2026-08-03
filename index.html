@@ -255,7 +255,7 @@
 
 <script>
 const AU=document.getElementById('au');
-const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる'};
+const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる',G:'弱く消える音を聞き取る'};
 let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true,dlgShown={},partIdx=null;
 const SPEEDS=[1,0.85,0.7];                                   // 速度は3段(設定パネルと同じ)。カードのタップもこの順で回す
 const spdTxt=s=>s.toFixed(2).replace(/0$/,'')+'x';          // 速度表示を統一(1.0x/0.85x/0.7x)。初期もタップも設定も同じ表記に
@@ -340,7 +340,7 @@ function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}ca
     if(st.h){document.getElementById('home').classList.remove('off');markCurrent();saveState();}   // 一覧を開いた状態だったら開いたまま戻す(openPart内のsaveStateがh=falseで上書きするので、ここで開いた状態を保存し直す)
   }}
 
-const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい',F:'難しい'};   // 入門者から見た目安
+const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい',F:'難しい',G:'耳トレ'};   // 入門者から見た目安
 // 崩れの種類ごとの平易な解説(音声学の専門用語は出さない)
 const TIP={form:'2語がくっついて短く言われます。かたまりで覚えると聞き取れます。',
   yod:'前の語と you などが溶け合って「デュ／ヂュ」のように聞こえます。',
@@ -349,7 +349,7 @@ const TIP={form:'2語がくっついて短く言われます。かたまりで�
   drop_t:'t の音がほとんど消えて聞こえます。',
   drop_h:'h の音が消えて前の語とくっつきます。'};
 // 大きな英文が何なのかを示す小見出し(C/D=会話・本文の後に来る質問、E=聞いて再話する話そのもの、A/F=質問、B=復唱する英文)
-const ENLAB={A:'質問',B:'英文',C:'質問',D:'質問',E:'話',F:'質問'};
+const ENLAB={A:'質問',B:'英文',C:'質問',D:'質問',E:'話',F:'質問',G:'例文'};
 function renderHome(){
   document.getElementById('plist').innerHTML=DATA.parts.map((p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
@@ -656,7 +656,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0801-41';
+const BUILD='0801-42';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====

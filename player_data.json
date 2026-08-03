@@ -4853,6 +4853,219 @@
      "tail": true
     }
    ]
+  },
+  {
+   "id": "G",
+   "title": "Part G 弱形ドリル",
+   "sub": "弱く消える音だけ集中",
+   "mp3": "partG.mp3",
+   "total": 211.578,
+   "chapters": [
+    {
+     "n": 1,
+     "start": 22.376,
+     "end": 31.836,
+     "en": "Can you get them for me?",
+     "yaku": "取ってきてくれる？",
+     "kana": "",
+     "target": "get them",
+     "target_kana": "ゲレム",
+     "kind": "flap",
+     "memo": "get them が ゲレム に聞こえます"
+    },
+    {
+     "n": 2,
+     "start": 31.836,
+     "end": 41.505,
+     "en": "I will tell them tomorrow.",
+     "yaku": "明日みんなに言っておくよ。",
+     "kana": "",
+     "target": "tell them",
+     "target_kana": "テレム",
+     "kind": "drop_h",
+     "memo": "tell them が テレム に聞こえます"
+    },
+    {
+     "n": 3,
+     "start": 41.505,
+     "end": 53.287,
+     "en": "Please send it to them today.",
+     "yaku": "今日それを彼らに送って。",
+     "kana": "",
+     "target": "to them",
+     "target_kana": "トゥゼム",
+     "kind": "drop_h",
+     "memo": "to them が トゥゼム に聞こえます"
+    },
+    {
+     "n": 4,
+     "start": 53.287,
+     "end": 63.179,
+     "en": "We should let them know soon.",
+     "yaku": "早めに知らせたほうがいい。",
+     "kana": "",
+     "target": "let them",
+     "target_kana": "レレム",
+     "kind": "flap",
+     "memo": "let them が レレム に聞こえます"
+    },
+    {
+     "n": 5,
+     "start": 63.179,
+     "end": 74.722,
+     "en": "I will give them a call later.",
+     "yaku": "あとで電話しておくね。",
+     "kana": "",
+     "target": "give them",
+     "target_kana": "ギヴェム",
+     "kind": "drop_h",
+     "memo": "give them が ギヴェム に聞こえます"
+    },
+    {
+     "n": 6,
+     "start": 74.722,
+     "end": 85.346,
+     "en": "I had lunch with them today.",
+     "yaku": "今日は彼らと昼を食べた。",
+     "kana": "",
+     "target": "with them",
+     "target_kana": "ウィゼム",
+     "kind": "drop_h",
+     "memo": "with them が ウィゼム に聞こえます"
+    },
+    {
+     "n": 7,
+     "start": 85.346,
+     "end": 97.049,
+     "en": "Let us meet them at the station.",
+     "yaku": "駅で待ち合わせよう。",
+     "kana": "",
+     "target": "meet them",
+     "target_kana": "ミーレム",
+     "kind": "flap",
+     "memo": "meet them が ミーレム に聞こえます"
+    },
+    {
+     "n": 8,
+     "start": 97.049,
+     "end": 107.494,
+     "en": "Just put them on the desk.",
+     "yaku": "机に置いといて。",
+     "kana": "",
+     "target": "put them",
+     "target_kana": "プレム",
+     "kind": "flap",
+     "memo": "put them が プレム に聞こえます"
+    },
+    {
+     "n": 9,
+     "start": 114.614,
+     "end": 125.996,
+     "en": "It is kind of cold today.",
+     "yaku": "今日はなんか寒いね。",
+     "kana": "",
+     "target": "kind of",
+     "target_kana": "カインダ",
+     "kind": "form",
+     "memo": "kind of が カインダ に聞こえます"
+    },
+    {
+     "n": 10,
+     "start": 125.996,
+     "end": 137.263,
+     "en": "There are a lot of people here.",
+     "yaku": "ここは人がすごく多い。",
+     "kana": "",
+     "target": "a lot of",
+     "target_kana": "アラロブ",
+     "kind": "form",
+     "memo": "a lot of が アラロブ に聞こえます"
+    },
+    {
+     "n": 11,
+     "start": 137.263,
+     "end": 149.838,
+     "en": "We are out of milk again.",
+     "yaku": "また牛乳が切れてる。",
+     "kana": "",
+     "target": "out of",
+     "target_kana": "アウラ",
+     "kind": "form",
+     "memo": "out of が アウラ に聞こえます"
+    },
+    {
+     "n": 12,
+     "start": 149.838,
+     "end": 161.264,
+     "en": "It is sort of a big problem.",
+     "yaku": "まあまあ大きな問題だ。",
+     "kana": "",
+     "target": "sort of",
+     "target_kana": "ソータ",
+     "kind": "form",
+     "memo": "sort of が ソータ に聞こえます"
+    },
+    {
+     "n": 13,
+     "start": 169.224,
+     "end": 179.033,
+     "en": "Can you tell him to wait?",
+     "yaku": "彼に待つよう言ってくれる？",
+     "kana": "",
+     "target": "tell him",
+     "target_kana": "テリム",
+     "kind": "drop_h",
+     "memo": "tell him が テリム に聞こえます"
+    },
+    {
+     "n": 14,
+     "start": 179.033,
+     "end": 189.177,
+     "en": "I will give him the keys.",
+     "yaku": "彼に鍵を渡しておくよ。",
+     "kana": "",
+     "target": "give him",
+     "target_kana": "ギヴィム",
+     "kind": "drop_h",
+     "memo": "give him が ギヴィム に聞こえます"
+    },
+    {
+     "n": 15,
+     "start": 189.177,
+     "end": 198.768,
+     "en": "I will talk with him later.",
+     "yaku": "あとで彼と話すよ。",
+     "kana": "",
+     "target": "with him",
+     "target_kana": "ウィズィム",
+     "kind": "drop_h",
+     "memo": "with him が ウィズィム に聞こえます"
+    },
+    {
+     "n": 16,
+     "start": 198.768,
+     "end": 209.378,
+     "en": "You should ask her first.",
+     "yaku": "先に彼女に聞いたほうがいい。",
+     "kana": "",
+     "target": "ask her",
+     "target_kana": "アスカー",
+     "kind": "drop_h",
+     "memo": "ask her が アスカー に聞こえます"
+    },
+    {
+     "n": 0,
+     "start": 209.378,
+     "end": 211.578,
+     "en": "",
+     "kana": "",
+     "yaku": "",
+     "target": "",
+     "target_kana": "",
+     "memo": "",
+     "tail": true
+    }
+   ]
   }
  ]
 }
