@@ -625,7 +625,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
     if(c.question){h+=`<div class="enlab">${ENLAB[PART.id]||'質問'}</div><div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }   // 会話の後の大きな英文が「質問」だと分かるようにラベルを付ける
   else if(c.en){if(ENLAB[PART.id])h+=`<div class="enlab">${ENLAB[PART.id]}</div>`;   // 大きな英文が質問(A/D/F)か・聞いて再話する話(E)か・復唱する英文(B)かを示す
     if(c.kana)h+=`<div class="kana">${c.kana}</div>`;
-    const enh=((PART.id==='B'||PART.id==='E')&&c.hl&&c.hl.length&&c.hl[0].s)?c.hl.map((x,si)=>`<span class="lseg" data-seg="${si}">${x.s}</span>`).join(' '):c.en;   // B/E だけ 文/話をlseg化(再生中を青くなぞる)。Dのenは質問なのでそのまま(本文の二重表示を防ぐ)
+    const enh=(['A','B','E','F','G'].includes(PART.id)&&c.hl&&c.hl.length&&c.hl[0].s)?c.hl.map((x,si)=>`<span class="lseg" data-seg="${si}">${x.s}</span>`).join(' '):c.en;   // A/B/E/F/G のen(質問・文・例文)を読み上げに合わせてlseg化(青くなぞる)。Dは本文を先頭で別描画するのでここでは除外(二重表示防止)
     h+=`<div class="en">${enh}</div>`; if(c.yaku)h+=`<div class="yaku">${c.yaku}</div>`;}
   if(c.bone&&c.bone.length&&PART.id!=='D'&&PART.id!=='E')h+=`<div class="row"><span class="k">要点</span><span class="v">${c.bone.join(' / ')}</span></div>`;   // Part Eは要点を廃止(最低限とほぼ同義)。Part Fの要点(意見→理由)は残す
   if(c.bone_en&&c.bone_en.length&&PART.id!=='E')h+=`<div class="row"><span class="k">使える単語</span><span class="v">${c.bone_en.join(' / ')}</span></div>`;   // Part Eは使える単語を廃止(最低限回答とイコール)。Part Fの言い出し表現は残す
@@ -659,7 +659,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0801-44';
+const BUILD='0801-45';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
