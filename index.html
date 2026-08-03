@@ -368,6 +368,7 @@ let switching=false, switchTarget=0, switchTimer=0;   // パート切替中は�
 let lastSwipe=0;       // 直近にユーザーがスワイプして表示カードを変えた時刻。この直後は表示を正=音声を合わせる
 function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iOSは無操作で自動再生できないので鳴らさず頭出しだけ
   startCard = startCard || 0;
+  const wasPlaying = !noPlay && !AU.paused;   // ★連続再生: この切替の直前に鳴っていたか(ensureAudioSourceがpauseする前に見る)
   switching=true;   // 目標カードに着地するまで判定停止(switchTargetは下でclamp後に設定)
   PART=DATA.parts[pi]; partIdx=pi; CARDS=PART.chapters.filter(c=>!c.tail);
   startCard=Math.min(Math.max(0,startCard|0), Math.max(0,CARDS.length-1));   // 教材再生成でカードが減った時など、保存indexが範囲外でも安全に(Bug7)
@@ -377,6 +378,7 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   const _feed=document.getElementById('feed');
   _feed.style.transition='none'; _feed.style.opacity='0';   // ★遷移中は隠す。フィード入替とスクロール頭出しのチラつきを覆い、着地後にふわっと出す
   ensureAudioSource(); AU.playbackRate=speed;   // ★前パートの音源が残らないよう必ずロードし直す(パート間の音ズレ根治)
+  if(wasPlaying) AU.play().catch(()=>{});   // ★連続再生: 前パートを鳴らしていたら、差し替え直後に即play()してiOSの再生権(user activation)を切らさない。頭出しはplayCard側が担う
   renderFeed();
   document.getElementById('home').classList.add('off');
   document.getElementById('app').classList.remove('off');
@@ -601,8 +603,9 @@ AU.addEventListener('timeupdate',()=>{
 AU.addEventListener('ended',()=>{ if(auto) goNextPart(); else AU.pause(); });   // パート音源の終端→次パート(Bug4: timeupdateが末尾閾値に届かず無音停止するのを防ぐ)
 setInterval(reconcile, 500);   // 予備: timeupdateが疎な時のズレも拾う
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ switching=false; setTimeout(reconcile,60); } });   // 画面復帰(ロック解除)でswitchingを解いて自己修復を空振りさせず、表示と音源を合わせ直す
-AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');reqWake();});
-AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;updateHighlight();});   // 停止でなぞりを消す
+function setPlaybackState(s){ if('mediaSession' in navigator){ try{ navigator.mediaSession.playbackState=s; }catch(e){} } }   // ★連続再生: iOSに「今再生中」を伝え、パート跨ぎでも再生セッションを維持させる
+AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');setPlaybackState('playing');reqWake();});
+AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;setPlaybackState('paused');updateHighlight();});   // 停止でなぞりを消す
 
 function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
@@ -656,7 +659,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0801-42';
+const BUILD='0801-43';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
