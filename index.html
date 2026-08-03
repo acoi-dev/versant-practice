@@ -138,6 +138,12 @@
   .hint.hide{opacity:0}
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  /* パート切替の中央バナー(境目ページの代わり・1.6秒でフェード) */
+  .pbanner{position:fixed;left:0;right:0;top:40%;z-index:30;text-align:center;pointer-events:none;opacity:0}
+  .pbanner.show{animation:pbfade 1.6s ease forwards}
+  .pbanner .pb-id{font-size:12px;letter-spacing:.14em;color:var(--sub);margin-bottom:7px}
+  .pbanner .pb-ttl{font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.01em;text-wrap:balance}
+  @keyframes pbfade{0%{opacity:0;transform:translateY(9px)}14%{opacity:1;transform:translateY(0)}68%{opacity:1;transform:translateY(0)}100%{opacity:0}}
 
   /* 上部：タイトル中央＋設定は右上（あまり使わないので親指圏外でOK） */
   .head{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:0;right:0;padding:0 64px;display:flex;justify-content:center;align-items:center;z-index:5}
@@ -206,6 +212,7 @@
   </div>
   <button class="topgear" id="mGear" aria-label="設定"></button>
   <div id="feed"></div>
+  <div class="pbanner" id="pbanner" aria-hidden="true"></div>   <!-- パート切替の中央バナー(境目ページの代わり・1.5秒でフェード) -->
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
   <!-- 片手操作バー（よく使う「答えを見る/隠す」は中央、ホームは右下） -->
   <div class="navbar">
@@ -366,6 +373,12 @@ function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時�
 
 let switching=false, switchTarget=0, switchTimer=0;   // パート切替中は判定停止。目標カード(switchTarget)に着地するまで前/次パート発火を抑止(scrollTop=0の一瞬で番兵を拾う誤発火を防ぐ)。switchTimer=保険タイマーid(連続切替時に前回分をclearし、途中発火でクロスフェードが潰れるのを防ぐ)
 let lastSwipe=0;       // 直近にユーザーがスワイプして表示カードを変えた時刻。この直後は表示を正=音声を合わせる
+function showPartBanner(){   // パート切替を中央バナーで一瞬知らせる(境目の空白ページの代わり)
+  const el=document.getElementById('pbanner'); if(!el||!PART)return;
+  const name=PART.title.replace(/^Part\s+\S+\s+/,'');   // "Part C 会話に関する質問" → "会話に関する質問"
+  el.innerHTML=`<div class="pb-id">Part ${PART.id}</div><div class="pb-ttl">${name}</div>`;
+  el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');   // リフローを挟んで再アニメを確実に発火
+}
 function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iOSは無操作で自動再生できないので鳴らさず頭出しだけ
   startCard = startCard || 0;
   const wasPlaying = !noPlay && !AU.paused;   // ★連続再生: この切替の直前に鳴っていたか(ensureAudioSourceがpauseする前に見る)
@@ -375,6 +388,7 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   active=startCard; switchTarget=startCard; revealed={}; dlgShown={};
   document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後一覧は×で閉じてプレイヤーに戻れる
   document.getElementById('htitle').textContent=PART.title;
+  showPartBanner();   // ★パートが変わったことを中央バナーで一瞬知らせる(境目の空白ページの代わり)
   const _feed=document.getElementById('feed');
   _feed.style.transition='none'; _feed.style.opacity='0';   // ★遷移中は隠す。フィード入替とスクロール頭出しのチラつきを覆い、着地後にふわっと出す
   ensureAudioSource(); AU.playbackRate=speed;   // ★前パートの音源が残らないよう必ずロードし直す(パート間の音ズレ根治)
@@ -414,15 +428,7 @@ document.getElementById('popClose').onclick=closeSet;
 
 function renderFeed(){
   const feed=document.getElementById('feed');
-  const pp=(partIdx-1+DATA.parts.length)%DATA.parts.length;   // 前パート(先頭なら末尾へ回る)
-  const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;         // 次パート
-  feed.innerHTML=`
-    <section class="card prevcard" data-i="-1">
-      <div class="nextwrap">
-        <button class="nextbtn" data-prev>前のパートへ<small>${DATA.parts[pp].title}</small></button>
-      </div>
-    </section>`
-    + CARDS.map((c,i)=>`
+  feed.innerHTML= CARDS.map((c,i)=>`
     <section class="card" data-i="${i}">
       <div class="plabel"><b>${c.n}</b> / ${CARDS.length}</div>
       <div class="mid">
@@ -437,18 +443,9 @@ function renderFeed(){
           <button class="spd" data-spd>${spdTxt(speed)}</button>
         </div>
       </div>
-    </section>`).join('')
-    + `
-    <section class="card nextcard" data-i="${CARDS.length}">
-      <div class="nextwrap">
-        <div class="nextlabel">${PART.title} おわり</div>
-        <button class="nextbtn" data-next>次のパートへ<small>${DATA.parts[np].title}</small></button>
-      </div>
-    </section>`;
+    </section>`).join('');
 
   feed.querySelectorAll('.card').forEach(card=>card.addEventListener('click',e=>{
-    if(e.target.closest('.prevcard')){goPrevPart();return;}   // 先頭番兵=前パートへ
-    if(e.target.closest('.nextcard')){goNextPart();return;}   // 末尾番兵=次パートへ
     if(e.target.closest('.veil')){const i=+e.target.closest('.veil').dataset.rev;revealed[i]=true;paintText(i);return;}
     if(e.target.closest('[data-hide]')){const i=+e.target.closest('[data-hide]').dataset.hide;revealed[i]=false;paintText(i);return;}
     if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
@@ -464,16 +461,19 @@ function renderFeed(){
     const st=feed.scrollTop; let best=null,bd=1e9;
     feed.querySelectorAll('.card').forEach(el=>{const d=Math.abs(el.offsetTop-st);if(d<bd){bd=d;best=el;}});
     if(!best)return;
-    const ri=best.classList.contains('prevcard')?-1:(best.classList.contains('nextcard')?CARDS.length:(+best.dataset.i));
-    if(switching){                                   // 切替の自動スクロール中
-      if(ri===switchTarget){switching=false;return;} // 目標カードに着地=正常終了
-      if(ri<0 || ri>=CARDS.length)return;            // 番兵(scrollTop=0の一瞬)は無視して誤パート移動を防ぐ
-      switching=false;                               // 実カードへ動いた=ユーザーが切替中に手でスワイプした→握り潰さず下の通常処理で追従
-    }
-    if(ri<0){goPrevPart();return;}                              // 先頭番兵=前パートへ
-    if(ri>=CARDS.length){goNextPart();return;}                  // 末尾番兵=次パートへ
+    const ri=+best.dataset.i;
+    if(switching){ if(ri===switchTarget){switching=false;return;} switching=false; }   // 切替の自動スクロール中: 目標カード着地で解除。実カードへ手で動いたら解除して追従
     if(ri!==active){active=ri;lastSwipe=Date.now();document.getElementById('hint')?.classList.add('hide');playCard(ri);saveState();}   // ユーザーが手で送った=この後1.2秒は表示を正とする
   },90);};
+  // 境目ページ廃止: 最終カードでさらに上フリック→次パート / 先頭カードでさらに下フリック→前パート(空白ページを挟まず直接遷移)
+  let _tsY=0;
+  feed.addEventListener('touchstart',e=>{ _tsY=e.touches[0].clientY; },{passive:true});
+  feed.addEventListener('touchend',e=>{
+    const dy=e.changedTouches[0].clientY-_tsY;   // 負=上フリック(次へ) / 正=下フリック(前へ)
+    const atBottom=feed.scrollTop>=feed.scrollHeight-feed.clientHeight-4, atTop=feed.scrollTop<=4;
+    if(dy<-70 && active===CARDS.length-1 && atBottom) goNextPart();
+    else if(dy>70 && active===0 && atTop) goPrevPart();
+  },{passive:true});
 
   CARDS.forEach((_,i)=>paintText(i));   // 全カードを最初から正しい状態に(隠す=空/常時表示=本文)。スワイプ中のveilチラつき防止
 }
@@ -659,7 +659,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0801-43';
+const BUILD='0801-44';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
