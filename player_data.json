@@ -5267,30 +5267,44 @@
    "title": "Part G 弱形ドリル",
    "sub": "弱く消える音だけ集中",
    "mp3": "partG.mp3",
-   "total": 211.578,
+   "total": 222.003,
    "chapters": [
     {
      "n": 1,
-     "start": 22.376,
-     "end": 31.836,
-     "en": "Can you get them for me?",
-     "yaku": "取ってきてくれる？",
+     "start": 15.032,
+     "end": 29.405,
+     "en": "Did you tell them what I said?",
+     "yaku": "私が言ったこと、彼らに伝えた？",
      "kana": "",
-     "target": "get them",
-     "target_kana": "ゲレム",
-     "kind": "flap",
-     "memo": "get them が ゲレム に聞こえます",
+     "crush_spots": [
+      {
+       "phrase": "did you",
+       "kana": "ディジャ",
+       "kind": "form"
+      },
+      {
+       "phrase": "tell them",
+       "kana": "テレム",
+       "kind": "form"
+      }
+     ],
+     "kind": "form",
+     "memo": "did you→ディジャ / tell them→テレム",
      "hl": [
       {
-       "s": "Can you get them for me?",
+       "s": "Did you tell them what I said?",
        "w": [
         [
-         22.376,
-         24.224
+         15.032,
+         17.0
         ],
         [
-         28.588,
-         30.436
+         17.6,
+         19.568
+        ],
+        [
+         25.237,
+         27.205
         ]
        ]
       }
@@ -5298,26 +5312,36 @@
     },
     {
      "n": 2,
-     "start": 31.836,
-     "end": 41.505,
-     "en": "I will tell them tomorrow.",
-     "yaku": "明日みんなに言っておくよ。",
+     "start": 29.405,
+     "end": 46.494,
+     "en": "We ought to let them finish it first.",
+     "yaku": "先に彼らに終わらせたほうがいい。",
      "kana": "",
-     "target": "tell them",
-     "target_kana": "テレム",
-     "kind": "drop_h",
-     "memo": "tell them が テレム に聞こえます",
+     "crush_spots": [
+      {
+       "phrase": "ought to",
+       "kana": "オータ",
+       "kind": "form"
+      },
+      {
+       "phrase": "let them",
+       "kana": "レレム",
+       "kind": "form"
+      }
+     ],
+     "kind": "form",
+     "memo": "ought to→オータ / let them→レレム",
      "hl": [
       {
-       "s": "I will tell them tomorrow.",
+       "s": "We ought to let them finish it first.",
        "w": [
         [
-         31.836,
-         33.756
+         29.405,
+         31.805
         ],
         [
-         38.185,
-         40.105
+         41.894,
+         44.294
         ]
        ]
       }
@@ -5325,26 +5349,40 @@
     },
     {
      "n": 3,
-     "start": 41.505,
-     "end": 53.287,
-     "en": "Please send it to them today.",
-     "yaku": "今日それを彼らに送って。",
+     "start": 46.494,
+     "end": 62.668,
+     "en": "Would you ask them about the plan?",
+     "yaku": "その計画、彼らに聞いてくれる？",
      "kana": "",
-     "target": "to them",
-     "target_kana": "トゥゼム",
-     "kind": "drop_h",
-     "memo": "to them が トゥゼム に聞こえます",
+     "crush_spots": [
+      {
+       "phrase": "would you",
+       "kana": "ウッジャ",
+       "kind": "form"
+      },
+      {
+       "phrase": "ask them",
+       "kana": "アスケム",
+       "kind": "form"
+      }
+     ],
+     "kind": "form",
+     "memo": "would you→ウッジャ / ask them→アスケム",
      "hl": [
       {
-       "s": "Please send it to them today.",
+       "s": "Would you ask them about the plan?",
        "w": [
         [
-         41.505,
-         44.313
+         46.494,
+         49.206
         ],
         [
-         49.079,
-         51.887
+         49.806,
+         52.518
+        ],
+        [
+         57.756,
+         60.468
         ]
        ]
       }
@@ -5352,26 +5390,36 @@
     },
     {
      "n": 4,
-     "start": 53.287,
-     "end": 63.179,
-     "en": "We should let them know soon.",
-     "yaku": "早めに知らせたほうがいい。",
+     "start": 62.668,
+     "end": 80.77,
+     "en": "I'll get them over to your place soon.",
+     "yaku": "すぐ彼らをそっちに行かせるよ。",
      "kana": "",
-     "target": "let them",
-     "target_kana": "レレム",
-     "kind": "flap",
-     "memo": "let them が レレム に聞こえます",
+     "crush_spots": [
+      {
+       "phrase": "get them",
+       "kana": "ゲレム",
+       "kind": "form"
+      },
+      {
+       "phrase": "over to",
+       "kana": "オウヴァタ",
+       "kind": "form"
+      }
+     ],
+     "kind": "form",
+     "memo": "get them→ゲレム / over to→オウヴァタ",
      "hl": [
       {
-       "s": "We should let them know soon.",
+       "s": "I'll get them over to your place soon.",
        "w": [
         [
-         53.287,
-         55.399
+         62.668,
+         65.284
         ],
         [
-         59.667,
-         61.779
+         75.954,
+         78.57
         ]
        ]
       }
@@ -5379,26 +5427,40 @@
     },
     {
      "n": 5,
-     "start": 63.179,
-     "end": 74.722,
-     "en": "I will give them a call later.",
-     "yaku": "あとで電話しておくね。",
+     "start": 80.77,
+     "end": 97.973,
+     "en": "There is kind of a lot of them left.",
+     "yaku": "けっこう沢山残ってるね。",
      "kana": "",
-     "target": "give them",
-     "target_kana": "ギヴェム",
-     "kind": "drop_h",
-     "memo": "give them が ギヴェム に聞こえます",
+     "crush_spots": [
+      {
+       "phrase": "kind of",
+       "kana": "カインダ",
+       "kind": "form"
+      },
+      {
+       "phrase": "a lot of",
+       "kana": "アラロブ",
+       "kind": "form"
+      }
+     ],
+     "kind": "form",
+     "memo": "kind of→カインダ / a lot of→アラロブ",
      "hl": [
       {
-       "s": "I will give them a call later.",
+       "s": "There is kind of a lot of them left.",
        "w": [
         [
-         63.179,
-         65.987
+         80.77,
+         83.626
         ],
         [
-         70.514,
-         73.322
+         84.226,
+         87.082
+        ],
+        [
+         92.917,
+         95.773
         ]
        ]
       }
@@ -5406,26 +5468,36 @@
     },
     {
      "n": 6,
-     "start": 74.722,
-     "end": 85.346,
-     "en": "I had lunch with them today.",
-     "yaku": "今日は彼らと昼を食べた。",
+     "start": 97.973,
+     "end": 116.875,
+     "en": "We ran out of most of them already.",
+     "yaku": "もうほとんど切らしちゃった。",
      "kana": "",
-     "target": "with them",
-     "target_kana": "ウィゼム",
-     "kind": "drop_h",
-     "memo": "with them が ウィゼム に聞こえます",
+     "crush_spots": [
+      {
+       "phrase": "out of",
+       "kana": "アウラ",
+       "kind": "form"
+      },
+      {
+       "phrase": "of them",
+       "kana": "アヴェム",
+       "kind": "form"
+      }
+     ],
+     "kind": "form",
+     "memo": "out of→アウラ / of them→アヴェム",
      "hl": [
       {
-       "s": "I had lunch with them today.",
+       "s": "We ran out of most of them already.",
        "w": [
         [
-         74.722,
-         76.738
+         97.973,
+         100.637
         ],
         [
-         81.93,
-         83.946
+         112.011,
+         114.675
         ]
        ]
       }
@@ -5433,26 +5505,40 @@
     },
     {
      "n": 7,
-     "start": 85.346,
-     "end": 97.049,
-     "en": "Let us meet them at the station.",
-     "yaku": "駅で待ち合わせよう。",
+     "start": 116.875,
+     "end": 132.428,
+     "en": "Did you give him the keys yet?",
+     "yaku": "もう彼に鍵渡した？",
      "kana": "",
-     "target": "meet them",
-     "target_kana": "ミーレム",
-     "kind": "flap",
-     "memo": "meet them が ミーレム に聞こえます",
+     "crush_spots": [
+      {
+       "phrase": "did you",
+       "kana": "ディジャ",
+       "kind": "form"
+      },
+      {
+       "phrase": "give him",
+       "kana": "ギヴィム",
+       "kind": "form"
+      }
+     ],
+     "kind": "form",
+     "memo": "did you→ディジャ / give him→ギヴィム",
      "hl": [
       {
-       "s": "Let us meet them at the station.",
+       "s": "Did you give him the keys yet?",
        "w": [
         [
-         85.346,
-         87.65
+         116.875,
+         119.275
         ],
         [
-         93.345,
-         95.649
+         119.875,
+         122.275
+        ],
+        [
+         127.828,
+         130.228
         ]
        ]
       }
@@ -5460,26 +5546,36 @@
     },
     {
      "n": 8,
-     "start": 97.049,
-     "end": 107.494,
-     "en": "Just put them on the desk.",
-     "yaku": "机に置いといて。",
+     "start": 132.428,
+     "end": 149.731,
+     "en": "Could you tell her I will be late?",
+     "yaku": "遅れるって彼女に伝えてくれる？",
      "kana": "",
-     "target": "put them",
-     "target_kana": "プレム",
-     "kind": "flap",
-     "memo": "put them が プレム に聞こえます",
+     "crush_spots": [
+      {
+       "phrase": "could you",
+       "kana": "クッジャ",
+       "kind": "form"
+      },
+      {
+       "phrase": "tell her",
+       "kana": "テラー",
+       "kind": "form"
+      }
+     ],
+     "kind": "form",
+     "memo": "could you→クッジャ / tell her→テラー",
      "hl": [
       {
-       "s": "Just put them on the desk.",
+       "s": "Could you tell her I will be late?",
        "w": [
         [
-         97.049,
-         99.161
+         132.428,
+         134.684
         ],
         [
-         103.982,
-         106.094
+         145.275,
+         147.531
         ]
        ]
       }
@@ -5487,224 +5583,56 @@
     },
     {
      "n": 9,
-     "start": 114.614,
-     "end": 125.996,
-     "en": "It is kind of cold today.",
-     "yaku": "今日はなんか寒いね。",
+     "start": 155.587,
+     "end": 172.395,
+     "en": "Can you get them?  /  Can you get him?",
+     "yaku": "get them(ゲレム) と get him(ゲリム)",
      "kana": "",
-     "target": "kind of",
-     "target_kana": "カインダ",
-     "kind": "form",
-     "memo": "kind of が カインダ に聞こえます",
-     "hl": [
-      {
-       "s": "It is kind of cold today.",
-       "w": [
-        [
-         114.614,
-         117.326
-        ],
-        [
-         121.884,
-         124.596
-        ]
-       ]
-      }
-     ]
+     "crush_spots": [],
+     "kind": "drop_h",
+     "memo": "",
+     "hl": []
     },
     {
      "n": 10,
-     "start": 125.996,
-     "end": 137.263,
-     "en": "There are a lot of people here.",
-     "yaku": "ここは人がすごく多い。",
+     "start": 172.395,
+     "end": 188.027,
+     "en": "I'll tell them.  /  I'll tell him.",
+     "yaku": "tell them(テレム) と tell him(テリム)",
      "kana": "",
-     "target": "a lot of",
-     "target_kana": "アラロブ",
-     "kind": "form",
-     "memo": "a lot of が アラロブ に聞こえます",
-     "hl": [
-      {
-       "s": "There are a lot of people here.",
-       "w": [
-        [
-         125.996,
-         128.06
-        ],
-        [
-         133.799,
-         135.863
-        ]
-       ]
-      }
-     ]
+     "crush_spots": [],
+     "kind": "drop_h",
+     "memo": "",
+     "hl": []
     },
     {
      "n": 11,
-     "start": 137.263,
-     "end": 149.838,
-     "en": "We are out of milk again.",
-     "yaku": "また牛乳が切れてる。",
+     "start": 188.027,
+     "end": 204.643,
+     "en": "It starts at thirty.  /  It starts at thirteen.",
+     "yaku": "thirty(サーリ) と thirteen(サーティーン)",
      "kana": "",
-     "target": "out of",
-     "target_kana": "アウラ",
-     "kind": "form",
-     "memo": "out of が アウラ に聞こえます",
-     "hl": [
-      {
-       "s": "We are out of milk again.",
-       "w": [
-        [
-         137.263,
-         140.479
-        ],
-        [
-         145.222,
-         148.438
-        ]
-       ]
-      }
-     ]
+     "crush_spots": [],
+     "kind": "drop_h",
+     "memo": "",
+     "hl": []
     },
     {
      "n": 12,
-     "start": 149.838,
-     "end": 161.264,
-     "en": "It is sort of a big problem.",
-     "yaku": "まあまあ大きな問題だ。",
+     "start": 204.643,
+     "end": 222.003,
+     "en": "I think we can.  /  I think we can't.",
+     "yaku": "can(クン) と can't(キャーン)",
      "kana": "",
-     "target": "sort of",
-     "target_kana": "ソータ",
-     "kind": "form",
-     "memo": "sort of が ソータ に聞こえます",
-     "hl": [
-      {
-       "s": "It is sort of a big problem.",
-       "w": [
-        [
-         149.838,
-         152.142
-        ],
-        [
-         157.56,
-         159.864
-        ]
-       ]
-      }
-     ]
-    },
-    {
-     "n": 13,
-     "start": 169.224,
-     "end": 179.033,
-     "en": "Can you tell him to wait?",
-     "yaku": "彼に待つよう言ってくれる？",
-     "kana": "",
-     "target": "tell him",
-     "target_kana": "テリム",
+     "crush_spots": [],
      "kind": "drop_h",
-     "memo": "tell him が テリム に聞こえます",
-     "hl": [
-      {
-       "s": "Can you tell him to wait?",
-       "w": [
-        [
-         169.224,
-         170.928
-        ],
-        [
-         175.929,
-         177.633
-        ]
-       ]
-      }
-     ]
-    },
-    {
-     "n": 14,
-     "start": 179.033,
-     "end": 189.177,
-     "en": "I will give him the keys.",
-     "yaku": "彼に鍵を渡しておくよ。",
-     "kana": "",
-     "target": "give him",
-     "target_kana": "ギヴィム",
-     "kind": "drop_h",
-     "memo": "give him が ギヴィム に聞こえます",
-     "hl": [
-      {
-       "s": "I will give him the keys.",
-       "w": [
-        [
-         179.033,
-         181.097
-        ],
-        [
-         185.713,
-         187.777
-        ]
-       ]
-      }
-     ]
-    },
-    {
-     "n": 15,
-     "start": 189.177,
-     "end": 198.768,
-     "en": "I will talk with him later.",
-     "yaku": "あとで彼と話すよ。",
-     "kana": "",
-     "target": "with him",
-     "target_kana": "ウィズィム",
-     "kind": "drop_h",
-     "memo": "with him が ウィズィム に聞こえます",
-     "hl": [
-      {
-       "s": "I will talk with him later.",
-       "w": [
-        [
-         189.177,
-         191.025
-        ],
-        [
-         195.52,
-         197.368
-        ]
-       ]
-      }
-     ]
-    },
-    {
-     "n": 16,
-     "start": 198.768,
-     "end": 209.378,
-     "en": "You should ask her first.",
-     "yaku": "先に彼女に聞いたほうがいい。",
-     "kana": "",
-     "target": "ask her",
-     "target_kana": "アスカー",
-     "kind": "drop_h",
-     "memo": "ask her が アスカー に聞こえます",
-     "hl": [
-      {
-       "s": "You should ask her first.",
-       "w": [
-        [
-         198.768,
-         200.736
-        ],
-        [
-         206.01,
-         207.978
-        ]
-       ]
-      }
-     ]
+     "memo": "",
+     "hl": []
     },
     {
      "n": 0,
-     "start": 209.378,
-     "end": 211.578,
+     "start": 222.003,
+     "end": 222.003,
      "en": "",
      "kana": "",
      "yaku": "",
