@@ -602,7 +602,17 @@ AU.addEventListener('timeupdate',()=>{
 });
 AU.addEventListener('ended',()=>{ if(auto) goNextPart(); else AU.pause(); });   // パート音源の終端→次パート(Bug4: timeupdateが末尾閾値に届かず無音停止するのを防ぐ)
 setInterval(reconcile, 500);   // 予備: timeupdateが疎な時のズレも拾う
-document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ switching=false; setTimeout(reconcile,60); } });   // 画面復帰(ロック解除)でswitchingを解いて自己修復を空振りさせず、表示と音源を合わせ直す
+document.addEventListener('visibilitychange',()=>{   // 画面復帰(別アプリから戻る/ロック解除)で表示と音源を合わせ直す
+  if(document.hidden) return;
+  switching=false;
+  setTimeout(()=>{
+    if(!CARDS.length) return;
+    if(srcWrong()){ reconcile(); return; }                 // 別パートの音源が載っていたらreconcileで是正
+    const ac=audioCardOf(AU.currentTime);
+    if(ac>=0 && ac!==active) followAudioToCard(ac);         // ★復帰時は再生中でなくても表示を音声の今のカードへ追従(iOSは復帰時に一瞬pausedになりreconcileが空振りするため)
+    reconcile();
+  }, 80);
+});
 function setPlaybackState(s){ if('mediaSession' in navigator){ try{ navigator.mediaSession.playbackState=s; }catch(e){} } }   // ★連続再生: iOSに「今再生中」を伝え、パート跨ぎでも再生セッションを維持させる
 AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');setPlaybackState('playing');reqWake();});
 AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;setPlaybackState('paused');updateHighlight();});   // 停止でなぞりを消す
@@ -660,7 +670,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0801-47';
+const BUILD='0801-48';
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
