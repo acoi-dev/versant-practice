@@ -52,6 +52,9 @@
   .pcard .meta{font-size:11.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
   .pcard .ttl{font-size:16px;font-weight:600;letter-spacing:-.01em}
   .pcard .desc{font-size:12.5px;color:var(--sub)}
+  .pcard.speak{text-decoration:none;color:inherit}        /* 話すモード導線(別ページ遷移) */
+  .pcard.speak .eb{color:var(--accent)}                    /* 家用モードだと分かるよう見出しだけアクセント色 */
+  .phead{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:22px 2px 3px}  /* 聞く/話すの区切り見出し */
 
   /* ===== フィード ===== */
   #app{position:fixed;inset:0;transition:opacity .22s ease,transform .22s ease}
@@ -358,7 +361,13 @@ const TIP={form:'2語がくっついて短く言われます。かたまりで�
 // 大きな英文が何なのかを示す小見出し(C/D=会話・本文の後に来る質問、E=聞いて再話する話そのもの、A/F=質問、B=復唱する英文)
 const ENLAB={A:'質問',B:'英文',C:'質問',D:'質問',E:'話',F:'質問',G:'例文'};
 function renderHome(){
-  document.getElementById('plist').innerHTML=DATA.parts.map((p,i)=>{
+  // 話すモード(家用)への入口。採点APIを繋ぐまでは非表示(SPEAK_ENABLED=false)。有効時のみ先頭に出す
+  const speak=SPEAK_ENABLED?(`<a class="pcard speak" href="speak.html">`
+    +`<div class="top"><span class="eb">話すモード</span><span class="meta">家で ・ 要マイク</span></div>`
+    +`<div class="ttl">声に出して発音を採点</div>`
+    +`<div class="desc">お手本を聞いて同じ文を言う（Part B 復唱）</div></a>`
+    +`<div class="phead">聞くモード（移動中）</div>`):'';
+  const parts=DATA.parts.map((p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
     const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"(先頭のPart Xは小見出しへ)
     return `<div class="pcard" data-p="${i}">`
@@ -366,7 +375,8 @@ function renderHome(){
       +`<div class="ttl">${name}</div>`
       +`<div class="desc">${TASK[p.id]||''}</div></div>`;
   }).join('');
-  document.querySelectorAll('.pcard').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
+  document.getElementById('plist').innerHTML=speak+`<div class="phead">聞くモード（移動中）</div>`+parts;
+  document.querySelectorAll('.pcard[data-p]').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
 }
 
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
@@ -670,7 +680,8 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0801-49';
+const BUILD='0805-51';
+const SPEAK_ENABLED=false;   // 話すモード導線: 採点API(Azure/Vercel)を繋いでspeak.htmlのAPIを設定したらtrueに。未接続でモック採点を実ユーザーに見せないためのゲート
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====

@@ -4353,12 +4353,12 @@
    "title": "Part E 再話",
    "sub": "話を自分の言葉で言い直す",
    "mp3": "partE3.mp3",
-   "total": 891.81,
+   "total": 885.22,
    "chapters": [
     {
      "n": 1,
      "start": 16.86,
-     "end": 141.8,
+     "end": 139.83,
      "en": "Tom forgot his lunch at home. He asked his coworker to share some food with him.",
      "kana": "",
      "yaku": "トムは家にお弁当を忘れました。彼は同僚に食べ物を分けてもらうよう頼みました。",
@@ -4397,12 +4397,12 @@
        "s": "Tom forgot his lunch at home.",
        "w": [
         [
-         21.28,
-         22.901
+         21.472,
+         23.199
         ],
         [
-         123.585,
-         125.206
+         121.09,
+         122.817
         ]
        ]
       },
@@ -4410,12 +4410,12 @@
        "s": "He asked his coworker to share some food with him.",
        "w": [
         [
-         22.901,
-         25.696
+         23.199,
+         26.176
         ],
         [
-         125.206,
-         128.001
+         122.817,
+         125.794
         ]
        ]
       }
@@ -4423,8 +4423,8 @@
     },
     {
      "n": 2,
-     "start": 141.8,
-     "end": 265.06,
+     "start": 139.83,
+     "end": 255.97,
      "en": "Mary finished her report early. She went to the park to relax after work.",
      "kana": "",
      "yaku": "メアリーは早くレポートを終えました。彼女は仕事の後、公園にリラックスしに行きました。",
@@ -4463,12 +4463,12 @@
        "s": "Mary finished her report early.",
        "w": [
         [
-         145.449,
-         147.35
+         144.25,
+         146.337
         ],
         [
-         247.714,
-         249.615
+         238.623,
+         240.71
         ]
        ]
       },
@@ -4476,12 +4476,12 @@
        "s": "She went to the park to relax after work.",
        "w": [
         [
-         147.35,
-         149.865
+         146.337,
+         149.098
         ],
         [
-         249.615,
-         252.13
+         240.71,
+         243.471
         ]
        ]
       }
@@ -4489,8 +4489,8 @@
     },
     {
      "n": 3,
-     "start": 265.06,
-     "end": 384.95,
+     "start": 255.97,
+     "end": 378.37,
      "en": "John's meeting was canceled. He used the extra time to read a book.",
      "kana": "",
      "yaku": "ジョンの会議はキャンセルされました。彼はその余った時間を使って本を読みました。",
@@ -4529,12 +4529,12 @@
        "s": "John's meeting was canceled.",
        "w": [
         [
-         269.962,
-         271.601
+         260.487,
+         262.381
         ],
         [
-         367.867,
-         369.506
+         360.875,
+         362.769
         ]
        ]
       },
@@ -4542,12 +4542,12 @@
        "s": "He used the extra time to read a book.",
        "w": [
         [
-         271.601,
-         273.826
+         262.381,
+         264.951
         ],
         [
-         369.506,
-         371.731
+         362.769,
+         365.339
         ]
        ]
       }
@@ -4555,8 +4555,8 @@
     },
     {
      "n": 4,
-     "start": 384.95,
-     "end": 513.31,
+     "start": 378.37,
+     "end": 506.73,
      "en": "Lisa bought new shoes yesterday, but they were too big. She took them back to the store today.",
      "kana": "",
      "yaku": "リサは昨日新しい靴を買いましたが、大きすぎました。彼女は今日それを店に戻しました。",
@@ -4595,12 +4595,12 @@
        "s": "Lisa bought new shoes yesterday, but they were too big.",
        "w": [
         [
-         388.963,
-         392.369
+         382.379,
+         385.785
         ],
         [
-         492.652,
-         496.058
+         486.068,
+         489.474
         ]
        ]
       },
@@ -4608,12 +4608,12 @@
        "s": "She took them back to the store today.",
        "w": [
         [
-         392.369,
-         394.723
+         385.785,
+         388.139
         ],
         [
-         496.058,
-         498.412
+         489.474,
+         491.828
         ]
        ]
       }
@@ -4621,8 +4621,8 @@
     },
     {
      "n": 5,
-     "start": 513.31,
-     "end": 641.48,
+     "start": 506.73,
+     "end": 634.9,
      "en": "The bus was late this morning, so Ken walked to the station. He still got to work on time.",
      "kana": "",
      "yaku": "今朝バスが遅れたので、ケンは駅まで歩きました。それでも彼は時間通りに仕事に着きました。",
@@ -4661,12 +4661,12 @@
        "s": "The bus was late this morning, so Ken walked to the station.",
        "w": [
         [
-         517.228,
-         521.208
+         510.644,
+         514.624
         ],
         [
-         621.252,
-         625.232
+         614.668,
+         618.648
         ]
        ]
       },
@@ -4674,12 +4674,12 @@
        "s": "He still got to work on time.",
        "w": [
         [
-         521.208,
-         523.132
+         514.624,
+         516.548
         ],
         [
-         625.232,
-         627.156
+         618.648,
+         620.572
         ]
        ]
       }
@@ -4687,8 +4687,8 @@
     },
     {
      "n": 6,
-     "start": 641.48,
-     "end": 771.46,
+     "start": 634.9,
+     "end": 764.87,
      "en": "Emma's cat looked sick last night. She took it to the animal doctor after work.",
      "kana": "",
      "yaku": "エマの猫は昨夜具合が悪そうでした。彼女は仕事の後、それを動物病院に連れて行きました。",
@@ -4727,12 +4727,12 @@
        "s": "Emma's cat looked sick last night.",
        "w": [
         [
-         645.588,
-         647.816
+         639.004,
+         641.232
         ],
         [
-         752.116,
-         754.344
+         745.532,
+         747.76
         ]
        ]
       },
@@ -4740,12 +4740,12 @@
        "s": "She took it to the animal doctor after work.",
        "w": [
         [
-         647.816,
-         650.7
+         641.232,
+         644.116
         ],
         [
-         754.344,
-         757.228
+         747.76,
+         750.644
         ]
        ]
       }
@@ -4753,8 +4753,8 @@
     },
     {
      "n": 7,
-     "start": 771.46,
-     "end": 891.81,
+     "start": 764.87,
+     "end": 885.22,
      "en": "It started to rain during the soccer game. The players stopped and waited inside for a while.",
      "kana": "",
      "yaku": "サッカーの試合中に雨が降り始めました。選手たちは中でしばらく待ちました。",
@@ -4793,12 +4793,12 @@
        "s": "It started to rain during the soccer game.",
        "w": [
         [
-         775.012,
-         777.663
+         768.428,
+         771.079
         ],
         [
-         873.067,
-         875.718
+         866.483,
+         869.134
         ]
        ]
       },
@@ -4806,12 +4806,12 @@
        "s": "The players stopped and waited inside for a while.",
        "w": [
         [
-         777.663,
-         780.82
+         771.079,
+         774.236
         ],
         [
-         875.718,
-         878.875
+         869.134,
+         872.291
         ]
        ]
       }
