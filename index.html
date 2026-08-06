@@ -178,6 +178,8 @@
   .sk-btn{flex:1;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line2);background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 6px;cursor:pointer;text-align:center;white-space:nowrap}
   .sk-btn:active{background:var(--hover)}
   .sk-btn.sk-again{border-color:var(--accent);color:var(--accent)}
+  .sk-verdict{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .sk-verdict span{font-size:12.5px;color:var(--sub);font-weight:600;font-variant-numeric:tabular-nums}
 
   .hint{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
@@ -425,7 +427,7 @@ function renderHome(){
       +`<div class="ttl">${name}</div>`
       +`<div class="desc">${TASK[p.id]||''}</div></div>`;
   }).join('');
-  document.getElementById('plist').innerHTML=speak+`<div class="phead">聞くモード（移動中）</div>`+parts;
+  document.getElementById('plist').innerHTML=speak+parts;
   document.querySelectorAll('.pcard[data-p]').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
 }
 
@@ -732,7 +734,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-58';
+const BUILD='0806-59';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -838,24 +840,22 @@ async function scoreSpk(wavB64, reference){
     renderSpkResult(j);
   }catch(e){ skOpen('<div class="sk-status">採点サーバーに接続できませんでした</div>'); }
 }
+const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were be been do does did have has had will would shall can could i he she it we they you your my me this that with as so no not'.split(' '));
 function renderSpkResult(j){
   const said=Math.round((j.scores&&j.scores.said)??0);
-  const words=j.words||[], okN=words.filter(w=>w.ok).length;
-  const wHTML=words.map(w=>`<span class="w ${w.ok?'':'bad'}">${skEsc(w.word)}</span>`).join(' ');
+  const words=j.words||[];
+  const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
+  const wHTML=words.map(w=>`<span class="w ${bad(w)?'bad':''}">${skEsc(w.word)}</span>`).join(' ');
+  const hasBad=words.some(bad);
+  const verdict= said>=80?'よく言えています' : said>=55?'おしい、あと少し' : 'もう一度言ってみよう';
   skOpen(
-    `<div class="sk-top">`
-     +`<div class="sk-ring" style="--v:${said}"><b>${said}</b><i>%</i></div>`
-     +`<div class="sk-sub"><div class="l">言えた率</div>`
-       +`<div class="r"><span>言えた語</span><span>${okN} / ${words.length}</span></div>`
-       +`<div class="r"><span>聞き取れなかった語</span><span>${j.missing?j.missing.length:words.filter(w=>!w.ok).length}</span></div></div>`
-     +`</div>`
+    `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%</span></div>`
     +`<div class="sk-words">${wHTML}</div>`
-    +`<div class="sk-leg">赤 ＝ <b>機械が聞き取れなかった語</b>（無色は聞き取れた）・<span class="sk-tap">語をタップで読み上げ</span></div>`
+    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${hasBad?'（赤 ＝ 直したい所）':''}</div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}</div>`
-    +(j.transcript?`<div class="sk-heard">あなたの声はこう聞こえました: <b>${skEsc(j.transcript)}</b></div>`:'')
     +`<div class="sk-actions">`
-      +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
       +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
+      +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
       +`<button class="sk-btn sk-again" data-sk="again">もう一度言う</button>`
     +`</div>`
   );
