@@ -180,6 +180,8 @@
   .sk-btn.sk-again{border-color:var(--accent);color:var(--accent)}
   .sk-verdict{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .sk-verdict span{font-size:12.5px;color:var(--sub);font-weight:600;font-variant-numeric:tabular-nums}
+  .sk-load{font-size:15px;font-weight:500;color:var(--sub);animation:skpulse 1.2s ease-in-out infinite}   /* 採点中の待ち表示 */
+  @keyframes skpulse{50%{opacity:.4}}
 
   .hint{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
@@ -734,7 +736,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-59';
+const BUILD='0806-60';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -775,12 +777,12 @@ async function startSpkRec(){
       try{ spkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
       const ref=(CARDS[active]&&CARDS[active].en)||''; spkLastRef=ref;
       if(!spkChunks.length||!ref){ skClose(); return; }
-      skOpen('<div class="sk-status">採点中…</div>');
+      spkLastBlob=new Blob(spkChunks,{type:(spkChunks[0]&&spkChunks[0].type)||'audio/mp4'});   // 聞き返し用(即・お手本/自分の声ボタンをすぐ使える)
+      renderSpkPending(ref);   // 先に画面(英文・ボタン)を即表示。採点が要る所だけ後で埋める
       try{
-        const blob=new Blob(spkChunks,{type:(spkChunks[0]&&spkChunks[0].type)||'audio/mp4'}); spkLastBlob=blob;   // 聞き返し用に保持
-        const wav=await blobToWav16k(blob);
-        await scoreSpk(wav, ref);
-      }catch(e){ skOpen('<div class="sk-status">音声の変換に失敗しました</div>'); }
+        const b64=await blobToB64(spkLastBlob);   // 変換せず"そのまま"の音声を送る(粗い16kHzリサンプルをやめ認識精度を上げる)
+        await scoreSpk(b64, ref, spkLastBlob.type);
+      }catch(e){ skOpen('<div class="sk-status">音声の処理に失敗しました</div>'); }
     };
     spkRec.start(); spkRecording=true;
     document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));
@@ -833,12 +835,28 @@ function encodeWav(samples,rate){
 }
 function skB64(ab){ const by=new Uint8Array(ab); let s=''; for(let i=0;i<by.length;i+=0x8000) s+=String.fromCharCode.apply(null,by.subarray(i,i+0x8000)); return btoa(s); }
 
-async function scoreSpk(wavB64, reference){
+async function blobToB64(blob){ return skB64(await blob.arrayBuffer()); }   // 元の音声をそのままbase64化(変換なし)
+async function scoreSpk(audioB64, reference, mime){
   try{
-    const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:wavB64,reference})});
+    const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:audioB64,reference,mime})});
     const j=await r.json(); if(!j.ok) throw new Error(j.error||'採点に失敗');
     renderSpkResult(j);
   }catch(e){ skOpen('<div class="sk-status">採点サーバーに接続できませんでした</div>'); }
+}
+// 録音直後の"下地"表示: 英文とボタンを即出し、評価とアドバイスだけ後で埋める(体感を速く)
+function renderSpkPending(ref){
+  const wHTML=(ref||'').split(/\s+/).filter(Boolean).map(w=>`<span class="w">${skEsc(w)}</span>`).join(' ');
+  skOpen(
+    `<div class="sk-verdict"><span class="sk-load">採点中…</span></div>`
+    +`<div class="sk-words">${wHTML}</div>`
+    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span></div>`
+    +`<div class="sk-adv"><span class="k">アドバイス</span><span class="sk-load">考え中…</span></div>`
+    +`<div class="sk-actions">`
+      +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
+      +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
+      +`<button class="sk-btn sk-again" data-sk="again">もう一度言う</button>`
+    +`</div>`
+  );
 }
 const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were be been do does did have has had will would shall can could i he she it we they you your my me this that with as so no not'.split(' '));
 function renderSpkResult(j){
