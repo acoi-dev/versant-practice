@@ -732,7 +732,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-56';
+const BUILD='0806-57';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -847,10 +847,10 @@ function renderSpkResult(j){
      +`<div class="sk-ring" style="--v:${said}"><b>${said}</b><i>%</i></div>`
      +`<div class="sk-sub"><div class="l">言えた率</div>`
        +`<div class="r"><span>言えた語</span><span>${okN} / ${words.length}</span></div>`
-       +`<div class="r"><span>伝わらなかった語</span><span>${j.missing?j.missing.length:words.filter(w=>!w.ok).length}</span></div></div>`
+       +`<div class="r"><span>聞き取れなかった語</span><span>${j.missing?j.missing.length:words.filter(w=>!w.ok).length}</span></div></div>`
      +`</div>`
     +`<div class="sk-words">${wHTML}</div>`
-    +`<div class="sk-leg">お手本の各語 ＝ <b>伝わらなかった語</b>（無色は言えている）・<span class="sk-tap">語をタップで読み上げ</span></div>`
+    +`<div class="sk-leg">赤 ＝ <b>機械が聞き取れなかった語</b>（無色は聞き取れた）・<span class="sk-tap">語をタップで読み上げ</span></div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}</div>`
     +(j.transcript?`<div class="sk-heard">聞き取り: <b>${skEsc(j.transcript)}</b></div>`:'')
     +`<div class="sk-actions">`
