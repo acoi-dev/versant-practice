@@ -178,6 +178,7 @@
   .sk-btn{flex:1;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line2);background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 6px;cursor:pointer;text-align:center;white-space:nowrap}
   .sk-btn:active{background:var(--hover)}
   .sk-btn.sk-again{border-color:var(--accent);color:var(--accent)}
+  .sk-btn.sk-recing{border-color:#e5484d;color:#e5484d;animation:skpulse 1.1s ease-in-out infinite}   /* 録音中の停止ボタン */
   .sk-verdict{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .sk-verdict span{font-size:12.5px;color:var(--sub);font-weight:600;font-variant-numeric:tabular-nums}
   .sk-load{font-size:15px;font-weight:500;color:var(--sub);animation:skpulse 1.2s ease-in-out infinite}   /* 採点中の待ち表示 */
@@ -736,7 +737,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-64';
+const BUILD='0806-65';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -766,7 +767,7 @@ function skOpen(html){ _spkrBody.innerHTML=html; _spkr.classList.add('show'); _s
 function skClose(){ _spkr.classList.remove('show'); _spkr.setAttribute('aria-hidden','true'); try{ clearTimeout(_modelStop); if(_mineAudio)_mineAudio.pause(); AU.pause(); speechSynthesis.cancel(); }catch(e){} }   // 閉じたら再生中の音声(自分の声/お手本/読み上げ)を止める   // 閉じたら再生中の音声も止める
 function skEsc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 
-async function startSpkRec(){
+async function startSpkRec(fromSheet){
   if(spkRecording) return;
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ skOpen('<div class="sk-status">この端末では録音できません</div>'); return; }
   try{
@@ -788,7 +789,7 @@ async function startSpkRec(){
     spkRec.start(); spkRecording=true; _recStart=Date.now();
     clearTimeout(_maxRecTimer); _maxRecTimer=setTimeout(()=>{ if(spkRecording) stopSpkRec(); }, SPK_MAX_MS);   // 止め忘れ対策: 最長で自動停止→採点
     document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));
-    _michint.classList.add('show');
+    if(!fromSheet) _michint.classList.add('show');   // シート内録音はボタンが状態を示すのでトーストは出さない
   }catch(e){ _michint.classList.remove('show'); skOpen('<div class="sk-status">マイクを使えませんでした（許可を確認してください）</div>'); }
 }
 function stopSpkRec(){
@@ -817,11 +818,13 @@ function skPlayModel(){
   clearTimeout(_modelStop); _modelStop=setTimeout(()=>{ try{AU.pause();}catch(e){} }, dur*1000+300);   // 文の分だけ鳴らして停止(以降のゆっくり/積み上げは流さない)
 }
 _spkrBody.addEventListener('click',e=>{
-  const w=e.target.closest('.w'); if(w){ skSpeak(w.textContent); return; }              // 語タップ=その語を読み上げ(単語ヘルパー)
-  const a=e.target.closest('[data-sk]'); if(!a) return;
-  if(a.dataset.sk==='mine') skPlayMine();                                                 // 自分の声
-  else if(a.dataset.sk==='model') skPlayModel();                                           // お手本=カードと同じ実音声
-  else if(a.dataset.sk==='again'){ skClose(); setTimeout(()=>startSpkRec(),140); }         // もう一度言う(閉じて再録音)
+  const a=e.target.closest('[data-sk]');
+  if(spkRecording){ if(a&&a.dataset.sk==='again') stopSpkRec(); return; }                  // 録音中は「停止」だけ有効(他は無効=音が混ざらない)
+  const w=e.target.closest('.w'); if(w){ skSpeak(w.textContent); return; }                 // 語タップ=その語を読み上げ(単語ヘルパー)
+  if(!a) return;
+  if(a.dataset.sk==='mine') skPlayMine();                                                  // 自分の声
+  else if(a.dataset.sk==='model') skPlayModel();                                            // お手本=カードと同じ実音声
+  else if(a.dataset.sk==='again'){ startSpkRec(true); a.textContent='録音中… タップで停止'; a.classList.add('sk-recing'); }   // 閉じずにその場で録音(文を見ながら)
 });
 
 // 録音blob(iOSはmp4等)→ 16kHz mono PCM16 WAV → base64
