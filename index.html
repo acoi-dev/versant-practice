@@ -143,7 +143,7 @@
   .yb.mic:active{opacity:1}
   .yb.mic.rec{border-color:#e5484d;color:#e5484d;animation:micpulse 1.1s ease-in-out infinite}
   @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.30)}50%{box-shadow:0 0 0 9px rgba(229,72,77,0)}}
-  .michint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 100px);text-align:center;font-size:13px;color:#e5484d;font-weight:600;pointer-events:none;opacity:0;transition:.2s;z-index:9}
+  .michint{position:fixed;left:50%;top:36%;transform:translate(-50%,-50%);background:var(--ink);color:var(--bg);font-size:13px;font-weight:600;padding:9px 18px;border-radius:22px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:13}  /* 下部ボタンと重ならないよう中央トーストに */
   .michint.show{opacity:1}
   .spkr{position:fixed;inset:0;z-index:14;display:none}
   .spkr.show{display:block}
@@ -267,7 +267,7 @@
     </div>
   </div>
   <!-- マイク使用中のヒント(録音中の合図) -->
-  <div class="michint" id="michint" aria-hidden="true">録音中… もう一度マイクを押すと停止して採点</div>
+  <div class="michint" id="michint" aria-hidden="true">録音中… もう一度押すと停止</div>
 </div>
 
 <!-- 設定ポップ（右上の歯車の直下にその場で開く。画面遷移なし） -->
@@ -726,7 +726,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-54';
+const BUILD='0806-55';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
