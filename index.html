@@ -137,6 +137,42 @@
   .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg);justify-self:center}
   .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 15px;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
 
+  /* ===== 発音採点(押し続け録音のマイク＋結果シート) ===== */
+  .ytc{display:flex;align-items:center;gap:16px;justify-self:center}
+  .yb.mic{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--line2);color:var(--ink);touch-action:none}   /* 押し続けで録音するのでtouch-action:noneでスクロール抑止 */
+  .yb.mic:active{opacity:1}
+  .yb.mic.rec{border-color:#e5484d;color:#e5484d;animation:micpulse 1.1s ease-in-out infinite}
+  @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.30)}50%{box-shadow:0 0 0 9px rgba(229,72,77,0)}}
+  .michint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 100px);text-align:center;font-size:13px;color:#e5484d;font-weight:600;pointer-events:none;opacity:0;transition:.2s;z-index:9}
+  .michint.show{opacity:1}
+  .spkr{position:fixed;inset:0;z-index:14;display:none}
+  .spkr.show{display:block}
+  .spkr-bg{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+  .spkr-sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-top-left-radius:20px;border-top-right-radius:20px;border-top:1px solid var(--line2);
+    padding:22px 22px calc(env(safe-area-inset-bottom) + 24px);max-height:86vh;overflow-y:auto;transform:translateY(100%);transition:transform .24s ease}
+  .spkr.show .spkr-sheet{transform:translateY(0)}
+  .spkr-x{position:absolute;top:12px;right:14px;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:36px;height:36px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .spkr-body{padding-top:14px}
+  .sk-top{display:flex;align-items:center;gap:20px;margin-bottom:14px}
+  .sk-ring{--v:0;width:84px;height:84px;flex:0 0 auto;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--v)*1%),var(--line2) 0);display:flex;align-items:center;justify-content:center;position:relative}
+  .sk-ring::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--bg)}
+  .sk-ring b{position:relative;font-size:25px;font-weight:600;font-variant-numeric:tabular-nums}
+  .sk-ring i{position:relative;font-style:normal;font-size:12px;color:var(--sub);margin-left:1px}
+  .sk-sub{font-size:13px;flex:1}
+  .sk-sub .l{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);font-weight:600;margin-bottom:4px}
+  .sk-sub .r{display:flex;justify-content:space-between;gap:16px;padding:2px 0}
+  .sk-sub .r span:first-child{color:var(--sub)}
+  .sk-sub .r span:last-child{font-weight:600;font-variant-numeric:tabular-nums}
+  .sk-words{font-size:19px;line-height:1.9;margin:4px 0}
+  .sk-words .w.bad{color:#e5484d;text-decoration:underline;text-decoration-color:#e5484d;text-underline-offset:3px}
+  .sk-leg{font-size:11.5px;color:var(--faint)}
+  .sk-leg b{color:#e5484d;font-weight:600}
+  .sk-adv{font-size:14px;line-height:1.8;border-top:1px solid var(--line);padding-top:14px;margin-top:12px}
+  .sk-adv .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);font-weight:600;display:block;margin-bottom:5px}
+  .sk-heard{font-size:12px;color:var(--faint);margin-top:10px}
+  .sk-heard b{color:var(--sub);font-weight:600}
+  .sk-status{text-align:center;font-size:15px;color:var(--sub);padding:34px 0}
+
   .hint{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
@@ -222,6 +258,16 @@
     <button class="navb eye" id="eyeToggle"></button>
     <button class="navb home" id="back" aria-label="パート一覧"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
   </div>
+  <!-- 発音採点シート: 録音→採点の結果を同じ画面内(下から)に表示 -->
+  <div class="spkr" id="spkr" aria-hidden="true">
+    <div class="spkr-bg" id="spkrBg"></div>
+    <div class="spkr-sheet">
+      <button class="spkr-x" id="spkrX" aria-label="閉じる">&times;</button>
+      <div class="spkr-body" id="spkrBody"></div>
+    </div>
+  </div>
+  <!-- マイク使用中のヒント(録音中の合図) -->
+  <div class="michint" id="michint" aria-hidden="true">録音中… 指を離すと採点</div>
 </div>
 
 <!-- 設定ポップ（右上の歯車の直下にその場で開く。画面遷移なし） -->
@@ -275,6 +321,8 @@ const IC_EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 const IC_EYEOFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.1 10.1 0 0 1 12 20C5 20 2 12 2 12a18.5 18.5 0 0 1 5.1-6M9.9 4.2A9.1 9.1 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.2 3.2m-6.7-1.1a3 3 0 1 1-4.2-4.2"/><line x1="2" y1="2" x2="22" y2="22"/></svg>';
 const IC_PLAY='<svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
 const IC_PAUSE='<svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
+const IC_MIC='<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/><line x1="9" y1="21" x2="15" y2="21"/></svg>';
+const SPEAK_API='https://versant-speaking-api-s8gk.vercel.app';   // 発音採点API(OpenAI Whisper+語一致+GPT)。押し続け録音→離すと採点
 const IC_GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
 document.getElementById('mGear').innerHTML=IC_GEAR;
 
@@ -361,12 +409,8 @@ const TIP={form:'2語がくっついて短く言われます。かたまりで�
 // 大きな英文が何なのかを示す小見出し(C/D=会話・本文の後に来る質問、E=聞いて再話する話そのもの、A/F=質問、B=復唱する英文)
 const ENLAB={A:'質問',B:'英文',C:'質問',D:'質問',E:'話',F:'質問',G:'例文'};
 function renderHome(){
-  // 話すモード(家用)への入口。採点APIを繋ぐまでは非表示(SPEAK_ENABLED=false)。有効時のみ先頭に出す
-  const speak=SPEAK_ENABLED?(`<a class="pcard speak" href="speak.html">`
-    +`<div class="top"><span class="eb">話すモード</span><span class="meta">家で ・ 要マイク</span></div>`
-    +`<div class="ttl">声に出して発音を採点</div>`
-    +`<div class="desc">お手本を聞いて同じ文を言う（Part B 復唱）</div></a>`
-    +`<div class="phead">聞くモード（移動中）</div>`):'';
+  // 話す採点は各カードのマイクボタン(押し続け録音→離すと採点)に統合済み。別ページ導線は廃止
+  const speak='';
   const parts=DATA.parts.map((p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
     const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"(先頭のPart Xは小見出しへ)
@@ -449,7 +493,10 @@ function renderFeed(){
       <div class="bot">
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
-          <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
+          <div class="ytc">
+            <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
+            ${(SPEAK_ENABLED&&c.en)?`<button class="yb mic" data-mic aria-label="押し続けて録音、離すと採点">${IC_MIC}</button>`:''}
+          </div>
           <button class="spd" data-spd>${spdTxt(speed)}</button>
         </div>
       </div>
@@ -461,6 +508,7 @@ function renderFeed(){
     if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
     if(e.target.closest('[data-spd]')){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=spdTxt(speed));if(typeof syncSpeedSeg==='function')syncSpeedSeg();return;}
     if(e.target.closest('[data-rep]')){replay();return;}
+    if(e.target.closest('[data-mic]')){return;}   // マイクは押し続け録音(下のpointerdown/upで処理)。タップでは再生させない
     if(e.target.closest('[data-play]')){togglePlay();return;}
     togglePlay();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
   }));
@@ -680,7 +728,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-52';
+const BUILD='0806-53';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -700,6 +748,100 @@ if(location.href.indexOf('debug')>=0){
       +'t='+(AU.currentTime||0).toFixed(1)+'  paused='+AU.paused+'  rs='+AU.readyState+'  seek='+(AU.seekable&&AU.seekable.length?AU.seekable.end(0).toFixed(0):0)+'\n'
       +'scrollTop='+(f?Math.round(f.scrollTop):'-')+'  switching='+switching;
   },200);
+}
+
+// ===== 発音採点(押し続けて録音→離すと採点。結果は同じ画面のシートに表示) =====
+let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null;
+const _spkr=document.getElementById('spkr'), _spkrBody=document.getElementById('spkrBody'), _michint=document.getElementById('michint');
+function skOpen(html){ _spkrBody.innerHTML=html; _spkr.classList.add('show'); _spkr.setAttribute('aria-hidden','false'); }
+function skClose(){ _spkr.classList.remove('show'); _spkr.setAttribute('aria-hidden','true'); }
+function skEsc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+async function startSpkRec(){
+  if(spkRecording) return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ skOpen('<div class="sk-status">この端末では録音できません</div>'); return; }
+  try{
+    try{AU.pause();}catch(e){}                                   // 聞く音声が録音に混じらないよう止める
+    spkStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    spkChunks=[]; spkRec=new MediaRecorder(spkStream);
+    spkRec.ondataavailable=e=>{ if(e.data.size) spkChunks.push(e.data); };
+    spkRec.onstop=async ()=>{
+      try{ spkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+      const ref=(CARDS[active]&&CARDS[active].en)||'';
+      if(!spkChunks.length||!ref){ skClose(); return; }
+      skOpen('<div class="sk-status">採点中…</div>');
+      try{
+        const blob=new Blob(spkChunks,{type:(spkChunks[0]&&spkChunks[0].type)||'audio/mp4'});
+        const wav=await blobToWav16k(blob);
+        await scoreSpk(wav, ref);
+      }catch(e){ skOpen('<div class="sk-status">音声の変換に失敗しました</div>'); }
+    };
+    spkRec.start(); spkRecording=true;
+    document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));
+    _michint.classList.add('show');
+  }catch(e){ _michint.classList.remove('show'); skOpen('<div class="sk-status">マイクを使えませんでした（許可を確認してください）</div>'); }
+}
+function stopSpkRec(){
+  if(!spkRecording) return; spkRecording=false;
+  _michint.classList.remove('show');
+  document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec'));
+  try{ if(spkRec&&spkRec.state!=='inactive') spkRec.stop(); }catch(e){}
+}
+// 押し続け=録音 / 離す=停止して採点(pointerで touch/マウス両対応)
+document.getElementById('feed').addEventListener('pointerdown',e=>{ if(e.target.closest('[data-mic]')){ e.preventDefault(); startSpkRec(); }});
+document.addEventListener('pointerup',()=>{ if(spkRecording) stopSpkRec(); });
+document.addEventListener('pointercancel',()=>{ if(spkRecording) stopSpkRec(); });
+document.getElementById('spkrX').addEventListener('click',skClose);
+document.getElementById('spkrBg').addEventListener('click',skClose);
+
+// 録音blob(iOSはmp4等)→ 16kHz mono PCM16 WAV → base64
+async function blobToWav16k(blob){
+  const buf=await blob.arrayBuffer();
+  const AC=window.AudioContext||window.webkitAudioContext; const ac=new AC();
+  const audio=await ac.decodeAudioData(buf);
+  const len=audio.length, ch=audio.numberOfChannels;
+  let mono=new Float32Array(len);
+  for(let c=0;c<ch;c++){ const d=audio.getChannelData(c); for(let i=0;i<len;i++) mono[i]+=d[i]/ch; }
+  const src=audio.sampleRate, dst=16000, outLen=Math.max(1,Math.round(len*dst/src));
+  const out=new Float32Array(outLen);
+  for(let i=0;i<outLen;i++){ const t=i*src/dst, i0=Math.floor(t), i1=Math.min(i0+1,len-1), f=t-i0; out[i]=mono[i0]*(1-f)+mono[i1]*f; }
+  try{ ac.close(); }catch(e){}
+  return skB64(encodeWav(out,dst));
+}
+function encodeWav(samples,rate){
+  const n=samples.length, b=new ArrayBuffer(44+n*2), v=new DataView(b);
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  w(0,'RIFF'); v.setUint32(4,36+n*2,true); w(8,'WAVE'); w(12,'fmt '); v.setUint32(16,16,true);
+  v.setUint16(20,1,true); v.setUint16(22,1,true); v.setUint32(24,rate,true); v.setUint32(28,rate*2,true);
+  v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,'data'); v.setUint32(40,n*2,true);
+  let o=44; for(let i=0;i<n;i++){ let s=Math.max(-1,Math.min(1,samples[i])); v.setInt16(o,s<0?s*0x8000:s*0x7FFF,true); o+=2; }
+  return b;
+}
+function skB64(ab){ const by=new Uint8Array(ab); let s=''; for(let i=0;i<by.length;i+=0x8000) s+=String.fromCharCode.apply(null,by.subarray(i,i+0x8000)); return btoa(s); }
+
+async function scoreSpk(wavB64, reference){
+  try{
+    const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:wavB64,reference})});
+    const j=await r.json(); if(!j.ok) throw new Error(j.error||'採点に失敗');
+    renderSpkResult(j);
+  }catch(e){ skOpen('<div class="sk-status">採点サーバーに接続できませんでした</div>'); }
+}
+function renderSpkResult(j){
+  const said=Math.round((j.scores&&j.scores.said)??0);
+  const words=j.words||[], okN=words.filter(w=>w.ok).length;
+  const wHTML=words.map(w=>`<span class="w ${w.ok?'':'bad'}">${skEsc(w.word)}</span>`).join(' ');
+  skOpen(
+    `<div class="sk-top">`
+     +`<div class="sk-ring" style="--v:${said}"><b>${said}</b><i>%</i></div>`
+     +`<div class="sk-sub"><div class="l">言えた率</div>`
+       +`<div class="r"><span>言えた語</span><span>${okN} / ${words.length}</span></div>`
+       +`<div class="r"><span>伝わらなかった語</span><span>${j.missing?j.missing.length:words.filter(w=>!w.ok).length}</span></div></div>`
+     +`</div>`
+    +`<div class="sk-words">${wHTML}</div>`
+    +`<div class="sk-leg">お手本の各語 ＝ <b>伝わらなかった語</b>（無色は言えている）</div>`
+    +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}</div>`
+    +(j.transcript?`<div class="sk-heard">聞き取り: <b>${skEsc(j.transcript)}</b></div>`:'')
+  );
 }
 </script>
 </body>
