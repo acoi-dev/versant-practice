@@ -143,8 +143,8 @@
   .yb.mic:active{opacity:1}
   .yb.mic.rec{border-color:#e5484d;color:#e5484d;animation:micpulse 1.1s ease-in-out infinite}
   @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.30)}50%{box-shadow:0 0 0 9px rgba(229,72,77,0)}}
-  .michint{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 96px);transform:translateX(-50%);background:#e5484d;color:#fff;font-size:13px;font-weight:600;padding:9px 18px;border-radius:22px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:13}  /* 上部の空きへ(英文/ボタンと重ならない)・録音中なので赤 */
-  .michint.show{opacity:1}
+  .miclbl{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:700;color:#e5484d;opacity:0;transition:opacity .15s;pointer-events:none}   /* 録音中の合図はマイクボタンの真上に(浮かせず親=マイクに紐付き=重ならない) */
+  .yb.mic.rec .miclbl{opacity:1}
   .spkr{position:fixed;inset:0;z-index:14;display:none}
   .spkr.show{display:block}
   .spkr-bg{position:absolute;inset:0;background:rgba(0,0,0,.4)}
@@ -277,8 +277,6 @@
       <div class="spkr-body" id="spkrBody"></div>
     </div>
   </div>
-  <!-- マイク使用中のヒント(録音中の合図) -->
-  <div class="michint" id="michint" aria-hidden="true">録音中… もう一度押すと停止</div>
 </div>
 
 <!-- 設定ポップ（右上の歯車の直下にその場で開く。画面遷移なし） -->
@@ -506,7 +504,7 @@ function renderFeed(){
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
-          ${(SPEAK_ENABLED&&c.en)?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}</button>`:''}
+          ${(SPEAK_ENABLED&&c.en)?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
         </div>
       </div>
     </section>`).join('');
@@ -738,7 +736,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-67';
+const BUILD='0806-69';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -763,7 +761,7 @@ if(location.href.indexOf('debug')>=0){
 // ===== 発音採点(押し続けて録音→離すと採点。結果は同じ画面のシートに表示) =====
 let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null, spkLastBlob=null, spkLastRef='', _mineAudio=null, _modelAudio=null, _maxRecTimer=0, _recStart=0, _recCancel=false;
 const SPK_MAX_MS=20000, SPK_MIN_MS=500;   // 止め忘れは20秒で自動停止/採点、0.5秒未満の誤タップは無視
-const _spkr=document.getElementById('spkr'), _spkrBody=document.getElementById('spkrBody'), _michint=document.getElementById('michint');
+const _spkr=document.getElementById('spkr'), _spkrBody=document.getElementById('spkrBody');
 function skOpen(html){ _spkrBody.innerHTML=html; _spkr.classList.add('show'); _spkr.setAttribute('aria-hidden','false'); }
 function skClose(){ _spkr.classList.remove('show'); _spkr.setAttribute('aria-hidden','true'); try{ clearTimeout(_modelStop); if(_mineAudio)_mineAudio.pause(); AU.pause(); speechSynthesis.cancel(); }catch(e){} }   // 閉じたら再生中の音声(自分の声/お手本/読み上げ)を止める   // 閉じたら再生中の音声も止める
 function skEsc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
@@ -790,14 +788,12 @@ async function startSpkRec(fromSheet){
     };
     spkRec.start(); spkRecording=true; _recStart=Date.now();
     clearTimeout(_maxRecTimer); _maxRecTimer=setTimeout(()=>{ if(spkRecording) stopSpkRec(); }, SPK_MAX_MS);   // 止め忘れ対策: 最長で自動停止→採点
-    document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));
-    if(!fromSheet){ document.getElementById('hint')?.classList.add('hide'); _michint.classList.add('show'); }   // シート内録音はボタンが状態を示すのでトーストは出さない。フリックヒントと重ならないよう隠す
-  }catch(e){ _michint.classList.remove('show'); skOpen('<div class="sk-status">マイクを使えませんでした（許可を確認してください）</div>'); }
+    document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));   // マイクボタンが赤く点滅＋真上に「録音中…」ラベル(.miclbl)。シート内録音時はシートが覆うので裏のラベルは見えない
+  }catch(e){ document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec')); skOpen('<div class="sk-status">マイクを使えませんでした（許可を確認してください）</div>'); }
 }
 function stopSpkRec(cancel){
   if(!spkRecording) return; spkRecording=false; _recCancel=!!cancel;   // cancel=採点せず中断(再生等で割り込み時)
   clearTimeout(_maxRecTimer);
-  _michint.classList.remove('show');
   document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec'));
   try{ if(spkRec&&spkRec.state!=='inactive') spkRec.stop(); }catch(e){}
 }
