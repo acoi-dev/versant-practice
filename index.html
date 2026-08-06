@@ -736,7 +736,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-62';
+const BUILD='0806-63';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -762,7 +762,7 @@ if(location.href.indexOf('debug')>=0){
 let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null, spkLastBlob=null, spkLastRef='', _mineAudio=null, _modelAudio=null;
 const _spkr=document.getElementById('spkr'), _spkrBody=document.getElementById('spkrBody'), _michint=document.getElementById('michint');
 function skOpen(html){ _spkrBody.innerHTML=html; _spkr.classList.add('show'); _spkr.setAttribute('aria-hidden','false'); }
-function skClose(){ _spkr.classList.remove('show'); _spkr.setAttribute('aria-hidden','true'); try{ if(_mineAudio)_mineAudio.pause(); if(_modelAudio)_modelAudio.pause(); speechSynthesis.cancel(); }catch(e){} }   // 閉じたら再生中の音声も止める
+function skClose(){ _spkr.classList.remove('show'); _spkr.setAttribute('aria-hidden','true'); try{ clearTimeout(_modelStop); if(_mineAudio)_mineAudio.pause(); AU.pause(); speechSynthesis.cancel(); }catch(e){} }   // 閉じたら再生中の音声(自分の声/お手本/読み上げ)を止める   // 閉じたら再生中の音声も止める
 function skEsc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 
 async function startSpkRec(){
@@ -802,17 +802,16 @@ document.getElementById('spkrBg').addEventListener('click',skClose);
 // 結果シート内の操作: 語タップで読み上げ / 自分の声・お手本を再生 / もう一度言う
 function skSpeak(t){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=.9; const v=speechSynthesis.getVoices().find(v=>/en[-_]US/i.test(v.lang)); if(v)u.voice=v; speechSynthesis.speak(u); }catch(e){} }
 function skPlayMine(){ if(!spkLastBlob) return; try{ if(_modelAudio)_modelAudio.pause(); if(_mineAudio) _mineAudio.pause(); _mineAudio=new Audio(URL.createObjectURL(spkLastBlob)); _mineAudio.play().catch(()=>{}); }catch(e){} }
-// お手本は「録音前に聞いたのと同じ実音声(カードのmp3)」の該当文だけを鳴らす(合成音声にしない=声が変わらない)
+// お手本は「録音前に聞いたのと同じ実音声」＝メイン音声(AU, partB.mp3等)の該当文だけを鳴らす(合成音声にしない=声が変わらない)
+let _modelStop=0;
 function skPlayModel(){
-  const c=CARDS[active], url=PART&&(PART.audio||PART.mp3);
-  if(!c||!url){ skSpeak(spkLastRef); return; }                       // 音源不明ならフォールバック(合成音声)
-  try{ if(_mineAudio)_mineAudio.pause(); if(_modelAudio)_modelAudio.pause(); }catch(e){}
-  const start=(c.start||0)+0.03, words=(spkLastRef||'').split(/\s+/).filter(Boolean).length||3;
-  const dur=Math.min(8, words*0.42+0.6);                            // 文の読み上げ分だけ(以降のbuildup等は流さない)
-  _modelAudio=new Audio(url);
-  const begin=()=>{ try{_modelAudio.currentTime=start;}catch(e){} _modelAudio.play().catch(()=>{});
-    setTimeout(()=>{ try{ _modelAudio&&_modelAudio.pause(); }catch(e){} }, dur*1000+300); };   // 再生時間で確実に停止(シーク不発でも延々流れない)
-  if(_modelAudio.readyState>=1) begin(); else _modelAudio.addEventListener('loadedmetadata',begin,{once:true});
+  const c=CARDS[active]; if(!c){ skSpeak(spkLastRef); return; }
+  try{ if(_mineAudio)_mineAudio.pause(); }catch(e){}
+  try{ ensureAudioSource(); }catch(e){}                                        // AUに正しいパート音源を確実に載せる(既存の音ズレ対策)
+  const start=(c.start||0)+0.03, dur=Math.min(8,((spkLastRef||'').split(/\s+/).filter(Boolean).length||3)*0.42+0.6);
+  try{ AU.currentTime=start; }catch(e){}
+  AU.play().catch(()=>{});
+  clearTimeout(_modelStop); _modelStop=setTimeout(()=>{ try{AU.pause();}catch(e){} }, dur*1000+300);   // 文の分だけ鳴らして停止(以降のゆっくり/積み上げは流さない)
 }
 _spkrBody.addEventListener('click',e=>{
   const w=e.target.closest('.w'); if(w){ skSpeak(w.textContent); return; }              // 語タップ=その語を読み上げ(単語ヘルパー)
