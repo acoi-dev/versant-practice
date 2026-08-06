@@ -138,8 +138,8 @@
   .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 15px;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
 
   /* ===== 発音採点(押し続け録音のマイク＋結果シート) ===== */
-  .ytc{display:flex;align-items:center;gap:16px;justify-self:center}
-  .yb.mic{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--line2);color:var(--ink);touch-action:none}   /* 押し続けで録音するのでtouch-action:noneでスクロール抑止 */
+  .spdrow{display:flex;justify-content:center;margin-bottom:14px}   /* 速度は再生ボタンの上段に置く */
+  .yb.mic{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--line2);color:var(--ink);justify-self:center}   /* 録音: タップで開始、もう一度で停止して採点 */
   .yb.mic:active{opacity:1}
   .yb.mic.rec{border-color:#e5484d;color:#e5484d;animation:micpulse 1.1s ease-in-out infinite}
   @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.30)}50%{box-shadow:0 0 0 9px rgba(229,72,77,0)}}
@@ -267,7 +267,7 @@
     </div>
   </div>
   <!-- マイク使用中のヒント(録音中の合図) -->
-  <div class="michint" id="michint" aria-hidden="true">録音中… 指を離すと採点</div>
+  <div class="michint" id="michint" aria-hidden="true">録音中… もう一度マイクを押すと停止して採点</div>
 </div>
 
 <!-- 設定ポップ（右上の歯車の直下にその場で開く。画面遷移なし） -->
@@ -491,13 +491,11 @@ function renderFeed(){
       </div>
       <div class="text" id="text${i}"></div>
       <div class="bot">
+        <div class="spdrow"><button class="spd" data-spd>${spdTxt(speed)}</button></div>
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
-          <div class="ytc">
-            <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
-            ${(SPEAK_ENABLED&&c.en)?`<button class="yb mic" data-mic aria-label="押し続けて録音、離すと採点">${IC_MIC}</button>`:''}
-          </div>
-          <button class="spd" data-spd>${spdTxt(speed)}</button>
+          <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
+          ${(SPEAK_ENABLED&&c.en)?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}</button>`:''}
         </div>
       </div>
     </section>`).join('');
@@ -508,7 +506,7 @@ function renderFeed(){
     if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
     if(e.target.closest('[data-spd]')){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=spdTxt(speed));if(typeof syncSpeedSeg==='function')syncSpeedSeg();return;}
     if(e.target.closest('[data-rep]')){replay();return;}
-    if(e.target.closest('[data-mic]')){return;}   // マイクは押し続け録音(下のpointerdown/upで処理)。タップでは再生させない
+    if(e.target.closest('[data-mic]')){toggleSpkRec();return;}   // マイク: タップで録音開始、もう一度タップで停止して採点。タップで再生はさせない
     if(e.target.closest('[data-play]')){togglePlay();return;}
     togglePlay();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
   }));
@@ -728,7 +726,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-53';
+const BUILD='0806-54';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -787,10 +785,8 @@ function stopSpkRec(){
   document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec'));
   try{ if(spkRec&&spkRec.state!=='inactive') spkRec.stop(); }catch(e){}
 }
-// 押し続け=録音 / 離す=停止して採点(pointerで touch/マウス両対応)
-document.getElementById('feed').addEventListener('pointerdown',e=>{ if(e.target.closest('[data-mic]')){ e.preventDefault(); startSpkRec(); }});
-document.addEventListener('pointerup',()=>{ if(spkRecording) stopSpkRec(); });
-document.addEventListener('pointercancel',()=>{ if(spkRecording) stopSpkRec(); });
+// タップで録音開始 / もう一度タップで停止して採点(カードのclickハンドラから呼ばれる)
+function toggleSpkRec(){ if(spkRecording) stopSpkRec(); else startSpkRec(); }
 document.getElementById('spkrX').addEventListener('click',skClose);
 document.getElementById('spkrBg').addEventListener('click',skClose);
 
