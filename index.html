@@ -143,7 +143,7 @@
   .yb.mic:active{opacity:1}
   .yb.mic.rec{border-color:#e5484d;color:#e5484d;animation:micpulse 1.1s ease-in-out infinite}
   @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.30)}50%{box-shadow:0 0 0 9px rgba(229,72,77,0)}}
-  .michint{position:fixed;left:50%;top:36%;transform:translate(-50%,-50%);background:var(--ink);color:var(--bg);font-size:13px;font-weight:600;padding:9px 18px;border-radius:22px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:13}  /* 下部ボタンと重ならないよう中央トーストに */
+  .michint{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 96px);transform:translateX(-50%);background:#e5484d;color:#fff;font-size:13px;font-weight:600;padding:9px 18px;border-radius:22px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:13}  /* 上部の空きへ(英文/ボタンと重ならない)・録音中なので赤 */
   .michint.show{opacity:1}
   .spkr{position:fixed;inset:0;z-index:14;display:none}
   .spkr.show{display:block}
@@ -738,7 +738,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-66';
+const BUILD='0806-67';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -791,7 +791,7 @@ async function startSpkRec(fromSheet){
     spkRec.start(); spkRecording=true; _recStart=Date.now();
     clearTimeout(_maxRecTimer); _maxRecTimer=setTimeout(()=>{ if(spkRecording) stopSpkRec(); }, SPK_MAX_MS);   // 止め忘れ対策: 最長で自動停止→採点
     document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));
-    if(!fromSheet) _michint.classList.add('show');   // シート内録音はボタンが状態を示すのでトーストは出さない
+    if(!fromSheet){ document.getElementById('hint')?.classList.add('hide'); _michint.classList.add('show'); }   // シート内録音はボタンが状態を示すのでトーストは出さない。フリックヒントと重ならないよう隠す
   }catch(e){ _michint.classList.remove('show'); skOpen('<div class="sk-status">マイクを使えませんでした（許可を確認してください）</div>'); }
 }
 function stopSpkRec(cancel){
