@@ -172,6 +172,12 @@
   .sk-heard{font-size:12px;color:var(--faint);margin-top:10px}
   .sk-heard b{color:var(--sub);font-weight:600}
   .sk-status{text-align:center;font-size:15px;color:var(--sub);padding:34px 0}
+  .sk-words .w{cursor:pointer}
+  .sk-tap{color:var(--accent)}
+  .sk-actions{display:flex;gap:9px;margin-top:18px}
+  .sk-btn{flex:1;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line2);background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 6px;cursor:pointer;text-align:center;white-space:nowrap}
+  .sk-btn:active{background:var(--hover)}
+  .sk-btn.sk-again{border-color:var(--accent);color:var(--accent)}
 
   .hint{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
@@ -726,7 +732,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-55';
+const BUILD='0806-56';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -749,7 +755,7 @@ if(location.href.indexOf('debug')>=0){
 }
 
 // ===== 発音採点(押し続けて録音→離すと採点。結果は同じ画面のシートに表示) =====
-let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null;
+let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null, spkLastBlob=null, spkLastRef='', _mineAudio=null;
 const _spkr=document.getElementById('spkr'), _spkrBody=document.getElementById('spkrBody'), _michint=document.getElementById('michint');
 function skOpen(html){ _spkrBody.innerHTML=html; _spkr.classList.add('show'); _spkr.setAttribute('aria-hidden','false'); }
 function skClose(){ _spkr.classList.remove('show'); _spkr.setAttribute('aria-hidden','true'); }
@@ -765,11 +771,11 @@ async function startSpkRec(){
     spkRec.ondataavailable=e=>{ if(e.data.size) spkChunks.push(e.data); };
     spkRec.onstop=async ()=>{
       try{ spkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
-      const ref=(CARDS[active]&&CARDS[active].en)||'';
+      const ref=(CARDS[active]&&CARDS[active].en)||''; spkLastRef=ref;
       if(!spkChunks.length||!ref){ skClose(); return; }
       skOpen('<div class="sk-status">採点中…</div>');
       try{
-        const blob=new Blob(spkChunks,{type:(spkChunks[0]&&spkChunks[0].type)||'audio/mp4'});
+        const blob=new Blob(spkChunks,{type:(spkChunks[0]&&spkChunks[0].type)||'audio/mp4'}); spkLastBlob=blob;   // 聞き返し用に保持
         const wav=await blobToWav16k(blob);
         await scoreSpk(wav, ref);
       }catch(e){ skOpen('<div class="sk-status">音声の変換に失敗しました</div>'); }
@@ -789,6 +795,16 @@ function stopSpkRec(){
 function toggleSpkRec(){ if(spkRecording) stopSpkRec(); else startSpkRec(); }
 document.getElementById('spkrX').addEventListener('click',skClose);
 document.getElementById('spkrBg').addEventListener('click',skClose);
+// 結果シート内の操作: 語タップで読み上げ / 自分の声・お手本を再生 / もう一度言う
+function skSpeak(t){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=.9; const v=speechSynthesis.getVoices().find(v=>/en[-_]US/i.test(v.lang)); if(v)u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+function skPlayMine(){ if(!spkLastBlob) return; try{ if(_mineAudio) _mineAudio.pause(); _mineAudio=new Audio(URL.createObjectURL(spkLastBlob)); _mineAudio.play().catch(()=>{}); }catch(e){} }
+_spkrBody.addEventListener('click',e=>{
+  const w=e.target.closest('.w'); if(w){ skSpeak(w.textContent); return; }              // 語タップ=その語を読み上げ
+  const a=e.target.closest('[data-sk]'); if(!a) return;
+  if(a.dataset.sk==='mine') skPlayMine();                                                 // 自分の声
+  else if(a.dataset.sk==='model') skSpeak(spkLastRef);                                     // お手本(読み上げ)
+  else if(a.dataset.sk==='again'){ skClose(); setTimeout(()=>startSpkRec(),140); }         // もう一度言う(閉じて再録音)
+});
 
 // 録音blob(iOSはmp4等)→ 16kHz mono PCM16 WAV → base64
 async function blobToWav16k(blob){
@@ -834,9 +850,14 @@ function renderSpkResult(j){
        +`<div class="r"><span>伝わらなかった語</span><span>${j.missing?j.missing.length:words.filter(w=>!w.ok).length}</span></div></div>`
      +`</div>`
     +`<div class="sk-words">${wHTML}</div>`
-    +`<div class="sk-leg">お手本の各語 ＝ <b>伝わらなかった語</b>（無色は言えている）</div>`
+    +`<div class="sk-leg">お手本の各語 ＝ <b>伝わらなかった語</b>（無色は言えている）・<span class="sk-tap">語をタップで読み上げ</span></div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}</div>`
     +(j.transcript?`<div class="sk-heard">聞き取り: <b>${skEsc(j.transcript)}</b></div>`:'')
+    +`<div class="sk-actions">`
+      +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
+      +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
+      +`<button class="sk-btn sk-again" data-sk="again">もう一度言う</button>`
+    +`</div>`
   );
 }
 </script>
