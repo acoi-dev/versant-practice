@@ -65,6 +65,7 @@
   .cdown .cd-set{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .cdown input[type=date]{font:inherit;font-size:14px;color:var(--ink);background:none;border:1px solid var(--line2);border-radius:9px;padding:8px 11px}
   .cdown .cd-link{font-size:12px;color:var(--sub);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+  #streak{border-bottom:0;padding-bottom:6px}   /* 連続日数ブロック。区切り線は下の受験日ブロックに任せる */
   .pcard.lesson{text-decoration:none;color:inherit}        /* イメージ英文法(別ページへ) */
   .pcard .eb.kt{color:var(--accent)}                       /* きたえる系は見出しをアクセント色で区別 */
   .pcard.soon{opacity:.5}                                  /* 近日(タップ不可) */
@@ -272,6 +273,7 @@
   <button class="closex" id="homeClose" aria-label="閉じる" hidden>&times;</button>
   <div class="brand">Versant 練習</div>
   <div class="tag">本番と同じ例題を、耳で無限反復</div>
+  <div class="cdown" id="streak"></div>
   <div class="cdown" id="cdown"></div>
   <div class="plist" id="plist"></div>
   <p class="disc">非公式の練習アプリです。Versant<span class="r">®</span> は Pearson Education 社の商標で、本アプリは Pearson 社および Versant と関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
@@ -443,6 +445,27 @@ function logPracticeDay(){ const l=loadLog(); l.days=l.days||[]; const t=todaySt
 function logScore(part,said){ const l=loadLog(); l.scores=l.scores||[]; l.scores.push({d:todayStr(),part:part||'',said:said}); if(l.scores.length>500) l.scores=l.scores.slice(-500); saveLog(l); }
 function setExamDate(v){ const l=loadLog(); l.examDate=v||null; saveLog(l); renderCountdown(); }
 function daysUntil(ds){ const t=new Date(todayStr()+'T00:00:00'), e=new Date(ds+'T00:00:00'); return Math.round((e-t)/86400000); }
+function fmtDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+// 連続日数: 今日(やってれば)or昨日を起点に、練習した日が途切れるまで遡って数える。今日まだでも昨日まで続いていれば維持(今日やれば伸びる)
+function streakInfo(){
+  const set=new Set(loadLog().days||[]); const doneToday=set.has(todayStr());
+  let cur=0, d=new Date(todayStr()+'T00:00:00'); if(!doneToday) d.setDate(d.getDate()-1);
+  while(set.has(fmtDate(d))){ cur++; d.setDate(d.getDate()-1); }
+  return { streak:cur, doneToday, total:set.size };
+}
+// ホーム上部「連続日数＋今日やった印」。受験日がなくても効く。責めない優しいトーン(途切れ＝全否定にしない)
+function renderStreak(){
+  const el=document.getElementById('streak'); if(!el) return;
+  const s=streakInfo();
+  const tot=s.total>s.streak?'（これまで'+s.total+'日）':'';
+  if(s.streak>0){
+    el.innerHTML='<div class="cd-main"><span class="cd-num">'+s.streak+'日</span><span class="cd-lb">つづいています</span></div>'
+      +'<div class="cd-sub">'+(s.doneToday?'今日もできました。その調子。':'今日の1本で、記録がのびます。')+tot+'</div>';
+  } else {
+    el.innerHTML='<div class="cd-lb">'+(s.doneToday?'今日もできました。':'今日から、1日1本ずつ。')+'</div>'
+      +'<div class="cd-sub">むずかしく考えず、まず1本だけ声に出そう。'+tot+'</div>';
+  }
+}
 function bindExamInput(preset){ const inp=document.getElementById('examInput'); if(!inp) return; if(preset) inp.value=preset; inp.onchange=()=>{ if(inp.value) setExamDate(inp.value); }; }
 // ホーム上部の受験日カウントダウン。数字だけを裸で出さず「達成できる量」とペアで見せる(折れやすい層への配慮)
 function renderCountdown(){
@@ -508,7 +531,8 @@ function renderHome(){
     `<div class="ghdr">本番れんしゅう</div>${test}<div class="ghdr">きたえる</div>${kitae}`;
   document.querySelectorAll('.pcard[data-p]').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
   document.querySelectorAll('[data-lesson]').forEach(el=>el.onclick=openLesson);   // イメージ英文法=アプリ内オーバーレイ
-  renderCountdown();   // ホーム上部の受験日カウントダウンを描画
+  renderStreak();      // 連続日数＋今日やった印(受験日なしでも効く・主役)
+  renderCountdown();   // ホーム上部の受験日カウントダウン(受験日がある人向け・従)
 }
 // イメージ英文法をページ遷移でなくアプリ内オーバーレイ(iframe)で開く
 function openLesson(){
@@ -833,7 +857,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0808-01';
+const BUILD='0808-02';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
