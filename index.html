@@ -579,9 +579,12 @@ function renderFeed(){
   feed.addEventListener('touchstart',e=>{ _tsY=e.touches[0].clientY; },{passive:true});
   feed.addEventListener('touchend',e=>{
     const dy=e.changedTouches[0].clientY-_tsY;   // 負=上フリック(次へ) / 正=下フリック(前へ)
-    const atBottom=feed.scrollTop>=feed.scrollHeight-feed.clientHeight-4, atTop=feed.scrollTop<=4;
-    if(dy<-70 && active===CARDS.length-1 && atBottom) goNextPart();
-    else if(dy>70 && active===0 && atTop) goPrevPart();
+    // 最終カードで上フリック→次パート / 先頭カードで下フリック→前パート。
+    // 以前は scrollTop が最下部/最上部かも条件にしていたが、iOSのdvh(アドレスバー出入り)で
+    // scrollHeight/clientHeight が揺れ、最終カードにいても「最下部」と見なされず遷移が発火しないことがあった。
+    // カード位置(active)とフリック量だけで判定する。
+    if(dy<-70 && active===CARDS.length-1) goNextPart();
+    else if(dy>70 && active===0) goPrevPart();
   },{passive:true});
 
   CARDS.forEach((_,i)=>paintText(i));   // 全カードを最初から正しい状態に(隠す=空/常時表示=本文)。スワイプ中のveilチラつき防止
@@ -779,7 +782,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0807-11';
+const BUILD='0807-12';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
