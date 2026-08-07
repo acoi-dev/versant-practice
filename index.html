@@ -60,6 +60,13 @@
   .pcard .eb.kt{color:var(--accent)}                       /* きたえる系は見出しをアクセント色で区別 */
   .pcard.soon{opacity:.5}                                  /* 近日(タップ不可) */
   .pcard.soon:active{background:none}
+  /* イメージ英文法をアプリ内オーバーレイ(iframe)で開く=ページ遷移させない */
+  #lesson{position:fixed;inset:0;z-index:16;background:var(--bg);display:flex;flex-direction:column}
+  #lesson.off{display:none}
+  .lhead{display:flex;align-items:center;gap:6px;padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;border-bottom:1px solid var(--line);flex:0 0 auto}
+  .lback{border:0;background:none;color:var(--accent);font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;padding:6px 8px;-webkit-tap-highlight-color:transparent}
+  .lhead .lt{font-weight:700;font-size:15px;color:var(--ink)}
+  #lframe{flex:1 1 auto;width:100%;border:0;display:block}
   .phead{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:22px 2px 3px}  /* 聞く/話すの区切り見出し */
 
   /* ===== フィード ===== */
@@ -261,6 +268,12 @@
   <div id="build" class="build"></div>
 </div>
 
+<!-- イメージ英文法(別ページでなくアプリ内オーバーレイで開く) -->
+<div id="lesson" class="off" aria-hidden="true">
+  <div class="lhead"><button class="lback" id="lback" aria-label="もどる">‹ もどる</button><span class="lt">イメージ英文法</span></div>
+  <iframe id="lframe" title="イメージ英文法" loading="lazy"></iframe>
+</div>
+
 <!-- フィード -->
 <div id="app" class="off">
   <div class="head">
@@ -441,12 +454,25 @@ function renderHome(){
   const gN=gP?gP.chapters.filter(c=>!c.tail).length:0;
   const kitae=
     (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${gN}問</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div></div>`:'')
-    +`<a class="pcard lesson" href="series.html?v=3"><div class="top"><span class="eb kt">文法</span><span class="meta">絵で理解＋クイズ</span></div><div class="ttl">イメージ英文法</div><div class="desc">訳でなく“絵”で、前置詞・冠詞などを迷わず選べる</div></a>`
+    +`<div class="pcard lesson" data-lesson><div class="top"><span class="eb kt">文法</span><span class="meta">絵で理解＋クイズ</span></div><div class="ttl">イメージ英文法</div><div class="desc">訳でなく“絵”で、前置詞・冠詞などを迷わず選べる</div></div>`
     +`<div class="pcard soon"><div class="top"><span class="eb kt">話す</span><span class="meta">近日</span></div><div class="ttl">口から出る化トレ</div><div class="desc">言い回しの“武器”を増やして、パッと口から出す</div></div>`;
   document.getElementById('plist').innerHTML=
     `<div class="ghdr">本番れんしゅう</div>${test}<div class="ghdr">きたえる</div>${kitae}`;
   document.querySelectorAll('.pcard[data-p]').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
+  document.querySelectorAll('[data-lesson]').forEach(el=>el.onclick=openLesson);   // イメージ英文法=アプリ内オーバーレイ
 }
+// イメージ英文法をページ遷移でなくアプリ内オーバーレイ(iframe)で開く
+function openLesson(){
+  const f=document.getElementById('lframe');
+  if(!f.getAttribute('src')) f.setAttribute('src','series.html?v=4');   // 初回だけ読み込む(戻るリンク無し版)
+  const l=document.getElementById('lesson'); l.classList.remove('off'); l.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+}
+function closeLesson(){
+  const l=document.getElementById('lesson'); l.classList.add('off'); l.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
+document.getElementById('lback').addEventListener('click', closeLesson);
 
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
 
@@ -752,7 +778,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0807-03';
+const BUILD='0807-04';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
