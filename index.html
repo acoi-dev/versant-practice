@@ -464,6 +464,8 @@ function renderHome(){
 function openLesson(){
   const f=document.getElementById('lframe');
   if(!f.getAttribute('src')) f.setAttribute('src','grammar-swipe.html?v=4');   // 初回だけ読み込む(縦スワイプ・chrome統一版)
+  document.querySelectorAll('.pcard.current').forEach(el=>el.classList.remove('current'));   // 現在地=イメージ英文法に。パート側の囲い線を消す(markCurrentはdata-pのみ対象で消えないため明示)
+  document.querySelector('[data-lesson]')?.classList.add('current');
   const l=document.getElementById('lesson'); l.classList.remove('off'); l.setAttribute('aria-hidden','false');
   document.body.style.overflow='hidden';
 }
@@ -777,7 +779,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0807-08';
+const BUILD='0807-09';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
