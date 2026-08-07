@@ -56,6 +56,15 @@
   .pcard.speak .eb{color:var(--accent)}                    /* 家用モードだと分かるよう見出しだけアクセント色 */
   .ghdr{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:16px 0 -2px}  /* ホームのグループ見出し(本番れんしゅう/きたえる) */
   .plist>.ghdr:first-child{margin-top:2px}
+  /* 受験日カウントダウン(ホーム上部・罫線のみ/塗らない/アクセント1色) */
+  .cdown{margin:4px 0 2px;padding:2px 0 16px;border-bottom:1px solid var(--line2)}
+  .cdown .cd-main{display:flex;align-items:baseline;gap:9px}
+  .cdown .cd-num{font-size:29px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.1}
+  .cdown .cd-lb{font-size:15px;font-weight:600;color:var(--ink)}
+  .cdown .cd-sub{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65}
+  .cdown .cd-set{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .cdown input[type=date]{font:inherit;font-size:14px;color:var(--ink);background:none;border:1px solid var(--line2);border-radius:9px;padding:8px 11px}
+  .cdown .cd-link{font-size:12px;color:var(--sub);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   .pcard.lesson{text-decoration:none;color:inherit}        /* イメージ英文法(別ページへ) */
   .pcard .eb.kt{color:var(--accent)}                       /* きたえる系は見出しをアクセント色で区別 */
   .pcard.soon{opacity:.5}                                  /* 近日(タップ不可) */
@@ -263,6 +272,7 @@
   <button class="closex" id="homeClose" aria-label="閉じる" hidden>&times;</button>
   <div class="brand">Versant 練習</div>
   <div class="tag">本番と同じ例題を、耳で無限反復</div>
+  <div class="cdown" id="cdown"></div>
   <div class="plist" id="plist"></div>
   <p class="disc">非公式の練習アプリです。Versant<span class="r">®</span> は Pearson Education 社の商標で、本アプリは Pearson 社および Versant と関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
   <div id="build" class="build"></div>
@@ -425,6 +435,45 @@ function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}ca
     if(st.h){document.getElementById('home').classList.remove('off');markCurrent();saveState();}   // 一覧を開いた状態だったら開いたまま戻す(openPart内のsaveStateがh=falseで上書きするので、ここで開いた状態を保存し直す)
   }}
 
+// ===== 学習の記録(箱): 受験日 / 練習した日 / 言えた率% を localStorage 'vlog' に貯める。既存の'st'(現在位置)とは別 =====
+function loadLog(){ try{return JSON.parse(localStorage.getItem('vlog'))||{};}catch(e){return {};} }
+function saveLog(o){ try{localStorage.setItem('vlog',JSON.stringify(o));}catch(e){} }
+function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function logPracticeDay(){ const l=loadLog(); l.days=l.days||[]; const t=todayStr(); if(!l.days.includes(t)){ l.days.push(t); saveLog(l); } }   // その日はじめて触れたら1回だけ記録
+function logScore(part,said){ const l=loadLog(); l.scores=l.scores||[]; l.scores.push({d:todayStr(),part:part||'',said:said}); if(l.scores.length>500) l.scores=l.scores.slice(-500); saveLog(l); }
+function setExamDate(v){ const l=loadLog(); l.examDate=v||null; saveLog(l); renderCountdown(); }
+function daysUntil(ds){ const t=new Date(todayStr()+'T00:00:00'), e=new Date(ds+'T00:00:00'); return Math.round((e-t)/86400000); }
+function bindExamInput(preset){ const inp=document.getElementById('examInput'); if(!inp) return; if(preset) inp.value=preset; inp.onchange=()=>{ if(inp.value) setExamDate(inp.value); }; }
+// ホーム上部の受験日カウントダウン。数字だけを裸で出さず「達成できる量」とペアで見せる(折れやすい層への配慮)
+function renderCountdown(){
+  const el=document.getElementById('cdown'); if(!el) return;
+  const l=loadLog(), ex=l.examDate;
+  if(!ex){
+    el.innerHTML='<div class="cd-lb">受験日を入れると、本番までのペースが見えます</div>'
+      +'<div class="cd-sub">まだ決めていなければ、まず2週間チャレンジでもOK。</div>'
+      +'<div class="cd-set"><input type="date" id="examInput" aria-label="受験日"></div>';
+    bindExamInput('');
+  } else {
+    const n=daysUntil(ex);
+    if(n>0){
+      el.innerHTML='<div class="cd-main"><span class="cd-num">あと'+n+'日</span><span class="cd-lb">本番まで</span></div>'
+        +'<div class="cd-sub">1日1本で、本番までに'+n+'本つみ重ねられます。今日の1本から。</div>'
+        +'<div class="cd-set"><button class="cd-link" id="examEdit">受験日を変える</button></div>';
+    } else if(n===0){
+      el.innerHTML='<div class="cd-main"><span class="cd-num">本番は今日</span></div>'
+        +'<div class="cd-sub">落ち着いて、いつも通り声に出していきましょう。</div>'
+        +'<div class="cd-set"><button class="cd-link" id="examEdit">受験日を変える</button></div>';
+    } else {
+      el.innerHTML='<div class="cd-lb">受験おつかれさまでした</div>'
+        +'<div class="cd-sub">次の目標日を決めると、また続けやすくなります。</div>'
+        +'<div class="cd-set"><input type="date" id="examInput" aria-label="次の受験日"></div>';
+      bindExamInput('');
+    }
+    const ed=document.getElementById('examEdit');
+    if(ed) ed.onclick=()=>{ el.querySelector('.cd-set').innerHTML='<input type="date" id="examInput" aria-label="受験日">'; bindExamInput(ex); const i2=document.getElementById('examInput'); if(i2&&i2.showPicker){try{i2.showPicker();}catch(e){}} };
+  }
+}
+
 const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい',F:'難しい',G:'耳トレ'};   // 入門者から見た目安
 // 崩れの種類ごとの平易な解説(音声学の専門用語は出さない)
 const TIP={form:'2語がくっついて短く言われます。かたまりで覚えると聞き取れます。',
@@ -459,6 +508,7 @@ function renderHome(){
     `<div class="ghdr">本番れんしゅう</div>${test}<div class="ghdr">きたえる</div>${kitae}`;
   document.querySelectorAll('.pcard[data-p]').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
   document.querySelectorAll('[data-lesson]').forEach(el=>el.onclick=openLesson);   // イメージ英文法=アプリ内オーバーレイ
+  renderCountdown();   // ホーム上部の受験日カウントダウンを描画
 }
 // イメージ英文法をページ遷移でなくアプリ内オーバーレイ(iframe)で開く
 function openLesson(){
@@ -516,6 +566,7 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   playCard(startCard, noPlay);
   document.getElementById('hint').classList.remove('hide');
   saveState();
+  logPracticeDay();   // パートを開いた=今日は練習した、として記録(1日1回)
 }
 // ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
 // ホームはプレイヤーの上にかぶせて開く(画面遷移でなく)。プレイヤーはそのまま裏で継続
@@ -782,7 +833,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0807-12';
+const BUILD='0808-01';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
@@ -927,6 +978,7 @@ function renderSpkPending(ref){
 const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were be been do does did have has had will would shall can could i he she it we they you your my me this that with as so no not'.split(' '));
 function renderSpkResult(j){
   const said=Math.round((j.scores&&j.scores.said)??0);
+  try{ logScore(PART&&PART.id, said); }catch(e){}   // 言えた率を記録(あとで成長実感/自己ベストに使う)
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
   const wHTML=words.map(w=>`<span class="w ${bad(w)?'bad':''}">${skEsc(w.word)}</span>`).join(' ');
