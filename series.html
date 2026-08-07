@@ -94,6 +94,8 @@
   .qfb .v.ok{color:var(--accent)}
   .qfb .v.ng{color:#e5484d}
   .qfb .e{color:var(--ink);margin-top:4px}
+  .qdia{margin:14px 0 2px;display:flex;justify-content:center}
+  .qdia svg{max-width:180px;height:auto}
   .qnext{margin:20px 0 0;border:0;background:var(--ink);color:var(--bg);font-weight:700;font-size:15px;padding:11px 24px;border-radius:10px;cursor:pointer;font-family:inherit}
   .qnext:active{opacity:.85}
   .qend{border:1px solid var(--line2);border-radius:14px;padding:30px 22px;text-align:center}
@@ -122,11 +124,10 @@
     .card-body{min-width:0}
   }
 
-  /* シリーズ: メニュー/パネル */
-  .topbar{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 0 10px}
-  .tabs{display:flex;gap:8px;overflow-x:auto;padding:0 22px;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab{flex:0 0 auto;border:1px solid var(--line2);background:none;color:var(--muted);font-family:inherit;font-weight:700;font-size:13.5px;padding:8px 15px;border-radius:999px;cursor:pointer;white-space:nowrap}
+  /* シリーズ: メニュー/パネル(スマホ最優先=全トピックを折り返しで見せる) */
+  .topbar{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);padding:7px 0 6px}
+  .tabs{display:flex;flex-wrap:wrap;gap:7px;padding:4px 18px 2px}
+  .tab{border:1px solid var(--line2);background:none;color:var(--muted);font-family:inherit;font-weight:700;font-size:12.5px;padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
   .tab.on{border-color:var(--accent);color:var(--accent)}
   .panel{padding-top:8px}
   .ptitle{font-size:clamp(24px,6vw,34px);line-height:1.25;letter-spacing:-.02em;font-weight:800;margin:20px 0 0;text-wrap:balance}
@@ -135,11 +136,11 @@
   .lcard{border-top:1px solid var(--line);padding:26px 0 4px;margin-top:22px}
   .lcard:first-of-type{border-top:0}
   .seriesnote{color:var(--muted);font-size:13.5px;margin:8px 0 0}
-  .backapp{display:inline-block;color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;padding:2px 22px 8px}
+  .backapp{display:inline-block;color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;padding:2px 18px 6px}
   .backapp:hover{color:var(--ink)}
 </style>
 
-<div class="topbar"><a class="backapp" href="index.html">‹ れんしゅうにもどる</a><div class="tabs"><button class="tab" data-go="prepositions">前置詞</button><button class="tab" data-go="basic-verbs">基本動詞</button><button class="tab" data-go="see-look-watch">see/look/watch</button><button class="tab" data-go="phrasal-verbs">句動詞</button><button class="tab" data-go="a-the">a / the（冠詞）</button><button class="tab" data-go="to-ing">to / -ing</button><button class="tab" data-go="causatives">使役動詞</button><button class="tab" data-go="possessive">'s / of（所有）</button></div></div>
+<div class="topbar"><a class="backapp" href="index.html">‹ れんしゅうにもどる</a><div class="tabs"><button class="tab" data-go="prepositions">前置詞</button><button class="tab" data-go="basic-verbs">基本動詞</button><button class="tab" data-go="see-look-watch">見る系</button><button class="tab" data-go="phrasal-verbs">句動詞</button><button class="tab" data-go="a-the">a・the</button><button class="tab" data-go="to-ing">to・-ing</button><button class="tab" data-go="causatives">使役</button><button class="tab" data-go="possessive">所有</button></div></div>
 <div class="wrap">
   <section class="panel" data-t="prepositions"><h1 class="ptitle">前置詞は、訳じゃなく「絵」で覚えよう</h1><!-- ① 空間 -->
   <section class="group">
@@ -407,7 +408,7 @@ var PREP_QUIZ=(function(){ var QUIZ=[
   ]; var QUIZ_HARD=[
     {s:["See you "," Monday."], a:"on", o:["on","at","in"], jp:"また月曜にね", e:"曜日は“その日にくっつく”感じ。だから on Monday。"},
     {s:["I get up "," the morning."], a:"in", o:["in","on","at"], jp:"朝に起きる", e:"朝という時間の“中”にいる感じ。だから in the morning。"},
-    {s:["The shop closes "," night."], a:"at", o:["at","in","on"], jp:"その店は夜に閉まる", e:"night は時の“一点”としてとらえる。だから at night。"},
+    {s:["The shop closes "," night."], a:"at", o:["at","in","on"], jp:"その店は夜に閉まる", e:"夜は時の“一点”ととらえて at night。※朝・昼・夕方は“時間の中にいる”感じなので in（in the morning / in the evening）。night だけが at になる例外と覚えると◎。"},
     {s:["I'll be back "," ten minutes."], a:"in", o:["in","for","after"], jp:"10分で戻るね", e:"「今から〜後」は in。「10分間ずっと」なら for。日本語につられて after にしないでね。"},
     {s:["She is good "," tennis."], a:"at", o:["at","in","on"], jp:"彼女はテニスが上手", e:"「一点にねらいを定める」at。的に当たっている感じ。"},
     {s:["I'm interested "," music."], a:"in", o:["in","on","to"], jp:"音楽に興味がある", e:"関心の“中に”入り込んでいる絵。だから in。"},
@@ -428,6 +429,11 @@ function qGet(item, key){
 function renderQuiz(box){
   var tid=box.getAttribute('data-t'); var raw=QUIZDATA[tid]||[];
   var items=raw.map(qGet); var total=items.length, correct=0, answered=0;
+  function diaForS(answer){
+    var panel=box.closest('.panel'); if(!panel||tid!=='prepositions') return '';
+    var PREPS=['at','in','on','to','for','of','from','with']; var i=PREPS.indexOf(answer);
+    var ds=panel.querySelectorAll('.card .dia'); return (i>=0&&ds[i])?'<div class="qdia">'+ds[i].outerHTML+'</div>':'';
+  }
   function card(q,idx){
     var opts=q.options.map(function(o){return '<button class="qopt" data-q="'+idx+'" data-o="'+o+'">'+o+'</button>';}).join('');
     return '<div class="qcard" data-card="'+idx+'"><div class="qnum">Q'+(idx+1)+'</div>'+
@@ -448,7 +454,7 @@ function renderQuiz(box){
       cd.querySelectorAll('.qopt').forEach(function(x){ x.disabled=true; var o=x.getAttribute('data-o');
         if(o===q.answer) x.classList.add('ok'); if(o===chosen&&!isC) x.classList.add('ng'); });
       var fb=cd.querySelector('.qfb');
-      fb.innerHTML=(isC?'<span class="v ok">正解！</span>':'<span class="v ng">おしい、正解は '+q.answer+'</span>')+'<div class="e">'+q.explain+'</div>';
+      fb.innerHTML=(isC?'<span class="v ok">正解！</span>':'<span class="v ng">おしい、正解は '+q.answer+'</span>')+'<div class="e">'+q.explain+'</div>'+diaForS(q.answer);
       fb.classList.add('show');
       scoreEl.innerHTML='正解 <b>'+correct+'</b> / '+total+(answered===total?'　全問完了！':'');
     });
