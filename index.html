@@ -54,6 +54,12 @@
   .pcard .desc{font-size:12.5px;color:var(--sub)}
   .pcard.speak{text-decoration:none;color:inherit}        /* 話すモード導線(別ページ遷移) */
   .pcard.speak .eb{color:var(--accent)}                    /* 家用モードだと分かるよう見出しだけアクセント色 */
+  .ghdr{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:16px 0 -2px}  /* ホームのグループ見出し(本番れんしゅう/きたえる) */
+  .plist>.ghdr:first-child{margin-top:2px}
+  .pcard.lesson{text-decoration:none;color:inherit}        /* イメージ英文法(別ページへ) */
+  .pcard .eb.kt{color:var(--accent)}                       /* きたえる系は見出しをアクセント色で区別 */
+  .pcard.soon{opacity:.5}                                  /* 近日(タップ不可) */
+  .pcard.soon:active{background:none}
   .phead{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600;margin:22px 2px 3px}  /* 聞く/話すの区切り見出し */
 
   /* ===== フィード ===== */
@@ -418,17 +424,27 @@ const TIP={form:'2語がくっついて短く言われます。かたまりで�
 // 大きな英文が何なのかを示す小見出し(C/D=会話・本文の後に来る質問、E=聞いて再話する話そのもの、A/F=質問、B=復唱する英文)
 const ENLAB={A:'質問',B:'英文',C:'質問',D:'質問',E:'話',F:'質問',G:'例文'};
 function renderHome(){
-  // 話す採点は各カードのマイクボタン(押し続け録音→離すと採点)に統合済み。別ページ導線は廃止
-  const speak='';
-  const parts=DATA.parts.map((p,i)=>{
+  // 話す採点は各カードのマイクボタンに統合済み。ホームは「本番れんしゅう(A〜F)」と「きたえる(基礎トレ)」の2グループ
+  const mkCard=(p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
-    const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"(先頭のPart Xは小見出しへ)
+    const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"
     return `<div class="pcard" data-p="${i}">`
       +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${n}問</span></div>`
       +`<div class="ttl">${name}</div>`
       +`<div class="desc">${TASK[p.id]||''}</div></div>`;
-  }).join('');
-  document.getElementById('plist').innerHTML=speak+parts;
+  };
+  // 本番れんしゅう = G以外(A〜F)
+  const test=DATA.parts.map((p,i)=>[p,i]).filter(([p])=>p.id!=='G').map(([p,i])=>mkCard(p,i)).join('');
+  // きたえる = 消える音トレ(現Part G)/ イメージ英文法(別ページ)/ 口から出る化トレ(近日)
+  const gIdx=DATA.parts.findIndex(p=>p.id==='G');
+  const gP=DATA.parts[gIdx];
+  const gN=gP?gP.chapters.filter(c=>!c.tail).length:0;
+  const kitae=
+    (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${gN}問</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div></div>`:'')
+    +`<a class="pcard lesson" href="series.html"><div class="top"><span class="eb kt">文法</span><span class="meta">絵で理解＋クイズ</span></div><div class="ttl">イメージ英文法</div><div class="desc">訳でなく“絵”で、前置詞・冠詞などを迷わず選べる</div></a>`
+    +`<div class="pcard soon"><div class="top"><span class="eb kt">話す</span><span class="meta">近日</span></div><div class="ttl">口から出る化トレ</div><div class="desc">言い回しの“武器”を増やして、パッと口から出す</div></div>`;
+  document.getElementById('plist').innerHTML=
+    `<div class="ghdr">本番れんしゅう</div>${test}<div class="ghdr">きたえる</div>${kitae}`;
   document.querySelectorAll('.pcard[data-p]').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
 }
 
@@ -736,7 +752,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0806-69';
+const BUILD='0807-01';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
