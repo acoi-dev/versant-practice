@@ -547,7 +547,7 @@ function renderFeed(){
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
-          ${(SPEAK_ENABLED&&c.en)?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
+          ${(SPEAK_ENABLED&&c.en&&SPK_PARTS.has(PART.id))?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
         </div>
       </div>
     </section>`).join('');
@@ -779,8 +779,9 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0807-10';
+const BUILD='0807-11';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
+const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
