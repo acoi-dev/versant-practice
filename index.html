@@ -779,7 +779,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0807-09';
+const BUILD='0807-10';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -802,7 +802,7 @@ if(location.href.indexOf('debug')>=0){
 }
 
 // ===== 発音採点(押し続けて録音→離すと採点。結果は同じ画面のシートに表示) =====
-let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null, spkLastBlob=null, spkLastRef='', _mineAudio=null, _modelAudio=null, _maxRecTimer=0, _recStart=0, _recCancel=false;
+let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null, spkLastBlob=null, spkLastRef='', _mineAudio=null, _modelAudio=null, _maxRecTimer=0, _recStart=0, _recCancel=false, _recStarting=false;
 const SPK_MAX_MS=20000, SPK_MIN_MS=500;   // 止め忘れは20秒で自動停止/採点、0.5秒未満の誤タップは無視
 const _spkr=document.getElementById('spkr'), _spkrBody=document.getElementById('spkrBody');
 function skOpen(html){ _spkrBody.innerHTML=html; _spkr.classList.add('show'); _spkr.setAttribute('aria-hidden','false'); }
@@ -810,8 +810,9 @@ function skClose(){ _spkr.classList.remove('show'); _spkr.setAttribute('aria-hid
 function skEsc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 
 async function startSpkRec(fromSheet){
-  if(spkRecording) return;
+  if(spkRecording||_recStarting) return;   // 二重起動防止(getUserMedia許可待ちの間に再タップ/合成clickが来ても多重に開始しない)
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ skOpen('<div class="sk-status">この端末では録音できません</div>'); return; }
+  _recStarting=true;
   try{
     try{AU.pause();}catch(e){}                                   // 聞く音声が録音に混じらないよう止める
     spkStream=await navigator.mediaDevices.getUserMedia({audio:true});
@@ -833,9 +834,12 @@ async function startSpkRec(fromSheet){
     clearTimeout(_maxRecTimer); _maxRecTimer=setTimeout(()=>{ if(spkRecording) stopSpkRec(); }, SPK_MAX_MS);   // 止め忘れ対策: 最長で自動停止→採点
     document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));   // マイクボタンが赤く点滅＋真上に「録音中…」ラベル(.miclbl)。シート内録音時はシートが覆うので裏のラベルは見えない
   }catch(e){ document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec')); skOpen('<div class="sk-status">マイクを使えませんでした（許可を確認してください）</div>'); }
+  finally{ _recStarting=false; }
 }
 function stopSpkRec(cancel){
-  if(!spkRecording) return; spkRecording=false; _recCancel=!!cancel;   // cancel=採点せず中断(再生等で割り込み時)
+  if(!spkRecording) return;
+  if((Date.now()-_recStart) < 400) return;   // 開始直後(0.4秒未満)の停止要求は二重タップ/合成clickの誤爆とみなし無視(=「一瞬録音中で終わって機能しない」対策)。20秒の自動停止は400ms超なので影響なし
+  spkRecording=false; _recCancel=!!cancel;   // cancel=採点せず中断(再生等で割り込み時)
   clearTimeout(_maxRecTimer);
   document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec'));
   try{ if(spkRec&&spkRec.state!=='inactive') spkRec.stop(); }catch(e){}
