@@ -270,7 +270,6 @@
 
 <!-- イメージ英文法(別ページでなくアプリ内オーバーレイで開く) -->
 <div id="lesson" class="off" aria-hidden="true">
-  <div class="lhead"><button class="lback" id="lback" aria-label="もどる">‹ もどる</button><span class="lt">イメージ英文法</span></div>
   <iframe id="lframe" title="イメージ英文法" loading="lazy"></iframe>
 </div>
 
@@ -464,15 +463,15 @@ function renderHome(){
 // イメージ英文法をページ遷移でなくアプリ内オーバーレイ(iframe)で開く
 function openLesson(){
   const f=document.getElementById('lframe');
-  if(!f.getAttribute('src')) f.setAttribute('src','grammar-swipe.html?v=3');   // 初回だけ読み込む(縦スワイプ版)
+  if(!f.getAttribute('src')) f.setAttribute('src','grammar-swipe.html?v=4');   // 初回だけ読み込む(縦スワイプ・chrome統一版)
   const l=document.getElementById('lesson'); l.classList.remove('off'); l.setAttribute('aria-hidden','false');
   document.body.style.overflow='hidden';
 }
-function closeLesson(){
+function closeLesson(){   // iframe内の右下ホームボタンからも window.parent.closeLesson() で呼ぶ
   const l=document.getElementById('lesson'); l.classList.add('off'); l.setAttribute('aria-hidden','true');
   document.body.style.overflow='';
 }
-document.getElementById('lback').addEventListener('click', closeLesson);
+window.closeLesson=closeLesson;
 
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
 
@@ -778,7 +777,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0807-07';
+const BUILD='0807-08';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
