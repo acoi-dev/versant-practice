@@ -150,7 +150,7 @@
   .shint{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 18px);left:0;right:0;text-align:center;color:var(--muted);font-size:13px;font-weight:600;animation:bob 1.8s ease-in-out infinite}
   .qtag{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin:0 0 14px}
   .qs{font-size:24px;font-weight:800;line-height:1.5;letter-spacing:-.01em}
-  .qbk{display:inline-block;min-width:2.4em;text-align:center;color:var(--accent);border-bottom:2px solid var(--accent);line-height:1}
+  .qbk{display:inline-block;width:1.9em;border-bottom:2.5px solid var(--accent);margin:0 6px;vertical-align:1px}
   .qj{font-size:14px;color:var(--muted);margin:12px 0 0}
   .qo{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:24px 0 0}
   .qb{border:1px solid var(--line2);background:none;color:var(--ink);font-family:inherit;font-weight:800;font-size:18px;padding:12px 22px;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -187,7 +187,7 @@ function quizCard(q,idx,total,tid){
   var opts=q.options.map(function(o){return '<button class="qb" data-o="'+esc(o)+'">'+esc(o)+'</button>';}).join('');
   return '<section class="scard" data-quiz="1" data-idx="'+idx+'"><div class="sc-in">'+
     '<div class="qtag">腕試し '+(idx+1)+' / '+total+'</div>'+
-    '<div class="qs">'+esc(q.pre)+'<span class="qbk">＿＿</span>'+esc(q.post)+'</div>'+
+    '<div class="qs">'+esc(q.pre)+'<span class="qbk">&nbsp;</span>'+esc(q.post)+'</div>'+
     '<div class="qj">'+esc(q.jp)+'</div>'+
     '<div class="qo">'+opts+'</div>'+
     '<div class="qf"></div>'+
