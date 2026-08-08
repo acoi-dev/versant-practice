@@ -66,16 +66,9 @@
   .cdown input[type=date]{font:inherit;font-size:14px;color:var(--ink);background:none;border:1px solid var(--line2);border-radius:9px;padding:8px 11px}
   .cdown .cd-link{font-size:12px;color:var(--sub);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   #streak{border-bottom:0;padding-bottom:6px}   /* 連続日数ブロック。区切り線は下の受験日ブロックに任せる */
-  .pcard .prog{font-size:11.5px;color:var(--sub);margin-top:7px;font-variant-numeric:tabular-nums}  /* 済み進捗・前回スコア */
+  .pcard .meta .dq{color:var(--accent);font-weight:600}   /* 右上の「N/M 済み」の数字だけアクセント */
+  .pcard .prog{font-size:11.5px;color:var(--sub);margin-top:7px;font-variant-numeric:tabular-nums}  /* 前回スコア */
   .pcard .prog b{color:var(--accent);font-weight:600}
-  /* これまでの練習(直近5週間の実施カレンダー)。マスの塗りはデータ表現でアクセント1色 */
-  .cal{margin:16px 0 4px}
-  .cal .callab{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;max-width:280px;margin-top:8px;font-size:10px;color:var(--faint);text-align:center}
-  .cal .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;max-width:280px;margin-top:5px}
-  .cal .calgrid .c{aspect-ratio:1;border-radius:4px;background:var(--hover)}
-  .cal .calgrid .c.on{background:var(--accent)}
-  .cal .calgrid .c.td{outline:2px solid var(--ink);outline-offset:1px}
-  .cal .calgrid .c.fu{background:none;border:1px solid var(--line2)}
   .pcard.lesson{text-decoration:none;color:inherit}        /* イメージ英文法(別ページへ) */
   .pcard .eb.kt{color:var(--accent)}                       /* きたえる系は見出しをアクセント色で区別 */
   .pcard.soon{opacity:.5}                                  /* 近日(タップ不可) */
@@ -286,7 +279,6 @@
   <div class="cdown" id="streak"></div>
   <div class="cdown" id="cdown"></div>
   <div class="plist" id="plist"></div>
-  <div class="cal" id="cal"></div>
   <p class="disc">非公式の練習アプリです。Versant<span class="r">®</span> は Pearson Education 社の商標で、本アプリは Pearson 社および Versant と関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
   <div id="build" class="build"></div>
 </div>
@@ -458,8 +450,8 @@ function logScore(part,said){ const l=loadLog(); l.scores=l.scores||[]; l.scores
 function logDone(partId,idx){ if(!partId) return; const l=loadLog(); l.done=l.done||{}; const a=l.done[partId]=l.done[partId]||[]; if(!a.includes(idx)){ a.push(idx); saveLog(l); } }
 function doneCount(partId){ return ((loadLog().done||{})[partId]||[]).length; }
 function prevScore(partId){ const s=(loadLog().scores||[]).filter(x=>x.part===partId); return s.length?s[s.length-1].said:null; }   // そのパートの直近の言えた率(=前回)
-// パート一覧カードの「◯/◯ 済み ・ 前回◯%」行。何も記録が無ければ空
-function progHTML(partId,n){ const dn=doneCount(partId), pv=prevScore(partId); if(!(dn>0||pv!=null)) return ''; const done=dn>=n?'<b>済み</b>':dn>0?'<b>'+dn+'</b>/'+n+' 済み':''; const prev=pv!=null?'前回 <b>'+pv+'%</b>':''; return '<div class="prog">'+done+((done&&prev)?' ・ ':'')+prev+'</div>'; }
+// カード下の「前回◯%」行(済み進捗は右上のmetaへ移した)。前回スコアが無ければ空
+function progHTML(partId){ const pv=prevScore(partId); return pv!=null?'<div class="prog">前回 <b>'+pv+'%</b></div>':''; }
 function setExamDate(v){ const l=loadLog(); l.examDate=v||null; saveLog(l); renderCountdown(); }
 function daysUntil(ds){ const t=new Date(todayStr()+'T00:00:00'), e=new Date(ds+'T00:00:00'); return Math.round((e-t)/86400000); }
 function fmtDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -483,23 +475,7 @@ function renderStreak(){
       +'<div class="cd-sub">むずかしく考えず、まず1本だけ声に出そう。'+tot+'</div>';
   }
 }
-// これまでの練習: 直近5週間のカレンダー。練習した日をアクセントで塗る。記録が無ければ何も出さない
-function renderCalendar(){
-  const el=document.getElementById('cal'); if(!el) return;
-  const set=new Set(loadLog().days||[]);
-  if(!set.size){ el.innerHTML=''; return; }
-  const WEEKS=5, tstr=todayStr(), today=new Date(tstr+'T00:00:00');
-  const start=new Date(today); start.setDate(today.getDate()-today.getDay()-(WEEKS-1)*7);   // 今日を含む週の日曜から (WEEKS-1)週さかのぼった日曜
-  let cells='';
-  for(let i=0;i<WEEKS*7;i++){
-    const cur=new Date(start); cur.setDate(start.getDate()+i);
-    const ds=fmtDate(cur), cls=['c'];
-    if(cur>today) cls.push('fu'); else if(set.has(ds)) cls.push('on');
-    if(ds===tstr) cls.push('td');
-    cells+='<span class="'+cls.join(' ')+'"></span>';
-  }
-  el.innerHTML='<div class="ghdr">これまでの練習</div><div class="callab"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div><div class="calgrid">'+cells+'</div>';
-}
+// (これまでの練習カレンダーは削除。練習日の記録=logPracticeDay/連続日数は継続)
 function bindExamInput(preset){ const inp=document.getElementById('examInput'); if(!inp) return; if(preset) inp.value=preset; inp.onchange=()=>{ if(inp.value) setExamDate(inp.value); }; }
 // ホーム上部の受験日カウントダウン。数字だけを裸で出さず「達成できる量」とペアで見せる(折れやすい層への配慮)
 function renderCountdown(){
@@ -547,9 +523,9 @@ function renderHome(){
     const n=p.chapters.filter(c=>!c.tail).length;
     const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"
     return `<div class="pcard" data-p="${i}">`
-      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${n}問</span></div>`
+      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${doneCount(p.id)>=n?'<span class="dq">済み</span>':doneCount(p.id)>0?'<span class="dq">'+doneCount(p.id)+'/'+n+'</span> 済み':n+'問'}</span></div>`
       +`<div class="ttl">${name}</div>`
-      +`<div class="desc">${TASK[p.id]||''}</div>${progHTML(p.id,n)}</div>`;
+      +`<div class="desc">${TASK[p.id]||''}</div>${progHTML(p.id)}</div>`;
   };
   // 本番れんしゅう = G以外(A〜F)
   const test=DATA.parts.map((p,i)=>[p,i]).filter(([p])=>p.id!=='G').map(([p,i])=>mkCard(p,i)).join('');
@@ -558,7 +534,7 @@ function renderHome(){
   const gP=DATA.parts[gIdx];
   const gN=gP?gP.chapters.filter(c=>!c.tail).length:0;
   const kitae=
-    (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${gN}問</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div>${progHTML('G',gN)}</div>`:'')
+    (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${doneCount('G')>=gN?'<span class="dq">済み</span>':doneCount('G')>0?'<span class="dq">'+doneCount('G')+'/'+gN+'</span> 済み':gN+'問'}</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div>${progHTML('G')}</div>`:'')
     +`<div class="pcard lesson" data-lesson><div class="top"><span class="eb kt">文法</span><span class="meta">絵で理解＋クイズ</span></div><div class="ttl">イメージ英文法</div><div class="desc">訳でなく“絵”で、前置詞・冠詞などを迷わず選べる</div></div>`
     +`<div class="pcard soon"><div class="top"><span class="eb kt">話す</span><span class="meta">近日</span></div><div class="ttl">口から出る化トレ</div><div class="desc">言い回しの“武器”を増やして、パッと口から出す</div></div>`;
   document.getElementById('plist').innerHTML=
@@ -567,7 +543,6 @@ function renderHome(){
   document.querySelectorAll('[data-lesson]').forEach(el=>el.onclick=openLesson);   // イメージ英文法=アプリ内オーバーレイ
   renderStreak();      // 連続日数＋今日やった印(受験日なしでも効く・主役)
   renderCountdown();   // ホーム上部の受験日カウントダウン(受験日がある人向け・従)
-  renderCalendar();    // ホーム下部「これまでの練習」カレンダー
 }
 // イメージ英文法をページ遷移でなくアプリ内オーバーレイ(iframe)で開く
 function openLesson(){
@@ -893,7 +868,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0808-08';
+const BUILD='0808-09';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
