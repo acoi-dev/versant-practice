@@ -1519,32 +1519,32 @@
      "q_yaku": "彼女は今どのサイズが欲しいですか？",
      "dialogue": [
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Hi, I bought this shirt yesterday, but it's too small.",
        "yaku": "こんにちは、昨日このシャツを買ったのですが、小さすぎます。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Do you want a different size or a refund?",
        "yaku": "別のサイズにしますか、それとも返金しますか？"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "I was thinking of getting a refund, but do you have a medium?",
        "yaku": "返金を考えていましたが、Mサイズはありますか？"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Yes, we have medium. Would you like to exchange it?",
        "yaku": "はい、Mサイズはあります。交換しますか？"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Yes, please. I'll take the medium size. I hope it fits better.",
        "yaku": "はい、お願いします。Mサイズをもらいます。これで合うといいのですが。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Great, I'll get that for you right away. Please wait a moment.",
        "yaku": "わかりました、すぐにお持ちしますね。少々お待ちください。"
       }
@@ -1903,32 +1903,32 @@
      "q_yaku": "彼女の予約はいつですか？",
      "dialogue": [
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "I'd like to book an appointment for a check-up.",
        "yaku": "健康診断の予約を取りたいのですが。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Sure, we have openings on Wednesday afternoon for check-ups.",
        "yaku": "かしこまりました、健康診断は水曜日の午後に空きがあります。"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "I can't make it on Wednesday. Do you have Thursday?",
        "yaku": "水曜日は都合が悪いです。木曜日はありますか？"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Yes, Thursday morning is available for check-ups. Would you like that?",
        "yaku": "はい、健康診断は木曜日の午前中が空いています。それでよろしいですか？"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Thursday morning works for me. I'll take it.",
        "yaku": "木曜日の午前中で大丈夫です。それでお願いします。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Great, you're all set for Thursday morning check-up. See you then.",
        "yaku": "わかりました、木曜日の午前中に健康診断の予約を入れました。それではその時に。"
       }
@@ -2163,32 +2163,32 @@
      "q_yaku": "金曜日の会議は何時ですか？",
      "dialogue": [
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Can we reschedule the meeting to Friday? I have a conflict.",
        "yaku": "会議を金曜日に変更できますか？予定が重なっています。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "I thought we were meeting on Thursday afternoon, but I can adjust.",
        "yaku": "木曜日の午後に会う予定だと思っていましたが、調整できます。"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Yes, but Friday works better for everyone, so let's do that.",
        "yaku": "はい、でも金曜日の方がみんなにとって都合がいいので、そうしましょう。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Alright, what time on Friday are we meeting? Let me know.",
        "yaku": "わかりました、金曜日の何時に会いますか？教えてください。"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "How about 2 PM? Does that suit you and everyone else?",
        "yaku": "午後2時はどうですか？それであなたとみんなに大丈夫ですか？"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Sounds good, I'll block off Friday afternoon and send the invite.",
        "yaku": "わかりました、金曜日の午後を空けて招待状を送ります。"
       }
@@ -2306,32 +2306,32 @@
      "q_yaku": "正しい商品はいつ届きますか？",
      "dialogue": [
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Hello, I received the wrong item in my order.",
        "yaku": "こんにちは、注文に間違った商品が届きました。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "I'm sorry to hear that. What did you receive?",
        "yaku": "それは申し訳ありません。何を受け取りましたか？"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "I ordered a blue shirt, but got a red one.",
        "yaku": "青いシャツを注文したのに、赤いシャツが届きました。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "I see, we'll replace it with the blue one right away.",
        "yaku": "わかりました、すぐに青いシャツと交換します。"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Thank you. When can I expect the correct item?",
        "yaku": "ありがとうございます。正しい商品はいつ届きますか？"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "It should arrive by tomorrow afternoon. Please let us know if it doesn't.",
        "yaku": "明日の午後には届くはずです。届かない場合はお知らせください。"
       }
@@ -2427,32 +2427,32 @@
      "q_yaku": "出荷は何日遅れていますか？",
      "dialogue": [
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "We've got a problem with the delivery schedule for this week.",
        "yaku": "今週の納品スケジュールに問題があります。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "What seems to be the issue with the delivery?",
        "yaku": "納品に関して何が問題のようですか？"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "The shipment was supposed to arrive today, but it's delayed.",
        "yaku": "今日到着するはずの出荷が遅れています。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "How long is the delay for the shipment? Is it serious?",
        "yaku": "出荷の遅れはどのくらいですか？深刻ですか？"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "It's going to be two days late, I'm afraid.",
        "yaku": "残念ながら2日遅れます。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Alright, let's inform the client about the delay and see what they say.",
        "yaku": "わかりました、クライアントに遅延を知らせて彼らの反応を見ましょう。"
       }
@@ -2691,32 +2691,32 @@
      "q_yaku": "プリンタ用紙を何箱注文すべきですか？",
      "dialogue": [
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "We're running low on printer paper again. It's almost out.",
        "yaku": "またプリンタ用紙が少なくなっています。ほとんど無くなりそうです。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Didn't we just order some last week for the office?",
        "yaku": "先週、オフィス用に注文したばかりではありませんか？"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Yes, but we had a big project that used a lot.",
        "yaku": "はい、大きなプロジェクトでたくさん使いました。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Alright, how many boxes should we order this time?",
        "yaku": "わかりました、今回は何箱注文しますか？"
       },
       {
-       "speaker": "A",
+       "speaker": "女の人",
        "text": "Let's order five boxes to be safe this time.",
        "yaku": "今回は安全のために5箱注文しましょう。"
       },
       {
-       "speaker": "B",
+       "speaker": "男の人",
        "text": "Okay, I'll place the order for five boxes today.",
        "yaku": "わかりました、今日5箱注文します。"
       }
