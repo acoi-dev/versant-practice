@@ -144,14 +144,14 @@
   .lseg.lit{color:var(--accent)}         /* 再生中の文/行をなぞる青 */
   .pass .pen .lseg.key{font-weight:700}   /* Part D 答えの手がかりの一文(太字) */
   .row{display:flex;gap:8px;margin-top:15px;font-size:14px}
-  .row .k{color:var(--sub);white-space:nowrap;font-size:12px;padding-top:2px;min-width:3.6em}
+  .row .k{color:var(--sub);white-space:nowrap;font-size:12px;padding-top:2px;min-width:3.6em;flex-shrink:0}   /* ラベルは縮めない(長いラベルが縮んで内容と重なるのを防ぐ) */
   .row .v{color:var(--ink)}
   .row .v b{font-weight:600}
   .row.ex .v b{font-weight:700;font-size:15.5px}   /* 解答例の「最低限の答え」は気持ち大きく・濃く(周囲14px→15.5px) */
   body.bigtext .row.ex .v b{font-size:17px}
   .dlg.first{padding-bottom:15px;margin-bottom:15px;border-bottom:1px solid var(--line)}  /* Part C: 会話を先頭に置き、質問との間に区切り */
   .dlg.first + .enlab{margin-top:0}   /* Part C: 会話の直後は質問ラベル。会話とラベルを詰める(enlabを挟んだので隣接対象を.enから.enlabへ) */
-  .dlg>div{font-size:14px;margin-bottom:3px;padding-left:46px}   /* 発話行だけ(直接の子)を左ガター分インデント。子孫の.dyにも効くと二重インデントになるので > で限定 */
+  .dlg>div{font-size:14px;margin-bottom:14px;padding-left:46px}   /* 発話ごとに少し余白。行だけ(直接の子)を左ガター分インデント。子孫の.dyにも効くと二重インデントになるので > で限定 */
   .dlg span:not(.lseg){color:var(--sub);font-size:11.5px;margin-right:0;display:inline-block;width:46px;margin-left:-46px;vertical-align:top}   /* 話者ラベルを左ガターに固定=英文が全行そろう。台詞本文の.lsegには当てない(会話が11.5px灰色に潰れ・bigtext無効になる回帰を防ぐ) */
   .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 0}   /* 訳は発話divのpadding-left(46px)で既に英文と同じ左端。ここで足すと二重インデントになる */
   /* 「文字を大きく」ON時 */
@@ -871,7 +871,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   }
   if(c.target)h+=`<div class="row"><span class="k">解説</span><span class="v"><b>${c.target}</b> → ${c.target_kana||''}${c.kotsu?`<div class="tip">${c.kotsu}</div>`:(c.kind&&TIP[c.kind]?`<div class="tip">${TIP[c.kind]}</div>`:'')}</span></div>`;   // kotsuがあれば「どこを聞くか」を優先表示、無ければ崩れ種別の一言
   else if((c.kotsu||c.memo)&&PART.id!=='D')h+=`<div class="row"><span class="k">手がかり</span><span class="v">${c.kotsu||c.memo}</span></div>`;   // Part C: 難所解説(kotsu)があればそれを手がかりに(答えの位置＋拾う語句)。Part Dは本文の太字が兼ねる
-  if(c.crush_spots&&c.crush_spots.length)h+=`<div class="row"><span class="k">聞き取りにくい所</span><span class="v">${c.crush_spots.map(s=>`<b>${s.phrase}</b> → ${s.kana}`).join(' ／ ')}</span></div>`;   // Part C: 会話中の弱形難所(消えやすい語)を一覧
+  if(c.crush_spots&&c.crush_spots.length)h+=`<div class="row"><span class="k">消える音</span><span class="v">${c.crush_spots.map(s=>`<b>${s.phrase}</b> → ${s.kana}`).join(' ／ ')}</span></div>`;   // Part C: 会話中の弱形難所(消えやすい語)を一覧
   if(c.retell)h+=`<div class="row"><span class="k">解答例</span><span class="v">${c.retell}${c.retell_yaku?'　'+c.retell_yaku:''}</span></div>`;        // Part E(再話の解答例。他パートと表記統一)
   if(c.retell_min)h+=`<div class="row"><span class="k">最低限</span><span class="v">${c.retell_min}${c.retell_min_yaku?'　'+c.retell_min_yaku:''}</span></div>`;  // Part E: これだけ言えば0点回避
   el.innerHTML=h;
@@ -893,7 +893,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0808-07';
+const BUILD='0808-08';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
