@@ -68,6 +68,14 @@
   #streak{border-bottom:0;padding-bottom:6px}   /* 連続日数ブロック。区切り線は下の受験日ブロックに任せる */
   .pcard .prog{font-size:11.5px;color:var(--sub);margin-top:7px;font-variant-numeric:tabular-nums}  /* 済み進捗・前回スコア */
   .pcard .prog b{color:var(--accent);font-weight:600}
+  /* これまでの練習(直近5週間の実施カレンダー)。マスの塗りはデータ表現でアクセント1色 */
+  .cal{margin:16px 0 4px}
+  .cal .callab{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;max-width:280px;margin-top:8px;font-size:10px;color:var(--faint);text-align:center}
+  .cal .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;max-width:280px;margin-top:5px}
+  .cal .calgrid .c{aspect-ratio:1;border-radius:4px;background:var(--hover)}
+  .cal .calgrid .c.on{background:var(--accent)}
+  .cal .calgrid .c.td{outline:2px solid var(--ink);outline-offset:1px}
+  .cal .calgrid .c.fu{background:none;border:1px solid var(--line2)}
   .pcard.lesson{text-decoration:none;color:inherit}        /* イメージ英文法(別ページへ) */
   .pcard .eb.kt{color:var(--accent)}                       /* きたえる系は見出しをアクセント色で区別 */
   .pcard.soon{opacity:.5}                                  /* 近日(タップ不可) */
@@ -278,6 +286,7 @@
   <div class="cdown" id="streak"></div>
   <div class="cdown" id="cdown"></div>
   <div class="plist" id="plist"></div>
+  <div class="cal" id="cal"></div>
   <p class="disc">非公式の練習アプリです。Versant<span class="r">®</span> は Pearson Education 社の商標で、本アプリは Pearson 社および Versant と関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
   <div id="build" class="build"></div>
 </div>
@@ -474,6 +483,23 @@ function renderStreak(){
       +'<div class="cd-sub">むずかしく考えず、まず1本だけ声に出そう。'+tot+'</div>';
   }
 }
+// これまでの練習: 直近5週間のカレンダー。練習した日をアクセントで塗る。記録が無ければ何も出さない
+function renderCalendar(){
+  const el=document.getElementById('cal'); if(!el) return;
+  const set=new Set(loadLog().days||[]);
+  if(!set.size){ el.innerHTML=''; return; }
+  const WEEKS=5, tstr=todayStr(), today=new Date(tstr+'T00:00:00');
+  const start=new Date(today); start.setDate(today.getDate()-today.getDay()-(WEEKS-1)*7);   // 今日を含む週の日曜から (WEEKS-1)週さかのぼった日曜
+  let cells='';
+  for(let i=0;i<WEEKS*7;i++){
+    const cur=new Date(start); cur.setDate(start.getDate()+i);
+    const ds=fmtDate(cur), cls=['c'];
+    if(cur>today) cls.push('fu'); else if(set.has(ds)) cls.push('on');
+    if(ds===tstr) cls.push('td');
+    cells+='<span class="'+cls.join(' ')+'"></span>';
+  }
+  el.innerHTML='<div class="ghdr">これまでの練習</div><div class="callab"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div><div class="calgrid">'+cells+'</div>';
+}
 function bindExamInput(preset){ const inp=document.getElementById('examInput'); if(!inp) return; if(preset) inp.value=preset; inp.onchange=()=>{ if(inp.value) setExamDate(inp.value); }; }
 // ホーム上部の受験日カウントダウン。数字だけを裸で出さず「達成できる量」とペアで見せる(折れやすい層への配慮)
 function renderCountdown(){
@@ -541,6 +567,7 @@ function renderHome(){
   document.querySelectorAll('[data-lesson]').forEach(el=>el.onclick=openLesson);   // イメージ英文法=アプリ内オーバーレイ
   renderStreak();      // 連続日数＋今日やった印(受験日なしでも効く・主役)
   renderCountdown();   // ホーム上部の受験日カウントダウン(受験日がある人向け・従)
+  renderCalendar();    // ホーム下部「これまでの練習」カレンダー
 }
 // イメージ英文法をページ遷移でなくアプリ内オーバーレイ(iframe)で開く
 function openLesson(){
@@ -866,7 +893,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0808-03';
+const BUILD='0808-04';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
