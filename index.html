@@ -153,7 +153,7 @@
   .dlg.first + .enlab{margin-top:0}   /* Part C: 会話の直後は質問ラベル。会話とラベルを詰める(enlabを挟んだので隣接対象を.enから.enlabへ) */
   .dlg div{font-size:14px;margin-bottom:3px;padding-left:46px}   /* 台詞を全行インデントして左端をそろえる(話者ラベルの分の左ガター) */
   .dlg span:not(.lseg){color:var(--sub);font-size:11.5px;margin-right:0;display:inline-block;width:46px;margin-left:-46px;vertical-align:top}   /* 話者ラベルを左ガターに固定=英文が全行そろう。台詞本文の.lsegには当てない(会話が11.5px灰色に潰れ・bigtext無効になる回帰を防ぐ) */
-  .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 46px}   /* 訳も英文と同じ左端にそろえる */
+  .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 0}   /* 訳は発話divのpadding-left(46px)で既に英文と同じ左端。ここで足すと二重インデントになる */
   /* 「文字を大きく」ON時 */
   body.bigtext .en{font-size:23px}
   body.bigtext .yaku{font-size:16px}
@@ -854,7 +854,7 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
     h+=`<div class="pass top"><div class="pk">本文<span>太字が答えの手がかり</span></div><div class="pen">${pe}</div>${py?`<div class="pyaku">${py}</div>`:''}</div>`;
   }
   if(isDlg){   // Part C: 会話(リスニング本文)を先頭に、質問はそのあと(Part Dの本文先頭と同じ並び)
-    h+='<div class="dlg first">'+c.dialogue.map((d,di)=>`<div><span>${d.speaker}</span><span class="lseg" data-seg="${di}">${d.text}</span></div>`+(d.yaku?`<div class="dy">${d.yaku}</div>`:'')).join('')+'</div>';   // 各台詞をlseg化(再生中の行を青くなぞる)
+    h+='<div class="dlg first">'+c.dialogue.map((d,di)=>`<div><span>${d.speaker}</span><span class="lseg" data-seg="${di}">${d.text}</span>${d.yaku?`<div class="dy">${d.yaku}</div>`:''}</div>`).join('')+'</div>';   // 訳も発話divの中に入れ、英文と同じ左端(divのpadding-left)にそろえる。台詞はlseg化(再生中の行を青くなぞる)
     if(c.question){h+=`<div class="enlab">${ENLAB[PART.id]||'質問'}</div><div class="en">${c.question}</div>`; if(c.q_yaku)h+=`<div class="yaku">${c.q_yaku}</div>`;} }   // 会話の後の大きな英文が「質問」だと分かるようにラベルを付ける
   else if(c.en){if(ENLAB[PART.id])h+=`<div class="enlab">${ENLAB[PART.id]}</div>`;   // 大きな英文が質問(A/D/F)か・聞いて再話する話(E)か・復唱する英文(B)かを示す
     if(c.kana)h+=`<div class="kana">${c.kana}</div>`;
@@ -893,7 +893,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0808-05';
+const BUILD='0808-06';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
