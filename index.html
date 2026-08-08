@@ -151,7 +151,7 @@
   body.bigtext .row.ex .v b{font-size:17px}
   .dlg.first{padding-bottom:15px;margin-bottom:15px;border-bottom:1px solid var(--line)}  /* Part C: 会話を先頭に置き、質問との間に区切り */
   .dlg.first + .enlab{margin-top:0}   /* Part C: 会話の直後は質問ラベル。会話とラベルを詰める(enlabを挟んだので隣接対象を.enから.enlabへ) */
-  .dlg div{font-size:14px;margin-bottom:3px;padding-left:46px}   /* 台詞を全行インデントして左端をそろえる(話者ラベルの分の左ガター) */
+  .dlg>div{font-size:14px;margin-bottom:3px;padding-left:46px}   /* 発話行だけ(直接の子)を左ガター分インデント。子孫の.dyにも効くと二重インデントになるので > で限定 */
   .dlg span:not(.lseg){color:var(--sub);font-size:11.5px;margin-right:0;display:inline-block;width:46px;margin-left:-46px;vertical-align:top}   /* 話者ラベルを左ガターに固定=英文が全行そろう。台詞本文の.lsegには当てない(会話が11.5px灰色に潰れ・bigtext無効になる回帰を防ぐ) */
   .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 0}   /* 訳は発話divのpadding-left(46px)で既に英文と同じ左端。ここで足すと二重インデントになる */
   /* 「文字を大きく」ON時 */
@@ -893,7 +893,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0808-06';
+const BUILD='0808-07';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
