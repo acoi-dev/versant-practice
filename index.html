@@ -446,12 +446,12 @@ function restoreState(){let st;try{st=JSON.parse(localStorage.getItem('st'));}ca
 function loadLog(){ try{return JSON.parse(localStorage.getItem('vlog'))||{};}catch(e){return {};} }
 function saveLog(o){ try{localStorage.setItem('vlog',JSON.stringify(o));}catch(e){} }
 function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function logPracticeDay(){ const l=loadLog(); l.days=l.days||[]; const t=todayStr(); if(!l.days.includes(t)){ l.days.push(t); saveLog(l); } }   // その日はじめて触れたら1回だけ記録
-function logScore(part,said){ const l=loadLog(); l.scores=l.scores||[]; l.scores.push({d:todayStr(),part:part||'',said:said}); if(l.scores.length>500) l.scores=l.scores.slice(-500); saveLog(l); }
+function logPracticeDay(){ const l=loadLog(); l.days=l.days||[]; const t=todayStr(); if(!l.days.includes(t)){ l.days.push(t); if(l.days.length>400) l.days=l.days.slice(-400); saveLog(l); } }   // その日はじめて触れたら1回だけ記録
+// logScore(scores記録)は前回%機能の廃止に伴い削除
 // 済み記録: パートごとに、再生した問題のindexを覚える
 function logDone(partId,idx){ if(!partId) return; const l=loadLog(); l.done=l.done||{}; const a=l.done[partId]=l.done[partId]||[]; if(!a.includes(idx)){ a.push(idx); saveLog(l); } }
-function doneCount(partId){ return ((loadLog().done||{})[partId]||[]).length; }
-function prevScore(partId){ const s=(loadLog().scores||[]).filter(x=>x.part===partId); return s.length?s[s.length-1].said:null; }   // そのパートの直近の言えた率(=前回)
+function doneCount(partId,n){ const a=(loadLog().done||{})[partId]||[]; return n==null?a.length:a.filter(x=>x<n).length; }
+// prevScore(前回%)は読み手が無い残骸のため削除
 // 問題(パート×番号)ごとの自己ベスト(過去最高の言えた率)。一度100点を取れば100として残る
 function logBest(part,idx,said){ if(!part) return; const l=loadLog(); l.best=l.best||{}; const b=l.best[part]=l.best[part]||{}; if((b[idx]||0)<said){ b[idx]=said; saveLog(l); } }
 function bestScore(part,idx){ const v=((loadLog().best||{})[part]||{})[idx]; return v==null?null:v; }
@@ -507,7 +507,7 @@ function renderHome(){
     const n=p.chapters.filter(c=>!c.tail).length;
     const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"
     return `<div class="pcard" data-p="${i}">`
-      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${doneCount(p.id)>=n?'<span class="dq">済み</span>':doneCount(p.id)>0?'<span class="dq">'+doneCount(p.id)+'/'+n+'</span> 済み':n+'問'}</span></div>`
+      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${(SPK_PARTS.has(p.id)||QA_PARTS.has(p.id))?(doneCount(p.id,n)>=n?'<span class="dq">済み</span>':doneCount(p.id,n)>0?'<span class="dq">'+doneCount(p.id,n)+'/'+n+'</span> 済み':n+'問'):((p.id==='E'||p.id==='F')?n+'問 <span style="color:var(--sub);font-size:11px;margin-left:2px">採点準備中</span>':n+'問')}</span></div>`
       +`<div class="ttl">${name}</div>`
       +`<div class="desc">${TASK[p.id]||''}</div></div>`;
   };
@@ -518,7 +518,7 @@ function renderHome(){
   const gP=DATA.parts[gIdx];
   const gN=gP?gP.chapters.filter(c=>!c.tail).length:0;
   const kitae=
-    (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${doneCount('G')>=gN?'<span class="dq">済み</span>':doneCount('G')>0?'<span class="dq">'+doneCount('G')+'/'+gN+'</span> 済み':gN+'問'}</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div></div>`:'')
+    (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${gN+'問'}</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div></div>`:'')
     +`<div class="pcard lesson" data-lesson><div class="top"><span class="eb kt">文法</span><span class="meta">絵で理解＋クイズ</span></div><div class="ttl">イメージ英文法</div><div class="desc">訳でなく“絵”で、前置詞・冠詞などを迷わず選べる</div></div>`
     +`<div class="pcard soon"><div class="top"><span class="eb kt">話す</span><span class="meta">近日</span></div><div class="ttl">口から出る化トレ</div><div class="desc">言い回しの“武器”を増やして、パッと口から出す</div></div>`;
   document.getElementById('plist').innerHTML=
@@ -647,17 +647,18 @@ function renderFeed(){
     if(ri!==active){active=ri;lastSwipe=Date.now();document.getElementById('hint')?.classList.add('hide');playCard(ri);saveState();}   // ユーザーが手で送った=この後1.2秒は表示を正とする
   },90);};
   // 境目ページ廃止: 最終カードでさらに上フリック→次パート / 先頭カードでさらに下フリック→前パート(空白ページを挟まず直接遷移)
-  let _tsY=0;
-  feed.addEventListener('touchstart',e=>{ _tsY=e.touches[0].clientY; },{passive:true});
-  feed.addEventListener('touchend',e=>{
-    const dy=e.changedTouches[0].clientY-_tsY;   // 負=上フリック(次へ) / 正=下フリック(前へ)
-    // 最終カードで上フリック→次パート / 先頭カードで下フリック→前パート。
-    // 以前は scrollTop が最下部/最上部かも条件にしていたが、iOSのdvh(アドレスバー出入り)で
-    // scrollHeight/clientHeight が揺れ、最終カードにいても「最下部」と見なされず遷移が発火しないことがあった。
-    // カード位置(active)とフリック量だけで判定する。
-    if(dy<-70 && active===CARDS.length-1) goNextPart();
-    else if(dy>70 && active===0) goPrevPart();
-  },{passive:true});
+  let _tsY=0, _tsInText=false;
+  const feedEl=document.getElementById('feed');
+  if(!feedEl.__gestBound){   // ジェスチャ登録は初回だけ(renderFeedは毎回呼ばれるためリスナ累積を防ぐ)
+    feedEl.__gestBound=true;
+    feedEl.addEventListener('touchstart',e=>{ _tsY=e.changedTouches[0].clientY; _tsInText=!!(e.target&&e.target.closest&&e.target.closest('.text')); },{passive:true});
+    feedEl.addEventListener('touchend',e=>{
+      if(_tsInText) return;   // 答え枠(.text)内スクロールで始まった指はパート移動に使わない(誤発火防止)
+      const dy=e.changedTouches[0].clientY-_tsY;
+      if(dy<-70 && active===CARDS.length-1) goNextPart();
+      else if(dy>70 && active===0) goPrevPart();
+    });
+  }
 
   CARDS.forEach((_,i)=>paintText(i));   // 全カードを最初から正しい状態に(隠す=空/常時表示=本文)。スワイプ中のveilチラつき防止
 }
@@ -785,7 +786,7 @@ AU.addEventListener('timeupdate',()=>{
   reconcile();
   updateHighlight();
 });
-AU.addEventListener('ended',()=>{ if(auto) goNextPart(); else AU.pause(); });   // パート音源の終端→次パート(Bug4: timeupdateが末尾閾値に届かず無音停止するのを防ぐ)
+AU.addEventListener('ended',()=>{ if(repeat){ replay(); return; } if(auto) goNextPart(); else AU.pause(); });   // パート音源の終端→次パート(Bug4: timeupdateが末尾閾値に届かず無音停止するのを防ぐ)
 setInterval(reconcile, 500);   // 予備: timeupdateが疎な時のズレも拾う
 document.addEventListener('visibilitychange',()=>{   // 画面復帰(別アプリから戻る/ロック解除)で表示と音源を合わせ直す
   if(document.hidden) return;
@@ -855,9 +856,9 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0809-09';
+const BUILD='0809-11';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
-const SPK_PARTS=new Set(['B','G']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
+const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
@@ -899,16 +900,18 @@ async function startSpkRec(fromSheet){
     spkRec.onstop=async ()=>{
       try{ spkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
       if(_recCancel){ _recCancel=false; return; }   // 再生等で割り込み→採点せず終了
-      const ref=(CARDS[active]&&CARDS[active].en)||''; spkLastRef=ref;
+      const ref=(CARDS[_recIdx]&&CARDS[_recIdx].en)||''; spkLastRef=ref;
       if(!spkChunks.length||!ref||(Date.now()-_recStart)<SPK_MIN_MS){ skClose(); return; }   // 誤タップ(0.5秒未満)は採点しない
       spkLastBlob=new Blob(spkChunks,{type:(spkChunks[0]&&spkChunks[0].type)||'audio/mp4'});   // 聞き返し用(即・お手本/自分の声ボタンをすぐ使える)
       renderSpkPending(ref);   // 先に画面(英文・ボタン)を即表示。採点が要る所だけ後で埋める
       try{
         const b64=await blobToB64(spkLastBlob);   // 変換せず"そのまま"の音声を送る(粗い16kHzリサンプルをやめ認識精度を上げる)
-        await scoreSpk(b64, ref, spkLastBlob.type);
+        let b64w=b64, sendMime=spkLastBlob.type;
+        if(_recPart && _recPart.id==='B'){ try{ b64w=await blobToWav16k(spkLastBlob); sendMime='audio/wav'; }catch(e){} }
+        await scoreSpk(b64w, ref, sendMime);
       }catch(e){ skOpen('<div class="sk-status">音声の処理に失敗しました</div>'); }
     };
-    spkRec.start(); spkRecording=true; _recStart=Date.now();
+    spkRec.start(); spkRecording=true; _recStart=Date.now(); _recIdx=active; _recPart=PART;
     clearTimeout(_maxRecTimer); _maxRecTimer=setTimeout(()=>{ if(spkRecording) stopSpkRec(); }, SPK_MAX_MS);   // 止め忘れ対策: 最長で自動停止→採点
     document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));   // マイクボタンが赤く点滅＋真上に「録音中…」ラベル(.miclbl)。シート内録音時はシートが覆うので裏のラベルは見えない
   }catch(e){ document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec')); skOpen('<div class="sk-status">マイクを使えませんでした（許可を確認してください）</div>'); }
@@ -950,40 +953,40 @@ _spkrBody.addEventListener('click',e=>{
   else if(a.dataset.sk==='again'){ startSpkRec(true); a.textContent='録音中… タップで停止'; a.classList.add('sk-recing'); }   // 閉じずにその場で録音(文を見ながら)
 });
 
-// 録音blob(iOSはmp4等)→ 16kHz mono PCM16 WAV → base64
-async function blobToWav16k(blob){
-  const buf=await blob.arrayBuffer();
-  const AC=window.AudioContext||window.webkitAudioContext; const ac=new AC();
-  const audio=await ac.decodeAudioData(buf);
-  const len=audio.length, ch=audio.numberOfChannels;
-  let mono=new Float32Array(len);
-  for(let c=0;c<ch;c++){ const d=audio.getChannelData(c); for(let i=0;i<len;i++) mono[i]+=d[i]/ch; }
-  const src=audio.sampleRate, dst=16000, outLen=Math.max(1,Math.round(len*dst/src));
-  const out=new Float32Array(outLen);
-  for(let i=0;i<outLen;i++){ const t=i*src/dst, i0=Math.floor(t), i1=Math.min(i0+1,len-1), f=t-i0; out[i]=mono[i0]*(1-f)+mono[i1]*f; }
-  try{ ac.close(); }catch(e){}
-  return skB64(encodeWav(out,dst));
-}
-function encodeWav(samples,rate){
-  const n=samples.length, b=new ArrayBuffer(44+n*2), v=new DataView(b);
-  const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
-  w(0,'RIFF'); v.setUint32(4,36+n*2,true); w(8,'WAVE'); w(12,'fmt '); v.setUint32(16,16,true);
-  v.setUint16(20,1,true); v.setUint16(22,1,true); v.setUint32(24,rate,true); v.setUint32(28,rate*2,true);
-  v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,'data'); v.setUint32(40,n*2,true);
-  let o=44; for(let i=0;i<n;i++){ let s=Math.max(-1,Math.min(1,samples[i])); v.setInt16(o,s<0?s*0x8000:s*0x7FFF,true); o+=2; }
-  return b;
-}
+  // 録音blob(iOS mp4等) → 16kHz mono PCM16 WAV → base64(Azure発音採点用)
+  async function blobToWav16k(blob){
+    const buf=await blob.arrayBuffer();
+    const AC=window.AudioContext||window.webkitAudioContext; const ac=new AC();
+    const audio=await ac.decodeAudioData(buf);
+    const len=audio.length, ch=audio.numberOfChannels;
+    let mono=new Float32Array(len);
+    for(let c=0;c<ch;c++){ const d=audio.getChannelData(c); for(let i=0;i<len;i++) mono[i]+=d[i]/ch; }
+    const src=audio.sampleRate, dst=16000, outLen=Math.max(1,Math.round(len*dst/src));
+    const out=new Float32Array(outLen);
+    for(let i=0;i<outLen;i++){ const t=i*src/dst, i0=Math.floor(t), i1=Math.min(i0+1,len-1), f=t-i0; out[i]=mono[i0]+(mono[i1]-mono[i0])*f; }
+    try{ ac.close(); }catch(e){}
+    return skB64(encodeWav(out,dst));
+  }
+  function encodeWav(samples,rate){
+    const n=samples.length, b=new ArrayBuffer(44+n*2), v=new DataView(b);
+    const w=(o,str)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i));};
+    w(0,'RIFF'); v.setUint32(4,36+n*2,true); w(8,'WAVE'); w(12,'fmt '); v.setUint32(16,16,true);
+    v.setUint16(20,1,true); v.setUint16(22,1,true); v.setUint32(24,rate,true); v.setUint32(28,rate*2,true);
+    v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,'data'); v.setUint32(40,n*2,true);
+    let o=44; for(let i=0;i<n;i++){ let x=Math.max(-1,Math.min(1,samples[i])); v.setInt16(o,x<0?x*0x8000:x*0x7fff,true); o+=2; }
+    return b;
+  }
 function skB64(ab){ const by=new Uint8Array(ab); let s=''; for(let i=0;i<by.length;i+=0x8000) s+=String.fromCharCode.apply(null,by.subarray(i,i+0x8000)); return btoa(s); }
 
 async function blobToB64(blob){ return skB64(await blob.arrayBuffer()); }   // 元の音声をそのままbase64化(変換なし)
 async function scoreSpk(audioB64, reference, mime){
   try{
-    const qa = PART && QA_PARTS.has(PART.id);   // 質問応答パートは内容判定モード(質問+模範解答も送る)
-    const body = qa ? {audio:audioB64,reference,mime,mode:'qa',question:reference,answer:(CARDS[active]&&CARDS[active].answer)||''} : {audio:audioB64,reference,mime};
+    const qa = _recPart && QA_PARTS.has(_recPart.id);   // 質問応答パートは内容判定モード(質問+模範解答も送る)
+    const body = qa ? {audio:audioB64,reference,mime,mode:'qa',question:reference,answer:(CARDS[_recIdx]&&CARDS[_recIdx].answer)||''} : {audio:audioB64,reference,mime};
     const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const j=await r.json(); if(!j.ok) throw new Error(j.error||'採点に失敗');
     renderSpkResult(j);
-  }catch(e){ skOpen('<div class="sk-status">採点サーバーに接続できませんでした</div>'); }
+  }catch(e){ skOpen('<div class="sk-status">'+skEsc(e.message||'採点サーバーに接続できませんでした')+'</div>'); }
 }
 // 録音直後の"下地"表示: 英文とボタンを即出し、評価とアドバイスだけ後で埋める(体感を速く)
 function renderSpkPending(ref){
@@ -1004,16 +1007,16 @@ const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were
 function renderSpkResult(j){
   if(j.mode==='qa') return renderQaResult(j);   // 質問応答パート(A/C/D)は内容判定の表示へ
   const said=Math.round((j.scores&&j.scores.said)??0);
-  const best = PART ? Math.max(bestScore(PART.id,active)||0, said) : null;   // その問題の自己ベスト(過去最高と今回の高い方)。一度100点なら100のまま残る
-  try{ logScore(PART&&PART.id, said); logBest(PART&&PART.id, active, said); }catch(e){}   // 言えた率＋自己ベストを記録
-  if(said>=100 && PART){ try{ logDone(PART.id, active); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
+  const best = _recPart ? Math.max(bestScore(_recPart.id,_recIdx)||0, said) : null;   // その問題の自己ベスト(過去最高と今回の高い方)。一度100点なら100のまま残る
+  try{ logBest(_recPart&&_recPart.id, _recIdx, said); }catch(e){}   // 言えた率＋自己ベストを記録
+  if(said>=100 && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
   const wHTML=words.map(w=>`<span class="w ${bad(w)?'bad':''}">${skEsc(w.word)}</span>`).join(' ');
   const hasBad=words.some(bad);
   const verdict= said>=80?'よく言えています' : said>=55?'おしい、あと少し' : 'もう一度言ってみよう';
   skOpen(
-    `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%</span>${best!=null?`<span class="sk-best${best>=100?' full':''}">自己ベスト ${best}%</span>`:''}</div>`
+    `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%</span>${j.pron?`<span style="margin-left:8px">発音 ${j.pron.score}点</span>`:''}${best!=null?`<span class="sk-best${best>=100?' full':''}">自己ベスト ${best}%</span>`:''}</div>`
     +`<div class="sk-words">${wHTML}</div>`
     +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${hasBad?'（赤 ＝ 直したい所）':''}</div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}</div>`
@@ -1027,7 +1030,7 @@ function renderSpkResult(j){
 // 質問応答パート(A/C/D)の結果表示。内容判定=正解/おしい/不正解。正解でその問題を済みに
 function renderQaResult(j){
   const v=j.verdict||'—', ok=(v==='正解');
-  if(ok && PART){ try{ logDone(PART.id, active); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
+  if(ok && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
   const cls = ok?'qa-ok':(v==='おしい'?'qa-mid':'qa-ng');
   skOpen(
     `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span></div>`
