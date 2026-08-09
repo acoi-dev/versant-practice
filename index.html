@@ -452,6 +452,8 @@ function doneCount(partId){ return ((loadLog().done||{})[partId]||[]).length; }
 function prevScore(partId){ const s=(loadLog().scores||[]).filter(x=>x.part===partId); return s.length?s[s.length-1].said:null; }   // そのパートの直近の言えた率(=前回)
 // カード下の「前回◯%」行(済み進捗は右上のmetaへ移した)。前回スコアが無ければ空
 function progHTML(partId){ const pv=prevScore(partId); return pv!=null?'<div class="prog">前回 <b>'+pv+'%</b></div>':''; }
+// 済みの定義を[再生]→[話すモードで100点]に変更。旧仕様で貯まった済み記録を一度だけ消す
+try{ const _l0=loadLog(); if(_l0.done && !_l0.doneV2){ _l0.done={}; _l0.doneV2=true; saveLog(_l0); } }catch(e){}
 function setExamDate(v){ const l=loadLog(); l.examDate=v||null; saveLog(l); renderCountdown(); }
 function daysUntil(ds){ const t=new Date(todayStr()+'T00:00:00'), e=new Date(ds+'T00:00:00'); return Math.round((e-t)/86400000); }
 function fmtDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -708,7 +710,7 @@ function trySeek(start){   // seekable範囲が目標をカバーしていれば
   return false;
 }
 function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
-  if(!noPlay&&PART){ try{logDone(PART.id,i);}catch(e){} }   // 実際に再生した問題を「済み」に記録(復元時の頭出し=noPlayは数えない)
+  // 済みは「再生」でなく「話すモードで100点」で付ける(renderSpkResult側)。ここでは記録しない
   const start=c.start+0.02, my=++seekSeq;
   // 各パートの1問目は先頭に約15〜22秒のイントロがあり、card開始は0秒でない。ここへ頭出しする
   const run=()=>{if(my!==seekSeq)return;
@@ -868,7 +870,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0808-09';
+const BUILD='0809-01';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
@@ -1015,6 +1017,7 @@ function renderSpkResult(j){
   const said=Math.round((j.scores&&j.scores.said)??0);
   const prev = PART ? prevScore(PART.id) : null;    // logScoreより先に「前回」を取る(でないと今回に上書きされる)
   try{ logScore(PART&&PART.id, said); }catch(e){}   // 言えた率を記録(あとで成長実感/自己ベストに使う)
+  if(said>=100 && PART){ try{ logDone(PART.id, active); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
   const wHTML=words.map(w=>`<span class="w ${bad(w)?'bad':''}">${skEsc(w.word)}</span>`).join(' ');
