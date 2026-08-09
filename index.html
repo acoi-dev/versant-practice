@@ -568,6 +568,9 @@ function closeLesson(){   // iframe内の右下ホームボタンからも windo
 window.closeLesson=closeLesson;
 
 function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
+// オフライン対策の先読み: mp3をfetchしてブラウザキャッシュに載せる(地下鉄・トンネルで途切れにくく)
+const _preAudio=new Set();
+function preloadAudio(url){ if(!url||/^data:/.test(url)||_preAudio.has(url)) return; _preAudio.add(url); try{ fetch(url,{cache:'force-cache'}).catch(()=>{}); }catch(e){} }
 
 let switching=false, switchTarget=0, switchTimer=0;   // パート切替中は判定停止。目標カード(switchTarget)に着地するまで前/次パート発火を抑止(scrollTop=0の一瞬で番兵を拾う誤発火を防ぐ)。switchTimer=保険タイマーid(連続切替時に前回分をclearし、途中発火でクロスフェードが潰れるのを防ぐ)
 let lastSwipe=0;       // 直近にユーザーがスワイプして表示カードを変えた時刻。この直後は表示を正=音声を合わせる
@@ -609,6 +612,7 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   document.getElementById('hint').classList.remove('hide');
   saveState();
   logPracticeDay();   // パートを開いた=今日は練習した、として記録(1日1回)
+  try{ preloadAudio(partAudio(PART)); const _nx=DATA.parts&&DATA.parts[(partIdx+1)%DATA.parts.length]; if(_nx&&_nx!==PART) preloadAudio(partAudio(_nx)); }catch(e){}   // オフライン対策: 現在＋次パートの音声を先読み
 }
 // ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
 // ホームはプレイヤーの上にかぶせて開く(画面遷移でなく)。プレイヤーはそのまま裏で継続
@@ -876,7 +880,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0809-06';
+const BUILD='0809-07';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
