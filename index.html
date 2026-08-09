@@ -206,6 +206,10 @@
   .sk-verdict{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .sk-verdict span{font-size:12.5px;color:var(--sub);font-weight:600;font-variant-numeric:tabular-nums}
   .sk-verdict .sk-best.full{color:var(--accent)}   /* 自己ベスト100%はアクセント色 */
+  .sk-qa{font-size:22px;font-weight:700}   /* 質問応答の判定(正解/おしい/不正解) */
+  .sk-verdict .sk-qa.qa-ok{color:var(--accent)}
+  .sk-verdict .sk-qa.qa-ng{color:#e5484d}
+  .sk-verdict .sk-qa.qa-mid{color:var(--ink)}
   .sk-load{font-size:15px;font-weight:500;color:var(--sub);animation:skpulse 1.2s ease-in-out infinite}   /* 採点中の待ち表示 */
   @keyframes skpulse{50%{opacity:.4}}
 
@@ -635,7 +639,7 @@ function renderFeed(){
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
-          ${(SPEAK_ENABLED&&c.en&&SPK_PARTS.has(PART.id))?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
+          ${(SPEAK_ENABLED&&c.en&&(SPK_PARTS.has(PART.id)||QA_PARTS.has(PART.id)))?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
         </div>
       </div>
     </section>`).join('');
@@ -871,9 +875,10 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0809-04';
+const BUILD='0809-05';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
-const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
+const SPK_PARTS=new Set(['B','G']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
+const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
@@ -993,7 +998,9 @@ function skB64(ab){ const by=new Uint8Array(ab); let s=''; for(let i=0;i<by.leng
 async function blobToB64(blob){ return skB64(await blob.arrayBuffer()); }   // 元の音声をそのままbase64化(変換なし)
 async function scoreSpk(audioB64, reference, mime){
   try{
-    const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:audioB64,reference,mime})});
+    const qa = PART && QA_PARTS.has(PART.id);   // 質問応答パートは内容判定モード(質問+模範解答も送る)
+    const body = qa ? {audio:audioB64,reference,mime,mode:'qa',question:reference,answer:(CARDS[active]&&CARDS[active].answer)||''} : {audio:audioB64,reference,mime};
+    const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const j=await r.json(); if(!j.ok) throw new Error(j.error||'採点に失敗');
     renderSpkResult(j);
   }catch(e){ skOpen('<div class="sk-status">採点サーバーに接続できませんでした</div>'); }
@@ -1015,6 +1022,7 @@ function renderSpkPending(ref){
 }
 const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were be been do does did have has had will would shall can could i he she it we they you your my me this that with as so no not'.split(' '));
 function renderSpkResult(j){
+  if(j.mode==='qa') return renderQaResult(j);   // 質問応答パート(A/C/D)は内容判定の表示へ
   const said=Math.round((j.scores&&j.scores.said)??0);
   const best = PART ? Math.max(bestScore(PART.id,active)||0, said) : null;   // その問題の自己ベスト(過去最高と今回の高い方)。一度100点なら100のまま残る
   try{ logScore(PART&&PART.id, said); logBest(PART&&PART.id, active, said); }catch(e){}   // 言えた率＋自己ベストを記録
@@ -1029,6 +1037,22 @@ function renderSpkResult(j){
     +`<div class="sk-words">${wHTML}</div>`
     +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${hasBad?'（赤 ＝ 直したい所）':''}</div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}</div>`
+    +`<div class="sk-actions">`
+      +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
+      +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
+      +`<button class="sk-btn sk-again" data-sk="again">もう一度言う</button>`
+    +`</div>`
+  );
+}
+// 質問応答パート(A/C/D)の結果表示。内容判定=正解/おしい/不正解。正解でその問題を済みに
+function renderQaResult(j){
+  const v=j.verdict||'—', ok=(v==='正解');
+  if(ok && PART){ try{ logDone(PART.id, active); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
+  const cls = ok?'qa-ok':(v==='おしい'?'qa-mid':'qa-ng');
+  skOpen(
+    `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span></div>`
+    +`<div class="sk-adv"><span class="k">あなたの解答</span>${skEsc(j.transcript||'（聞き取れませんでした）')}</div>`
+    +(j.reason?`<div class="sk-adv"><span class="k">ひとこと</span>${skEsc(j.reason)}</div>`:'')
     +`<div class="sk-actions">`
       +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
       +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
