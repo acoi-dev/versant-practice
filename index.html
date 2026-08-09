@@ -607,7 +607,7 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
 // ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
 // ホームはプレイヤーの上にかぶせて開く(画面遷移でなく)。プレイヤーはそのまま裏で継続
 function markCurrent(){document.querySelectorAll('.pcard').forEach(el=>el.classList.toggle('current',+el.dataset.p===partIdx));}  // 今いるパートに枠線
-document.getElementById('back').onclick=()=>{closeSet();markCurrent();document.getElementById('home').classList.remove('off');saveState();};
+document.getElementById('back').onclick=()=>{closeSet();renderHome();markCurrent();document.getElementById('home').classList.remove('off');saveState();};   // 一覧を開くたびに再描画=採点で増えた「済み」を反映
 // ×で閉じると、さっきのプレイヤーに位置そのまま・音も止めずに戻る
 document.getElementById('homeClose').onclick=()=>{document.getElementById('home').classList.add('off');saveState();};
 
@@ -870,7 +870,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0809-01';
+const BUILD='0809-02';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
