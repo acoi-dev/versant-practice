@@ -34,7 +34,7 @@
   #home.off{opacity:0;transform:scale(.99);pointer-events:none}
   #home::-webkit-scrollbar{display:none}
   /* 右上の閉じる×（ホーム・設定 共通） */
-  .closex{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:16px;z-index:12;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-size:24px;line-height:1}
+  .closex{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:16px;z-index:12;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-size:24px;line-height:1}
   .closex[hidden]{display:none}
   .pop .closex{position:absolute;top:10px;right:12px}
   /* パートを閉じる×は右下（親指位置）。設定の×は上のまま */
@@ -116,7 +116,7 @@
   .hidebtn{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;cursor:pointer;padding-bottom:11px;margin-bottom:3px;border-bottom:1px solid var(--line)}
   .hidebtn svg{width:15px;height:15px}
   /* 会話を全部見る（Part C・畳んでおく） */
-  .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px}
+  .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px;min-height:44px;display:inline-flex;align-items:center}
   .kana{font-size:13px;color:var(--sub);margin-bottom:5px;letter-spacing:.02em;line-height:1.6}  /* 英文の上・どう聞こえるか。かたまりで区切る */
   .kana b{color:var(--ink);font-weight:700}  /* 強く・高く読むかたまり=抑揚 */
   .enlab{font-size:12px;color:var(--sub);margin-bottom:6px}   /* 大きな英文が「質問」なのか「話(聞く本文)」なのかを示す小見出し(本文ラベルと同じ濃さ) */
@@ -159,7 +159,7 @@
   .yb:active{opacity:.5}
   .yb.rep{width:46px;height:46px;justify-self:center}
   .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg);justify-self:center}
-  .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 15px;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
+  .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 15px;min-height:44px;display:inline-flex;align-items:center;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
 
   /* ===== 発音採点(押し続け録音のマイク＋結果シート) ===== */
   .spdrow{display:flex;justify-content:center;margin-bottom:14px}   /* 速度は再生ボタンの上段に置く */
@@ -175,7 +175,7 @@
   .spkr-sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-top-left-radius:20px;border-top-right-radius:20px;border-top:1px solid var(--line2);
     padding:22px 22px calc(env(safe-area-inset-bottom) + 24px);max-height:86vh;overflow-y:auto;transform:translateY(100%);transition:transform .24s ease}
   .spkr.show .spkr-sheet{transform:translateY(0)}
-  .spkr-x{position:absolute;top:12px;right:14px;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:36px;height:36px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .spkr-x{position:absolute;top:12px;right:14px;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:44px;height:44px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
   .spkr-body{padding-top:14px}
   .sk-top{display:flex;align-items:center;gap:20px;margin-bottom:14px}
   .sk-ring{--v:0;width:84px;height:84px;flex:0 0 auto;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--v)*1%),var(--line2) 0);display:flex;align-items:center;justify-content:center;position:relative}
@@ -227,7 +227,7 @@
   /* 上部：タイトル中央＋設定は右上（あまり使わないので親指圏外でOK） */
   .head{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:0;right:0;padding:0 64px;display:flex;justify-content:center;align-items:center;z-index:5}
   .htitle{text-align:center;font-size:13px;color:var(--ink);font-weight:600}
-  .topgear{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:16px;z-index:9;border:1px solid var(--line2);background:none;color:var(--sub);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .topgear{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:16px;z-index:9;border:1px solid var(--line2);background:none;color:var(--sub);width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
   .topgear svg{width:22px;height:22px;display:block}
 
   /* ===== 下部の片手操作バー（ホーム／答え表示／設定） ===== */
@@ -259,11 +259,12 @@
   .setrow .lb b{display:block;font-size:13.5px;font-weight:500}
   .setrow .lb span{font-size:11.5px;color:var(--sub)}
   .sw{width:44px;height:26px;border-radius:15px;border:1px solid var(--line2);background:var(--hover);position:relative;cursor:pointer;flex:none;transition:.2s}
+  .sw::after{content:"";position:absolute;top:-10px;bottom:-10px;left:-8px;right:-8px}   /* 見た目は26pxのまま、タップ領域を44pt以上に */
   .sw::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--line2);transition:.2s}
   .sw.on{background:var(--accent);border-color:var(--accent)}
   .sw.on::after{left:19px;border-color:var(--accent)}
   .seg{display:flex;border:1px solid var(--line2);border-radius:9px;overflow:hidden}
-  .seg button{flex:1;border:0;background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 0;cursor:pointer;border-left:1px solid var(--line2)}
+  .seg button{flex:1;border:0;background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 0;min-height:46px;cursor:pointer;border-left:1px solid var(--line2)}
   .seg button:first-child{border-left:0}
   .seg button.on{background:var(--accent);color:var(--bg)}
   .pophint{font-size:11px;color:var(--faint);line-height:1.6;padding-top:12px;border-top:1px solid var(--line)}
@@ -875,7 +876,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0809-05';
+const BUILD='0809-06';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
