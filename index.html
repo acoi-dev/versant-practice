@@ -188,6 +188,8 @@
   .sk-sub .r span:last-child{font-weight:600;font-variant-numeric:tabular-nums}
   .sk-words{font-size:19px;line-height:1.9;margin:4px 0}
   .sk-words .w.bad{color:#e5484d;text-decoration:underline;text-decoration-color:#e5484d;text-underline-offset:3px}
+  /* 言えてはいるが発音が違うとAzureが判定した語。「言えていない(赤)」とは別物なので色は足さず点線で区別する */
+  .sk-words .w.weak{text-decoration:underline dotted;text-decoration-color:var(--sub);text-underline-offset:3px}
   .sk-leg{font-size:11.5px;color:var(--faint)}
   .sk-leg b{color:#e5484d;font-weight:600}
   .sk-adv{font-size:14px;line-height:1.8;border-top:1px solid var(--line);padding-top:14px;margin-top:12px}
@@ -856,7 +858,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0809-11';
+const BUILD='0810-01';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1012,13 +1014,24 @@ function renderSpkResult(j){
   if(said>=100 && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
-  const wHTML=words.map(w=>`<span class="w ${bad(w)?'bad':''}">${skEsc(w.word)}</span>`).join(' ');
+  // Azureが「言えてはいるが発音が違う」と判定した語(pron.words[].e==='Mispronunciation')に点線を引く。
+  // 同じ語が文中に複数あるので名前引きにせず、語順を保ったまま前から突き合わせる(Insertionで個数がずれても崩れない)
+  const skNorm=s=>String(s||'').toLowerCase().replace(/[^a-z']/g,'');
+  const pws=((j.pron&&j.pron.words)||[]).slice();
+  let _pi=0;
+  const weakSet=new Set();
+  words.forEach((w,i)=>{
+    const t=skNorm(w.word); if(!t) return;
+    for(let k=_pi;k<pws.length;k++){ if(skNorm(pws[k].w)===t){ if(pws[k].e==='Mispronunciation') weakSet.add(i); _pi=k+1; break; } }
+  });
+  const wHTML=words.map((w,i)=>`<span class="w ${bad(w)?'bad':(weakSet.has(i)?'weak':'')}">${skEsc(w.word)}</span>`).join(' ');
   const hasBad=words.some(bad);
+  const hasWeak=words.some((w,i)=>!bad(w)&&weakSet.has(i));
   const verdict= said>=80?'よく言えています' : said>=55?'おしい、あと少し' : 'もう一度言ってみよう';
   skOpen(
     `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%</span>${j.pron?`<span style="margin-left:8px">発音 ${j.pron.score}点</span>`:''}${best!=null?`<span class="sk-best${best>=100?' full':''}">自己ベスト ${best}%</span>`:''}</div>`
     +`<div class="sk-words">${wHTML}</div>`
-    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${hasBad?'（赤 ＝ 直したい所）':''}</div>`
+    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${(hasBad||hasWeak)?'（'+[hasBad?'赤 ＝ 言えていない所':'',hasWeak?'点線 ＝ 発音がすこし弱い所':''].filter(Boolean).join('／')+'）':''}</div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}</div>`
     +`<div class="sk-actions">`
       +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
