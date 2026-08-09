@@ -67,8 +67,6 @@
   .cdown .cd-link{font-size:12px;color:var(--sub);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   #streak{border-bottom:0;padding-bottom:6px}   /* 連続日数ブロック。区切り線は下の受験日ブロックに任せる */
   .pcard .meta .dq{color:var(--accent);font-weight:600}   /* 右上の「N/M 済み」の数字だけアクセント */
-  .pcard .prog{font-size:11.5px;color:var(--sub);margin-top:7px;font-variant-numeric:tabular-nums}  /* 前回スコア */
-  .pcard .prog b{color:var(--accent);font-weight:600}
   .pcard.lesson{text-decoration:none;color:inherit}        /* イメージ英文法(別ページへ) */
   .pcard .eb.kt{color:var(--accent)}                       /* きたえる系は見出しをアクセント色で区別 */
   .pcard.soon{opacity:.5}                                  /* 近日(タップ不可) */
@@ -450,8 +448,7 @@ function logScore(part,said){ const l=loadLog(); l.scores=l.scores||[]; l.scores
 function logDone(partId,idx){ if(!partId) return; const l=loadLog(); l.done=l.done||{}; const a=l.done[partId]=l.done[partId]||[]; if(!a.includes(idx)){ a.push(idx); saveLog(l); } }
 function doneCount(partId){ return ((loadLog().done||{})[partId]||[]).length; }
 function prevScore(partId){ const s=(loadLog().scores||[]).filter(x=>x.part===partId); return s.length?s[s.length-1].said:null; }   // そのパートの直近の言えた率(=前回)
-// カード下の「前回◯%」行(済み進捗は右上のmetaへ移した)。前回スコアが無ければ空
-function progHTML(partId){ const pv=prevScore(partId); return pv!=null?'<div class="prog">前回 <b>'+pv+'%</b></div>':''; }
+// (一覧カードの「前回◯%」表示は削除。前回比は採点画面にのみ表示)
 // 済みの定義を[再生]→[話すモードで100点]に変更。旧仕様で貯まった済み記録を一度だけ消す
 try{ const _l0=loadLog(); if(_l0.done && !_l0.doneV2){ _l0.done={}; _l0.doneV2=true; saveLog(_l0); } }catch(e){}
 function setExamDate(v){ const l=loadLog(); l.examDate=v||null; saveLog(l); renderCountdown(); }
@@ -527,7 +524,7 @@ function renderHome(){
     return `<div class="pcard" data-p="${i}">`
       +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${doneCount(p.id)>=n?'<span class="dq">済み</span>':doneCount(p.id)>0?'<span class="dq">'+doneCount(p.id)+'/'+n+'</span> 済み':n+'問'}</span></div>`
       +`<div class="ttl">${name}</div>`
-      +`<div class="desc">${TASK[p.id]||''}</div>${progHTML(p.id)}</div>`;
+      +`<div class="desc">${TASK[p.id]||''}</div></div>`;
   };
   // 本番れんしゅう = G以外(A〜F)
   const test=DATA.parts.map((p,i)=>[p,i]).filter(([p])=>p.id!=='G').map(([p,i])=>mkCard(p,i)).join('');
@@ -536,7 +533,7 @@ function renderHome(){
   const gP=DATA.parts[gIdx];
   const gN=gP?gP.chapters.filter(c=>!c.tail).length:0;
   const kitae=
-    (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${doneCount('G')>=gN?'<span class="dq">済み</span>':doneCount('G')>0?'<span class="dq">'+doneCount('G')+'/'+gN+'</span> 済み':gN+'問'}</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div>${progHTML('G')}</div>`:'')
+    (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${doneCount('G')>=gN?'<span class="dq">済み</span>':doneCount('G')>0?'<span class="dq">'+doneCount('G')+'/'+gN+'</span> 済み':gN+'問'}</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div></div>`:'')
     +`<div class="pcard lesson" data-lesson><div class="top"><span class="eb kt">文法</span><span class="meta">絵で理解＋クイズ</span></div><div class="ttl">イメージ英文法</div><div class="desc">訳でなく“絵”で、前置詞・冠詞などを迷わず選べる</div></div>`
     +`<div class="pcard soon"><div class="top"><span class="eb kt">話す</span><span class="meta">近日</span></div><div class="ttl">口から出る化トレ</div><div class="desc">言い回しの“武器”を増やして、パッと口から出す</div></div>`;
   document.getElementById('plist').innerHTML=
@@ -870,7 +867,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0809-02';
+const BUILD='0809-03';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B','G']);   // 録音採点(マイク)はお手本をそのまま復唱するPart B/Gだけに出す。A/C/D/E/Fは.enが質問文/本文で採点対象がズレ、正答でも「言えてない」と誤判定するため付けない
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
@@ -1015,8 +1012,7 @@ function renderSpkPending(ref){
 const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were be been do does did have has had will would shall can could i he she it we they you your my me this that with as so no not'.split(' '));
 function renderSpkResult(j){
   const said=Math.round((j.scores&&j.scores.said)??0);
-  const prev = PART ? prevScore(PART.id) : null;    // logScoreより先に「前回」を取る(でないと今回に上書きされる)
-  try{ logScore(PART&&PART.id, said); }catch(e){}   // 言えた率を記録(あとで成長実感/自己ベストに使う)
+  try{ logScore(PART&&PART.id, said); }catch(e){}   // 言えた率を記録(将来「一文ごとの前回%」等に使う)
   if(said>=100 && PART){ try{ logDone(PART.id, active); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
@@ -1024,7 +1020,7 @@ function renderSpkResult(j){
   const hasBad=words.some(bad);
   const verdict= said>=80?'よく言えています' : said>=55?'おしい、あと少し' : 'もう一度言ってみよう';
   skOpen(
-    `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%${prev!=null?`（前回 ${prev}%）`:''}</span></div>`
+    `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%</span></div>`
     +`<div class="sk-words">${wHTML}</div>`
     +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${hasBad?'（赤 ＝ 直したい所）':''}</div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}</div>`
