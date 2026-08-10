@@ -884,7 +884,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-01';
+const BUILD='0811-02';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1116,7 +1116,9 @@ function renderQaResult(j){
   const repeats=disp.filter((w,i)=>weakSet.has(i)).map(w=>({w,n:weakCount(w)}))
     .filter(x=>x.n>=WEAK_MIN).sort((a,b)=>b.n-a.n).slice(0,2);
   skOpen(
-    `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span>${(j.pron&&j.pron.score!=null)?`<span style="margin-left:10px">発音 ${j.pron.score}点</span>`:''}</div>`
+    // 発音は総合点でなく「正確さ」を見せる。内容判定パートはお手本が自分の発話なので、
+    // 完全さ(自分の文をどれだけ言えたか)が循環して意味を持たず、一語だと総合点が一桁に壊れるため
+    `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span>${(j.pron&&j.pron.accuracy!=null)?`<span style="margin-left:10px">発音 ${j.pron.accuracy}点</span>`:''}</div>`
     +`<div class="sk-words">${wHTML}</div>`
     +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${hasWeak?'（点線 ＝ 発音がすこし弱い所）':''}</div>`
     +(j.reason?`<div class="sk-adv"><span class="k">ひとこと</span>${skEsc(j.reason)}`
