@@ -884,7 +884,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0810-03';
+const BUILD='0811-01';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -933,9 +933,12 @@ async function startSpkRec(fromSheet){
       spkLastBlob=new Blob(spkChunks,{type:(spkChunks[0]&&spkChunks[0].type)||'audio/mp4'});   // 聞き返し用(即・お手本/自分の声ボタンをすぐ使える)
       renderSpkPending(ref);   // 先に画面(英文・ボタン)を即表示。採点が要る所だけ後で埋める
       try{
-        const b64=await blobToB64(spkLastBlob);   // 変換せず"そのまま"の音声を送る(粗い16kHzリサンプルをやめ認識精度を上げる)
-        let b64w=b64, sendMime=spkLastBlob.type;
-        if(_recPart && _recPart.id==='B'){ try{ b64w=await blobToWav16k(spkLastBlob); sendMime='audio/wav'; }catch(e){} }
+        // 全パートで16kHz WAVに変換して送る。Azureの発音採点が16kHz WAVしか受けないため、
+        // これでPart A/C/Dにも発音点と語ごとの指摘を出せる(認識精度は実測でm4aと同じ)。
+        // 変換できない端末では元の音声をそのまま送る(文字起こしだけは動く)
+        let b64w=null, sendMime='audio/wav';
+        try{ b64w=await blobToWav16k(spkLastBlob); }catch(e){ b64w=null; }
+        if(!b64w){ b64w=await blobToB64(spkLastBlob); sendMime=spkLastBlob.type; }
         await scoreSpk(b64w, ref, sendMime);
       }catch(e){ skOpen('<div class="sk-status">音声の処理に失敗しました</div>'); }
     };
@@ -982,18 +985,35 @@ _spkrBody.addEventListener('click',e=>{
 });
 
   // 録音blob(iOS mp4等) → 16kHz mono PCM16 WAV → base64(Azure発音採点用)
+  // 端末の録音を16kHzモノラルWAVにする。Azureの発音採点が16kHz WAVしか受けないため全パートで通す。
+  // 【2026-08-11修正】以前は線形補間だけで間引いていた。iPhoneの録音は48kHzなので 48000/16000=3 となり
+  // 補間係数が常に0＝「3サンプルに1つ捨てるだけ」。高い音を落とさずに間引くと折り返し雑音で子音が濁る。
+  // ブラウザ内蔵のリサンプラ(OfflineAudioContext)に任せれば折り返し対策込みで正しく落ちる。
   async function blobToWav16k(blob){
     const buf=await blob.arrayBuffer();
     const AC=window.AudioContext||window.webkitAudioContext; const ac=new AC();
     const audio=await ac.decodeAudioData(buf);
-    const len=audio.length, ch=audio.numberOfChannels;
-    let mono=new Float32Array(len);
-    for(let c=0;c<ch;c++){ const d=audio.getChannelData(c); for(let i=0;i<len;i++) mono[i]+=d[i]/ch; }
-    const src=audio.sampleRate, dst=16000, outLen=Math.max(1,Math.round(len*dst/src));
-    const out=new Float32Array(outLen);
-    for(let i=0;i<outLen;i++){ const t=i*src/dst, i0=Math.floor(t), i1=Math.min(i0+1,len-1), f=t-i0; out[i]=mono[i0]+(mono[i1]-mono[i0])*f; }
     try{ ac.close(); }catch(e){}
-    return skB64(encodeWav(out,dst));
+    let out=null;
+    try{
+      const OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+      const off=new OAC(1, Math.max(1,Math.ceil(audio.duration*16000)), 16000);   // 出力1ch=自動でモノラルに落ちる
+      const s=off.createBufferSource(); s.buffer=audio; s.connect(off.destination); s.start();
+      out=(await off.startRendering()).getChannelData(0);
+    }catch(e){ out=null; }   // 16kHzのOfflineAudioContextを作れない古い端末向けに予備を用意
+    if(!out || !out.length){
+      const len=audio.length, ch=audio.numberOfChannels;
+      const mono=new Float32Array(len);
+      for(let c=0;c<ch;c++){ const d=audio.getChannelData(c); for(let i=0;i<len;i++) mono[i]+=d[i]/ch; }
+      const src=audio.sampleRate, dst=16000, n=Math.max(1,Math.round(len*dst/src)), step=src/dst;
+      out=new Float32Array(n);
+      for(let i=0;i<n;i++){   // 予備でも折り返しを減らすため、間引かずに区間の平均を取る(簡易ローパス)
+        const a=Math.floor(i*step), b=Math.min(len, Math.max(a+1, Math.floor((i+1)*step)));
+        let s=0; for(let k=a;k<b;k++) s+=mono[k];
+        out[i]=s/(b-a);
+      }
+    }
+    return skB64(encodeWav(out,16000));
   }
   function encodeWav(samples,rate){
     const n=samples.length, b=new ArrayBuffer(44+n*2), v=new DataView(b);
@@ -1031,6 +1051,7 @@ function renderSpkPending(ref){
     +`</div>`
   );
 }
+const skNorm=s=>String(s||'').toLowerCase().replace(/[^a-z']/g,'');   // 語の突き合わせ用(復唱・内容判定の両方で使う)
 const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were be been do does did have has had will would shall can could i he she it we they you your my me this that with as so no not'.split(' '));
 function renderSpkResult(j){
   if(j.mode==='qa') return renderQaResult(j);   // 質問応答パート(A/C/D)は内容判定の表示へ
@@ -1042,7 +1063,6 @@ function renderSpkResult(j){
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
   // Azureが「言えてはいるが発音が違う」と判定した語(pron.words[].e==='Mispronunciation')に点線を引く。
   // 同じ語が文中に複数あるので名前引きにせず、語順を保ったまま前から突き合わせる(Insertionで個数がずれても崩れない)
-  const skNorm=s=>String(s||'').toLowerCase().replace(/[^a-z']/g,'');
   const pws=((j.pron&&j.pron.words)||[]).slice();
   let _pi=0;
   const weakSet=new Set();
@@ -1064,7 +1084,7 @@ function renderSpkResult(j){
     +`<div class="sk-words">${wHTML}</div>`
     +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${(hasBad||hasWeak)?'（'+[hasBad?'赤 ＝ 言えていない所':'',hasWeak?'点線 ＝ 発音がすこし弱い所':''].filter(Boolean).join('／')+'）':''}</div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}`
-      +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(r.w)} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
+      +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
     +`</div>`
     +`<div class="sk-actions">`
       +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
@@ -1078,10 +1098,30 @@ function renderQaResult(j){
   const v=j.verdict||'—', ok=(v==='正解');
   if(ok && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
   const cls = ok?'qa-ok':(v==='おしい'||v==='もう一度'?'qa-mid':'qa-ng');   // 「もう一度」=聞き取れなかっただけ。不正解の赤にはしない
+  // 表示はPart B(復唱)と同じ構造にそろえる。ただし決まったお手本が無いので「言えた率」は出さず、
+  // 自分が言った文章を語ごとに並べて、発音が弱い所に点線を引く(発音点は自分の発話を基準にした値)
+  // 表示は自分が言った文章そのまま(大文字小文字・句読点を保つ)。Azureの語は印を付けるためだけに使う
+  const disp=String(j.transcript||'').split(/\s+/).filter(Boolean);
+  const pws=((j.pron&&j.pron.words)||[]).slice();
+  let _pi=0; const weakSet=new Set();
+  disp.forEach((w,i)=>{
+    const t=skNorm(w); if(!t) return;
+    for(let k=_pi;k<pws.length;k++){ if(skNorm(pws[k].w)===t){ if(pws[k].e==='Mispronunciation') weakSet.add(i); _pi=k+1; break; } }
+  });
+  const wHTML=disp.length
+    ? disp.map((w,i)=>`<span class="w ${weakSet.has(i)?'weak':''}">${skEsc(w)}</span>`).join(' ')
+    : '（聞き取れませんでした）';
+  const hasWeak=weakSet.size>0;
+  try{ logWeakWords([], j.pron); }catch(e){}
+  const repeats=disp.filter((w,i)=>weakSet.has(i)).map(w=>({w,n:weakCount(w)}))
+    .filter(x=>x.n>=WEAK_MIN).sort((a,b)=>b.n-a.n).slice(0,2);
   skOpen(
-    `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span></div>`
-    +`<div class="sk-adv"><span class="k">あなたの解答</span>${skEsc(j.transcript||'（聞き取れませんでした）')}</div>`
-    +(j.reason?`<div class="sk-adv"><span class="k">ひとこと</span>${skEsc(j.reason)}</div>`:'')
+    `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span>${(j.pron&&j.pron.score!=null)?`<span style="margin-left:10px">発音 ${j.pron.score}点</span>`:''}</div>`
+    +`<div class="sk-words">${wHTML}</div>`
+    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${hasWeak?'（点線 ＝ 発音がすこし弱い所）':''}</div>`
+    +(j.reason?`<div class="sk-adv"><span class="k">ひとこと</span>${skEsc(j.reason)}`
+       +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
+       +`</div>`:'')
     +`<div class="sk-actions">`
       +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
       +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
