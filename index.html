@@ -884,7 +884,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0810-02';
+const BUILD='0810-03';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1077,7 +1077,7 @@ function renderSpkResult(j){
 function renderQaResult(j){
   const v=j.verdict||'—', ok=(v==='正解');
   if(ok && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
-  const cls = ok?'qa-ok':(v==='おしい'?'qa-mid':'qa-ng');
+  const cls = ok?'qa-ok':(v==='おしい'||v==='もう一度'?'qa-mid':'qa-ng');   // 「もう一度」=聞き取れなかっただけ。不正解の赤にはしない
   skOpen(
     `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span></div>`
     +`<div class="sk-adv"><span class="k">あなたの解答</span>${skEsc(j.transcript||'（聞き取れませんでした）')}</div>`
