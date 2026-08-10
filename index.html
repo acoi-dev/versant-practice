@@ -884,7 +884,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-02';
+const BUILD='0811-03';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1100,6 +1100,8 @@ function renderQaResult(j){
   const cls = ok?'qa-ok':(v==='おしい'||v==='もう一度'?'qa-mid':'qa-ng');   // 「もう一度」=聞き取れなかっただけ。不正解の赤にはしない
   // 表示はPart B(復唱)と同じ構造にそろえる。ただし決まったお手本が無いので「言えた率」は出さず、
   // 自分が言った文章を語ごとに並べて、発音が弱い所に点線を引く(発音点は自分の発話を基準にした値)
+  // 解答例(模範解答)。APIが返した値を優先し、無ければ手元のカードから拾う
+  const ans=(j.answer||'').trim() || ((CARDS[_recIdx]&&CARDS[_recIdx].answer)||'').trim();
   // 表示は自分が言った文章そのまま(大文字小文字・句読点を保つ)。Azureの語は印を付けるためだけに使う
   const disp=String(j.transcript||'').split(/\s+/).filter(Boolean);
   const pws=((j.pron&&j.pron.words)||[]).slice();
@@ -1121,7 +1123,9 @@ function renderQaResult(j){
     `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span>${(j.pron&&j.pron.accuracy!=null)?`<span style="margin-left:10px">発音 ${j.pron.accuracy}点</span>`:''}</div>`
     +`<div class="sk-words">${wHTML}</div>`
     +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${hasWeak?'（点線 ＝ 発音がすこし弱い所）':''}</div>`
-    +(j.reason?`<div class="sk-adv"><span class="k">ひとこと</span>${skEsc(j.reason)}`
+    // 解答例(模範解答)。答えが短いので注記は付けない=Part Aの表示ルール
+    +(ans?`<div class="sk-adv"><span class="k">解答例</span><b>${skEsc(ans)}</b></div>`:'')
+    +((j.advice||j.reason)?`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||j.reason)}`
        +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
        +`</div>`:'')
     +`<div class="sk-actions">`
