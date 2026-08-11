@@ -193,6 +193,9 @@
   /* ホームの「にがてな語」。カードにも枠にもしない=1行の覚え書き。回数は濃淡だけで示す */
   .wknote{font-size:14px;line-height:2.1;color:var(--ink)}
   .wknote span{font-size:11px;color:var(--faint);margin:0 14px 0 4px}
+  /* 「あなたの答え」等の小見出し。.sk-adv .k と同じ見た目でそろえる */
+  .sk-lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);font-weight:600;display:block;margin:12px 0 2px}
+  .sk-words.sub{font-size:15px;line-height:1.7;margin:2px 0}
   .sk-leg{font-size:11.5px;color:var(--faint)}
   .sk-leg b{color:#e5484d;font-weight:600}
   .sk-adv{font-size:14px;line-height:1.8;border-top:1px solid var(--line);padding-top:14px;margin-top:12px}
@@ -884,7 +887,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-05';
+const BUILD='0811-06';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1106,22 +1109,29 @@ function renderQaResult(j){
   // 冠詞などの機能語(a/the等)は弱く発音されて拾われにくいので赤くしない=Part Bと同じ扱い
   const isBad=w=>!w.ok && !w.fn && !SK_FUNC.has(skNorm(w.word));
   const isWeak=w=>w.ok && w.weak && !w.fn && !SK_FUNC.has(skNorm(w.word));
-  const wHTML=words.length
-    ? words.map(w=>`<span class="w ${isBad(w)?'bad':(isWeak(w)?'weak':'')}">${skEsc(w.word)}</span>`).join(' ')
-    : skEsc(ans||'');
   const hasBad=words.some(isBad), hasWeak=words.some(isWeak);
   try{ logWeakWords(words.filter(isBad).map(w=>w.word), j.pron); }catch(e){}
   const repeats=words.filter(w=>isBad(w)||isWeak(w)).map(w=>({w:w.word,n:weakCount(w.word)}))
     .filter(x=>x.n>=WEAK_MIN).sort((a,b)=>b.n-a.n).slice(0,2);
-  const leg=[hasBad?'赤 ＝ 言えていない所':'',hasWeak?'点線 ＝ 発音がすこし弱い所':''].filter(Boolean);
+  // 主役は「自分が言った答え」。お手本の語は発音の印を付けるためだけに使い、語順で突き合わせる
+  const mine=String(j.transcript||'').split(/\s+/).filter(Boolean);
+  const weakWords=words.filter(isWeak).map(w=>skNorm(w.word));
+  const mineHTML=mine.length
+    ? mine.map(w=>`<span class="w ${weakWords.includes(skNorm(w))?'weak':''}">${skEsc(w)}</span>`).join(' ')
+    : '（聞き取れませんでした）';
+  const mineWeak=mine.some(w=>weakWords.includes(skNorm(w)));
   skOpen(
     // 発音は総合点でなく「正確さ」。総合点は一語だと壊れる(完全さ0→流暢さ0の連鎖)
     `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span>${said!=null?`<span style="margin-left:10px">言えた率 ${said}%</span>`:''}${(j.pron&&j.pron.accuracy!=null)?`<span style="margin-left:8px">発音 ${j.pron.accuracy}点</span>`:''}</div>`
-    +`<div class="sk-words">${wHTML}</div>`
-    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${leg.length?'（'+leg.join('／')+'）':''}</div>`
-    +(j.transcript?`<div class="sk-heard">聞こえた内容: ${skEsc(j.transcript)}</div>`:'')
+    +`<span class="sk-lbl">あなたの答え</span>`
+    +`<div class="sk-words">${mineHTML}</div>`
+    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${mineWeak?'（点線 ＝ 発音がすこし弱い所）':''}</div>`
+    // お手本の語で言えていないものがあるときだけ、何が届いていないかを出す
+    +(hasBad?`<span class="sk-lbl">お手本と比べると</span>`
+      +`<div class="sk-words sub">${words.map(w=>`<span class="w ${isBad(w)?'bad':(isWeak(w)?'weak':'')}">${skEsc(w.word)}</span>`).join(' ')}</div>`
+      +`<div class="sk-leg">赤 ＝ 届いていない所</div>`:'')
     // 解答例(模範解答)。答えが短いので注記は付けない=Part Aの表示ルール
-    +(ans?`<div class="sk-adv"><span class="k">解答例</span><b>${skEsc(ans)}</b></div>`:'')
+    +(ans?`<div class="sk-adv"><span class="k">解答例</span><b>${skEsc(ans)}</b>${j.reason?`<div class="sk-heard">${skEsc(j.reason)}</div>`:''}</div>`:'')
     +((j.advice||j.reason)?`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||j.reason)}`
        +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
        +`</div>`:'')
