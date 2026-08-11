@@ -884,7 +884,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-04';
+const BUILD='0811-05';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1103,12 +1103,15 @@ function renderQaResult(j){
   const ans=(j.answer||'').trim() || ((CARDS[_recIdx]&&CARDS[_recIdx].answer)||'').trim();
   const words=j.words||[];
   const said=(j.scores&&j.scores.said);
+  // 冠詞などの機能語(a/the等)は弱く発音されて拾われにくいので赤くしない=Part Bと同じ扱い
+  const isBad=w=>!w.ok && !w.fn && !SK_FUNC.has(skNorm(w.word));
+  const isWeak=w=>w.ok && w.weak && !w.fn && !SK_FUNC.has(skNorm(w.word));
   const wHTML=words.length
-    ? words.map(w=>`<span class="w ${!w.ok?'bad':(w.weak?'weak':'')}">${skEsc(w.word)}</span>`).join(' ')
+    ? words.map(w=>`<span class="w ${isBad(w)?'bad':(isWeak(w)?'weak':'')}">${skEsc(w.word)}</span>`).join(' ')
     : skEsc(ans||'');
-  const hasBad=words.some(w=>!w.ok), hasWeak=words.some(w=>w.ok&&w.weak);
-  try{ logWeakWords(words.filter(w=>!w.ok).map(w=>w.word), j.pron); }catch(e){}
-  const repeats=words.filter(w=>!w.ok||w.weak).map(w=>({w:w.word,n:weakCount(w.word)}))
+  const hasBad=words.some(isBad), hasWeak=words.some(isWeak);
+  try{ logWeakWords(words.filter(isBad).map(w=>w.word), j.pron); }catch(e){}
+  const repeats=words.filter(w=>isBad(w)||isWeak(w)).map(w=>({w:w.word,n:weakCount(w.word)}))
     .filter(x=>x.n>=WEAK_MIN).sort((a,b)=>b.n-a.n).slice(0,2);
   const leg=[hasBad?'赤 ＝ 言えていない所':'',hasWeak?'点線 ＝ 発音がすこし弱い所':''].filter(Boolean);
   skOpen(
