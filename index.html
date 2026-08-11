@@ -939,7 +939,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-09';
+const BUILD='0811-10';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1107,6 +1107,24 @@ function renderSpkPending(ref){
   );
 }
 const skNorm=s=>String(s||'').toLowerCase().replace(/[^a-z']/g,'');   // 語の突き合わせ用(復唱・内容判定の両方で使う)
+const mineLen=j=>String((j&&j.transcript)||'').split(/\s+/).filter(Boolean).length;
+// 発音は点数でなく段階で見せる。Azureの正確さ(AccuracyScore)は「ネイティブの発音にどれだけ近いか」なので
+// 日本語話者だと40〜60が普通に出る。数字のまま見せると不当に厳しく感じるうえ、短い答えでは
+// 同じ発音でも録音条件だけで19点動くことを実測している(はっきり84点/小さめ反響65点)
+function pronBand(acc){
+  if(acc==null) return null;
+  // ラベルは短くする。Part Bの判定文(「よく言えています」等)と重複させない
+  if(acc>=75) return {label:'よい',     low:false};
+  if(acc>=55) return {label:'ふつう',   low:false};
+  return              {label:'もう少し', low:true};
+}
+// 段階が低いときだけ、なぜそう出るのかを添える(学習者が理不尽に感じないように)
+function pronNote(band, wordCount){
+  if(!band || !band.low) return '';
+  const a='ネイティブの発音にどれだけ近いかで見ています。日本語の話し方だと低めに出ます。';
+  const b=(wordCount<=2)?'短い答えは、マイクとの距離や部屋の響きでも変わります。':'';
+  return a+b;
+}
 const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were be been do does did have has had will would shall can could i he she it we they you your my me this that with as so no not'.split(' '));
 function renderSpkResult(j){
   if(j.mode==='qa') return renderQaResult(j);   // 質問応答パート(A/C/D)は内容判定の表示へ
@@ -1134,15 +1152,18 @@ function renderSpkResult(j){
   const hasWeak=words.some((w,i)=>!bad(w)&&weakSet.has(i));
   // つまずいた語を記録してから、この文の中で「前もつまずいた語」を拾う(今回の分を含めた回数を出す)
   if(!replay){ try{ logWeakWords(j.missing, j.pron); }catch(e){} }
+  const band=pronBand(j.pron&&j.pron.accuracy);   // 点数でなく段階で見せる
+  const note=pronNote(band, words.length);
   const repeats=words.map((w,i)=>(bad(w)||weakSet.has(i))?w.word:null).filter(Boolean)
     .map(x=>({w:x,n:weakCount(x)})).filter(x=>x.n>=WEAK_MIN)
     .sort((a,b)=>b.n-a.n).slice(0,2);
   const verdict= said>=80?'よく言えています' : said>=55?'おしい、あと少し' : 'もう一度言ってみよう';
   skOpen(
-    `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%</span>${j.pron?`<span style="margin-left:8px">発音 ${j.pron.score}点</span>`:''}${best!=null?`<span class="sk-best${best>=100?' full':''}">自己ベスト ${best}%</span>`:''}</div>`
+    `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%</span>${band?`<span style="margin-left:8px">発音 ${band.label}</span>`:''}${best!=null?`<span class="sk-best${best>=100?' full':''}">自己ベスト ${best}%</span>`:''}</div>`
     +`<div class="sk-words">${wHTML}</div>`
     +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${(hasBad||hasWeak)?'（'+[hasBad?'赤 ＝ 言えていない所':'',hasWeak?'点線 ＝ 発音がすこし弱い所':''].filter(Boolean).join('／')+'）':''}</div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}`
+      +(note?`<div class="sk-heard">${note}</div>`:'')
       +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
     +`</div>`
     +`<div class="sk-actions">`
@@ -1171,6 +1192,8 @@ function renderQaResult(j){
   const isWeak=w=>w.ok && w.weak && !w.fn && !SK_FUNC.has(skNorm(w.word));
   const hasBad=words.some(isBad), hasWeak=words.some(isWeak);
   if(!replay){ try{ logWeakWords(words.filter(isBad).map(w=>w.word), j.pron); }catch(e){} }
+  const band=pronBand(j.pron&&j.pron.accuracy);   // 点数でなく段階で見せる
+  const note=pronNote(band, words.length||mineLen(j));
   const repeats=words.filter(w=>isBad(w)||isWeak(w)).map(w=>({w:w.word,n:weakCount(w.word)}))
     .filter(x=>x.n>=WEAK_MIN).sort((a,b)=>b.n-a.n).slice(0,2);
   // 主役は「自分が言った答え」。お手本の語は発音の印を付けるためだけに使い、語順で突き合わせる
@@ -1182,7 +1205,7 @@ function renderQaResult(j){
   const mineWeak=mine.some(w=>weakWords.includes(skNorm(w)));
   skOpen(
     // 発音は総合点でなく「正確さ」。総合点は一語だと壊れる(完全さ0→流暢さ0の連鎖)
-    `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span>${said!=null?`<span style="margin-left:10px">言えた率 ${said}%</span>`:''}${(j.pron&&j.pron.accuracy!=null)?`<span style="margin-left:8px">発音 ${j.pron.accuracy}点</span>`:''}</div>`
+    `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span>${said!=null?`<span style="margin-left:10px">言えた率 ${said}%</span>`:''}${band?`<span style="margin-left:8px">発音 ${band.label}</span>`:''}</div>`
     +`<span class="sk-lbl">あなたの答え</span>`
     +`<div class="sk-words">${mineHTML}</div>`
     +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${mineWeak?'（点線 ＝ 発音がすこし弱い所）':''}</div>`
@@ -1193,6 +1216,7 @@ function renderQaResult(j){
     // 解答例(模範解答)。答えが短いので注記は付けない=Part Aの表示ルール
     +(ans?`<div class="sk-adv"><span class="k">解答例</span><b>${skEsc(ans)}</b>${j.reason?`<div class="sk-heard">${skEsc(j.reason)}</div>`:''}</div>`:'')
     +((j.advice||j.reason)?`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||j.reason)}`
+       +(note?`<div class="sk-heard">${note}</div>`:'')
        +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
        +`</div>`:'')
     +`<div class="sk-actions">`
