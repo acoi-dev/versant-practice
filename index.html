@@ -943,7 +943,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-13';
+const BUILD='0811-14';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1222,6 +1222,8 @@ function renderQaResult(j){
     ? mine.map(w=>`<span class="w ${weakWords.includes(skNorm(w))?'weak':''}">${skEsc(w)}</span>`).join(' ')
     : '（聞き取れませんでした）';
   const mineWeak=mine.some(w=>weakWords.includes(skNorm(w)));
+  // 「あなたの答え」と解答例が同じ文なら、解答例は出さない(同じ英文が2回並ぶだけで読む所が増える)
+  const sameAsModel = !!ans && mine.join(' ').trim().toLowerCase()===String(ans).trim().toLowerCase();
   skOpen(
     // 発音は総合点でなく「正確さ」。総合点は一語だと壊れる(完全さ0→流暢さ0の連鎖)
     `<div class="sk-verdict"><span class="sk-qa ${cls}">${skEsc(v)}</span>${said!=null?`<span style="margin-left:10px">言えた率 ${said}%</span>`:''}${band?`<span style="margin-left:8px">発音 ${band.label}${pronMeter(band)}</span>`:''}</div>`
@@ -1234,7 +1236,7 @@ function renderQaResult(j){
       +`<div class="sk-words sub">${words.map(w=>`<span class="w ${isBad(w)?'bad':(isWeak(w)?'weak':'')}">${skEsc(w.word)}</span>`).join(' ')}</div>`
       +`<div class="sk-leg">赤 ＝ 届いていない所</div>`:'')
     // 解答例(模範解答)。答えが短いので注記は付けない=Part Aの表示ルール
-    +((ans && !(!trustMine && said===100))?`<div class="sk-adv"><span class="k">解答例</span><b>${skEsc(ans)}</b>${(j.reason&&!ok)?`<div class="sk-heard">${skEsc(j.reason)}</div>`:''}</div>`:'')
+    +((ans && !sameAsModel)?`<div class="sk-adv"><span class="k">解答例</span><b>${skEsc(ans)}</b>${(j.reason&&!ok)?`<div class="sk-heard">${skEsc(j.reason)}</div>`:''}</div>`:'')
     +((j.advice||j.reason)?`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||j.reason)}`
        +(note?`<div class="sk-heard">${note}</div>`:'')
        +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
