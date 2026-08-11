@@ -100,6 +100,12 @@
   .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;min-height:0}
   .task{font-size:13px;color:var(--sub);font-weight:500;letter-spacing:.02em}
   .wave{display:flex;gap:5px;align-items:center;height:44px}
+  /* 答えを開いている間は上のブロックを詰める。flex:1のままだと縮んだ.midから波形がはみ出して答えに重なる */
+  .card.ans .mid{flex:0 0 auto;gap:8px;padding:2px 0}
+  .card.ans .wave{height:20px;gap:4px}
+  .card.ans .wave b{height:7px}
+  .card.ans .task{font-size:12px}
+  .card.ans .text{flex:1 1 auto;max-height:none}   /* 空いた分は答え欄に回す(下に余白を作らない) */
   .wave b{width:5px;height:12px;background:var(--line2);border-radius:3px;display:block}
   .wave.on b{background:var(--accent);animation:w .9s ease-in-out infinite}
   .wave.on b:nth-child(2){animation-delay:.1s}.wave.on b:nth-child(3){animation-delay:.2s}
@@ -866,7 +872,10 @@ AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classLi
 function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
   if(i===active){_litSeg=-1; updateMediaMeta();}   // 表示カードを描き直すと.textのscrollTopが0に戻るので、なぞり自動スクロールの記憶をリセット(次tickで再追従)。ロック画面の問題番号も更新
-  if(!revealed[i] && hideAns){el.innerHTML='';updateEye();return;}   // 非表示中は本文を空に。表示は下バーの「答えを見る」で
+  // 答えを開いているカードには .ans を付ける。上の波形ブロックを小さくして、答えに重ならないようにする
+  const _card=el.closest('.card');
+  if(!revealed[i] && hideAns){el.innerHTML='';_card&&_card.classList.remove('ans');updateEye();return;}   // 非表示中は本文を空に。表示は下バーの「答えを見る」で
+  _card&&_card.classList.add('ans');
   document.getElementById('hint')?.classList.add('hide');
   const isDlg=c.dialogue&&c.dialogue.length;
   let h='';
@@ -916,7 +925,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-07';
+const BUILD='0811-08';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
