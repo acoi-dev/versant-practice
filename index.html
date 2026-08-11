@@ -193,6 +193,9 @@
   /* ホームの「にがてな語」。カードにも枠にもしない=1行の覚え書き。回数は濃淡だけで示す */
   .wknote{font-size:14px;line-height:2.1;color:var(--ink)}
   .wknote span{font-size:11px;color:var(--faint);margin:0 14px 0 4px}
+  /* 前回の採点結果を開き直すリンク。ボタンらしく塗らず、下の操作列の邪魔をしない控えめな文字に */
+  .prevres{display:block;margin:12px auto 0;background:none;border:0;color:var(--sub);font-size:12.5px;padding:6px 10px;cursor:pointer;font-family:inherit}
+  .prevres:active{color:var(--accent)}
   /* 「あなたの答え」等の小見出し。.sk-adv .k と同じ見た目でそろえる */
   .sk-lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);font-weight:600;display:block;margin:12px 0 2px}
   .sk-words.sub{font-size:15px;line-height:1.7;margin:2px 0}
@@ -477,6 +480,30 @@ function logWeakWords(missing, pron){
   if(keys.length>200){ keys.sort((a,b)=>w[a].n-w[b].n).slice(0,keys.length-200).forEach(k=>delete w[k]); }   // 上限200語。少ない順に間引く
   saveLog(l);
 }
+// 直近の採点結果を問題ごとに保存し、あとから開き直せるようにする(端末内のみ)。
+// 音声は保存しない(容量が大きいため)ので、開き直したときは「自分の声を聞く」は出さない
+function lastKey(partId,idx){ return partId+':'+idx; }
+function saveLastResult(partId, idx, j){
+  if(!partId) return;
+  try{
+    const l=loadLog(); const m=l.last=l.last||{};
+    const keep={};   // 音声・巨大な項目は入れない
+    ["mode","verdict","reason","advice","transcript","answer","words","missing","scores","pron"].forEach(k=>{ if(j[k]!==undefined) keep[k]=j[k]; });
+    keep.at=todayStr();
+    m[lastKey(partId,idx)]=keep;
+    const ks=Object.keys(m); if(ks.length>80) ks.slice(0,ks.length-80).forEach(k=>delete m[k]);   // 上限80問
+    saveLog(l);
+  }catch(e){}
+}
+function loadLastResult(partId, idx){ return ((loadLog().last||{})[lastKey(partId,idx)])||null; }
+// カードから前回の結果を開く
+function openLastResult(idx){
+  if(!PART) return;
+  const j=loadLastResult(PART.id, idx); if(!j) return;
+  _recPart=PART; _recIdx=idx;
+  j._replay=true;   // 開き直しでは記録を二重に付けない
+  if(j.mode==='qa') renderQaResult(j); else renderSpkResult(j);
+}
 function weakList(min){ const w=loadLog().weak||{};
   return Object.entries(w).filter(([k,v])=>v.n>=(min||WEAK_MIN)&&!SK_FUNC.has(k))   // 古い記録に機能語が混ざっていても出さない
     .sort((a,b)=>b[1].n-a[1].n||(b[1].d>a[1].d?1:-1)); }
@@ -652,6 +679,7 @@ function renderFeed(){
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
           ${(SPEAK_ENABLED&&c.en&&(SPK_PARTS.has(PART.id)||QA_PARTS.has(PART.id)))?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
         </div>
+        ${loadLastResult(PART.id,i)?`<button class="prevres" data-prev="${i}">前回の結果を見る</button>`:''}
       </div>
     </section>`).join('');
 
@@ -662,6 +690,7 @@ function renderFeed(){
     if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
     if(e.target.closest('[data-spd]')){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=spdTxt(speed));if(typeof syncSpeedSeg==='function')syncSpeedSeg();return;}
     if(e.target.closest('[data-rep]')){replay();return;}
+    if(e.target.closest('[data-prev]')){ openLastResult(+e.target.closest('[data-prev]').dataset.prev); return; }   // 前回の採点結果を開き直す
     if(e.target.closest('[data-mic]')){toggleSpkRec();return;}   // マイク: タップで録音開始、もう一度タップで停止して採点。タップで再生はさせない
     if(e.target.closest('[data-play]')){togglePlay();return;}
     togglePlay();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
@@ -887,7 +916,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-06';
+const BUILD='0811-07';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1049,7 +1078,7 @@ function renderSpkPending(ref){
     +`<div class="sk-adv"><span class="k">アドバイス</span><span class="sk-load">考え中…</span></div>`
     +`<div class="sk-actions">`
       +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
-      +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
+      +(spkLastBlob?`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`:'')
       +`<button class="sk-btn sk-again" data-sk="again">もう一度言う</button>`
     +`</div>`
   );
@@ -1059,9 +1088,13 @@ const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were
 function renderSpkResult(j){
   if(j.mode==='qa') return renderQaResult(j);   // 質問応答パート(A/C/D)は内容判定の表示へ
   const said=Math.round((j.scores&&j.scores.said)??0);
+  const replay=!!j._replay;   // 前回の結果を開き直しただけ=記録を二重に付けない
   const best = _recPart ? Math.max(bestScore(_recPart.id,_recIdx)||0, said) : null;   // その問題の自己ベスト(過去最高と今回の高い方)。一度100点なら100のまま残る
-  try{ logBest(_recPart&&_recPart.id, _recIdx, said); }catch(e){}   // 言えた率＋自己ベストを記録
-  if(said>=100 && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
+  if(!replay){
+    try{ logBest(_recPart&&_recPart.id, _recIdx, said); }catch(e){}   // 言えた率＋自己ベストを記録
+    try{ saveLastResult(_recPart&&_recPart.id, _recIdx, j); }catch(e){}   // あとから開き直せるように保存
+    if(said>=100 && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
+  }
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
   // Azureが「言えてはいるが発音が違う」と判定した語(pron.words[].e==='Mispronunciation')に点線を引く。
@@ -1077,7 +1110,7 @@ function renderSpkResult(j){
   const hasBad=words.some(bad);
   const hasWeak=words.some((w,i)=>!bad(w)&&weakSet.has(i));
   // つまずいた語を記録してから、この文の中で「前もつまずいた語」を拾う(今回の分を含めた回数を出す)
-  try{ logWeakWords(j.missing, j.pron); }catch(e){}
+  if(!replay){ try{ logWeakWords(j.missing, j.pron); }catch(e){} }
   const repeats=words.map((w,i)=>(bad(w)||weakSet.has(i))?w.word:null).filter(Boolean)
     .map(x=>({w:x,n:weakCount(x)})).filter(x=>x.n>=WEAK_MIN)
     .sort((a,b)=>b.n-a.n).slice(0,2);
@@ -1091,7 +1124,7 @@ function renderSpkResult(j){
     +`</div>`
     +`<div class="sk-actions">`
       +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
-      +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
+      +(spkLastBlob?`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`:'')
       +`<button class="sk-btn sk-again" data-sk="again">もう一度言う</button>`
     +`</div>`
   );
@@ -1099,7 +1132,11 @@ function renderSpkResult(j){
 // 質問応答パート(A/C/D)の結果表示。内容判定=正解/おしい/不正解。正解でその問題を済みに
 function renderQaResult(j){
   const v=j.verdict||'—', ok=(v==='正解');
-  if(ok && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
+  const replay=!!j._replay;   // 前回の結果を開き直しただけ=記録を二重に付けない
+  if(!replay){
+    if(ok && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
+    try{ saveLastResult(_recPart&&_recPart.id, _recIdx, j); }catch(e){}   // あとから開き直せるように保存
+  }
   const cls = ok?'qa-ok':(v==='おしい'||v==='もう一度'?'qa-mid':'qa-ng');   // 「もう一度」=聞き取れなかっただけ。不正解の赤にはしない
   // 【2026-08-11】Part B(復唱)と同じ形に統一。APIが模範解答を基準に照合した結果(words/scores)を使う。
   // 文字起こしは判定に使わない(壊れることがあるため)。画面には「聞こえた内容」として補助的に出すだけ
@@ -1110,7 +1147,7 @@ function renderQaResult(j){
   const isBad=w=>!w.ok && !w.fn && !SK_FUNC.has(skNorm(w.word));
   const isWeak=w=>w.ok && w.weak && !w.fn && !SK_FUNC.has(skNorm(w.word));
   const hasBad=words.some(isBad), hasWeak=words.some(isWeak);
-  try{ logWeakWords(words.filter(isBad).map(w=>w.word), j.pron); }catch(e){}
+  if(!replay){ try{ logWeakWords(words.filter(isBad).map(w=>w.word), j.pron); }catch(e){} }
   const repeats=words.filter(w=>isBad(w)||isWeak(w)).map(w=>({w:w.word,n:weakCount(w.word)}))
     .filter(x=>x.n>=WEAK_MIN).sort((a,b)=>b.n-a.n).slice(0,2);
   // 主役は「自分が言った答え」。お手本の語は発音の印を付けるためだけに使い、語順で突き合わせる
@@ -1137,7 +1174,7 @@ function renderQaResult(j){
        +`</div>`:'')
     +`<div class="sk-actions">`
       +`<button class="sk-btn" data-sk="model">お手本を聞く</button>`
-      +`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`
+      +(spkLastBlob?`<button class="sk-btn" data-sk="mine">自分の声を聞く</button>`:'')
       +`<button class="sk-btn sk-again" data-sk="again">もう一度言う</button>`
     +`</div>`
   );
