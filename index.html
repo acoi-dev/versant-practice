@@ -943,7 +943,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0811-12';
+const BUILD='0811-13';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1215,7 +1215,8 @@ function renderQaResult(j){
   const modelKeys=words.map(w=>skNorm(w.word)).filter(Boolean);
   const mineKeys=mineRaw.map(skNorm).filter(Boolean);
   const overlap=modelKeys.length?modelKeys.filter(k=>mineKeys.includes(k)).length/modelKeys.length:0;
-  const trustMine = modelKeys.length ? overlap>=0.5 : mineRaw.length>0;
+  // mineSure=サーバーが2択(Part A)を音で照らして「どちらを言ったか」を確定させた場合。文字起こし由来でないので必ず信用する
+  const trustMine = j.mineSure ? true : (modelKeys.length ? overlap>=0.5 : mineRaw.length>0);
   const mine = trustMine ? mineRaw : words.filter(w=>w.ok).map(w=>w.word);
   const mineHTML=mine.length
     ? mine.map(w=>`<span class="w ${weakWords.includes(skNorm(w))?'weak':''}">${skEsc(w)}</span>`).join(' ')
