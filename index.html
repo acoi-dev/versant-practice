@@ -455,8 +455,8 @@ SWW.onclick=()=>{wakeOn=!wakeOn;SWW.classList.toggle('on',wakeOn);SWW.setAttribu
 
 boot();
 function boot(){
-  if(window.EMBED){ DATA=window.EMBED; renderHome(); restoreState(); }
-  else fetch('player_data.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(d=>{DATA=d;renderHome();restoreState();})
+  if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); }
+  else fetch('player_data.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(d=>{DATA=d;migrateRecordKeys();renderHome();restoreState();})
        .catch(()=>{document.getElementById('plist').innerHTML='<div class="tag">データが読めません</div>';});
 }
 // ===== リロードしても今の画面(どのパート・どのカード・一覧を開いていたか)を保つ =====
@@ -474,8 +474,15 @@ function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.get
 function logPracticeDay(){ const l=loadLog(); l.days=l.days||[]; const t=todayStr(); if(!l.days.includes(t)){ l.days.push(t); if(l.days.length>400) l.days=l.days.slice(-400); saveLog(l); } }   // その日はじめて触れたら1回だけ記録
 // logScore(scores記録)は前回%機能の廃止に伴い削除
 // 済み記録: パートごとに、再生した問題のindexを覚える
-function logDone(partId,idx){ if(!partId) return; const l=loadLog(); l.done=l.done||{}; const a=l.done[partId]=l.done[partId]||[]; if(!a.includes(idx)){ a.push(idx); saveLog(l); } }
-function doneCount(partId,n){ const a=(loadLog().done||{})[partId]||[]; return n==null?a.length:a.filter(x=>x<n).length; }
+// 問題の名札。記録は並び順の番号でなくこれでひも付ける
+// (番号だと教材を1問差し込むだけで、既存の記録が別の問題に付いてしまう)。
+// 名札はデータ側(player_data.json の qid)が持つ。古いデータでも壊れないよう番号に落ちる。
+function qidOf(part,idx){ const c=part&&part.chapters&&part.chapters[idx]; return (c&&c.qid)||((part&&part.id||'?')+'#'+idx); }
+function logDone(part,idx){ if(!part) return; const q=qidOf(part,idx); const l=loadLog(); l.done=l.done||{}; const a=l.done[part.id]=l.done[part.id]||[]; if(!a.includes(q)){ a.push(q); saveLog(l); } }
+// いま在る問題のうち、記録に名札が載っているものを数える(問題を減らしても数がおかしくならない)
+function doneCount(part,n){ if(!part) return 0; const a=(loadLog().done||{})[part.id]||[];
+  const ch=(part.chapters||[]).filter(c=>!c.tail).slice(0,n==null?undefined:n);
+  return ch.filter((c,i)=>a.includes(qidOf(part,(part.chapters||[]).indexOf(c)))).length; }
 // prevScore(前回%)は読み手が無い残骸のため削除
 // 問題(パート×番号)ごとの自己ベスト(過去最高の言えた率)。一度100点を取れば100として残る
 // つまずいた語を貯める(端末内のみ・外には出さない)。m=言えなかった回数 / p=発音が弱かった回数 / n=合計 / d=最終日
@@ -496,26 +503,25 @@ function logWeakWords(missing, pron){
 }
 // 直近の採点結果を問題ごとに保存し、あとから開き直せるようにする(端末内のみ)。
 // 音声は保存しない(容量が大きいため)ので、開き直したときは「自分の声を聞く」は出さない
-function lastKey(partId,idx){ return partId+':'+idx; }
-function saveLastResult(partId, idx, j){
-  if(!partId) return;
+function saveLastResult(part, idx, j){
+  if(!part) return;
   try{
     const l=loadLog(); const m=l.last=l.last||{};
     const keep={};   // 音声・巨大な項目は入れない
     ["mode","verdict","reason","advice","transcript","answer","words","missing","scores","pron"].forEach(k=>{ if(j[k]!==undefined) keep[k]=j[k]; });
     keep.at=todayStr();
-    m[lastKey(partId,idx)]=keep;
+    m[qidOf(part,idx)]=keep;
     const ks=Object.keys(m); if(ks.length>80) ks.slice(0,ks.length-80).forEach(k=>delete m[k]);   // 上限80問
     saveLog(l);
   }catch(e){}
 }
-function loadLastResult(partId, idx){ return ((loadLog().last||{})[lastKey(partId,idx)])||null; }
+function loadLastResult(part, idx){ return part ? ((loadLog().last||{})[qidOf(part,idx)])||null : null; }
 // 採点した直後にも「前回の結果を見る」を出す(カード全体を描き直すと再生位置や表示状態が飛ぶので、そのボタンだけ足す)
 function refreshPrevBtn(idx){
   if(!PART) return;
   const card=document.querySelector('#feed .card[data-i="'+idx+'"]'); if(!card) return;
   const bot=card.querySelector('.bot'); if(!bot || bot.querySelector('[data-prev]')) return;
-  if(!loadLastResult(PART.id, idx)) return;
+  if(!loadLastResult(PART, idx)) return;
   const b=document.createElement('button');
   b.className='prevres'; b.dataset.prev=idx; b.textContent='前回の結果を見る';
   bot.appendChild(b);
@@ -523,7 +529,7 @@ function refreshPrevBtn(idx){
 // カードから前回の結果を開く
 function openLastResult(idx){
   if(!PART) return;
-  const j=loadLastResult(PART.id, idx); if(!j) return;
+  const j=loadLastResult(PART, idx); if(!j) return;
   _recPart=PART; _recIdx=idx;
   j._replay=true;   // 開き直しでは記録を二重に付けない
   if(j.mode==='qa') renderQaResult(j); else renderSpkResult(j);
@@ -532,11 +538,32 @@ function weakList(min){ const w=loadLog().weak||{};
   return Object.entries(w).filter(([k,v])=>v.n>=(min||WEAK_MIN)&&!SK_FUNC.has(k))   // 古い記録に機能語が混ざっていても出さない
     .sort((a,b)=>b[1].n-a[1].n||(b[1].d>a[1].d?1:-1)); }
 function weakCount(word){ const v=(loadLog().weak||{})[weakKey(word)]; return v?v.n:0; }
-function logBest(part,idx,said){ if(!part) return; const l=loadLog(); l.best=l.best||{}; const b=l.best[part]=l.best[part]||{}; if((b[idx]||0)<said){ b[idx]=said; saveLog(l); } }
-function bestScore(part,idx){ const v=((loadLog().best||{})[part]||{})[idx]; return v==null?null:v; }
+function logBest(part,idx,said){ if(!part) return; const q=qidOf(part,idx); const l=loadLog(); l.best=l.best||{}; const b=l.best[part.id]=l.best[part.id]||{}; if((b[q]||0)<said){ b[q]=said; saveLog(l); } }
+function bestScore(part,idx){ if(!part) return null; const v=((loadLog().best||{})[part.id]||{})[qidOf(part,idx)]; return v==null?null:v; }
 // (一覧カードの「前回◯%」表示は削除。前回比は採点画面にのみ表示)
 // 済みの定義を[再生]→[話すモードで100点]に変更。旧仕様で貯まった済み記録を一度だけ消す
 try{ const _l0=loadLog(); if(_l0.done && !_l0.doneV2){ _l0.done={}; _l0.doneV2=true; saveLog(_l0); } }catch(e){}
+// 記録のひも付けを「並び順の番号」から「問題の名札」へ一度だけ移す(2026-08-14)。
+// 教材データを読み終わってから呼ぶ(名札はデータ側が持っているため)。既にある記録は捨てない。
+function migrateRecordKeys(){
+  try{
+    const l=loadLog(); if(l.keyV>=3) return;
+    const parts={}; (DATA&&DATA.parts||[]).forEach(p=>{ parts[p.id]=p; });
+    const qid=(pid,idx)=>parts[pid]?qidOf(parts[pid],idx):null;
+    if(l.done) for(const pid in l.done)
+      l.done[pid]=l.done[pid].map(v=>typeof v==='number'?qid(pid,v):v).filter(Boolean);
+    if(l.best) for(const pid in l.best){
+      const b={}; for(const k in l.best[pid]){ const q=/^\d+$/.test(k)?qid(pid,+k):k; if(q) b[q]=l.best[pid][k]; }
+      l.best[pid]=b;
+    }
+    if(l.last){
+      const m={};
+      for(const k in l.last){ const t=k.split(':'); const q=(t.length===2&&/^\d+$/.test(t[1]))?qid(t[0],+t[1]):k; if(q) m[q]=l.last[k]; }
+      l.last=m;
+    }
+    l.keyV=3; saveLog(l);
+  }catch(e){}
+}
 function setExamDate(v){ const l=loadLog(); l.examDate=v||null; saveLog(l); renderCountdown(); }
 function daysUntil(ds){ const t=new Date(todayStr()+'T00:00:00'), e=new Date(ds+'T00:00:00'); return Math.round((e-t)/86400000); }
 // 連続日数の表示は削除(受験日カウントダウンに一本化)。練習日の記録(logPracticeDay/days)はデータとして継続(将来の可視化用に残す)
@@ -586,7 +613,7 @@ function renderHome(){
     const n=p.chapters.filter(c=>!c.tail).length;
     const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"
     return `<div class="pcard" data-p="${i}">`
-      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${(SPK_PARTS.has(p.id)||QA_PARTS.has(p.id))?(doneCount(p.id,n)>=n?'<span class="dq">済み</span>':doneCount(p.id,n)>0?'<span class="dq">'+doneCount(p.id,n)+'/'+n+'</span> 済み':n+'問'):((p.id==='E'||p.id==='F')?n+'問 <span style="color:var(--sub);font-size:11px;margin-left:2px">採点準備中</span>':n+'問')}</span></div>`
+      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${(SPK_PARTS.has(p.id)||QA_PARTS.has(p.id))?(doneCount(p,n)>=n?'<span class="dq">済み</span>':doneCount(p,n)>0?'<span class="dq">'+doneCount(p,n)+'/'+n+'</span> 済み':n+'問'):((p.id==='E'||p.id==='F')?n+'問 <span style="color:var(--sub);font-size:11px;margin-left:2px">採点準備中</span>':n+'問')}</span></div>`
       +`<div class="ttl">${name}</div>`
       +`<div class="desc">${TASK[p.id]||''}</div></div>`;
   };
@@ -703,7 +730,7 @@ function renderFeed(){
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
           ${(SPEAK_ENABLED&&c.en&&(SPK_PARTS.has(PART.id)||QA_PARTS.has(PART.id)))?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止して採点">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
         </div>
-        ${loadLastResult(PART.id,i)?`<button class="prevres" data-prev="${i}">前回の結果を見る</button>`:''}
+        ${loadLastResult(PART,i)?`<button class="prevres" data-prev="${i}">前回の結果を見る</button>`:''}
       </div>
     </section>`).join('');
 
@@ -943,7 +970,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0814-01';
+const BUILD='0814-02';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1141,11 +1168,11 @@ function renderSpkResult(j){
   if(j.mode==='qa') return renderQaResult(j);   // 質問応答パート(A/C/D)は内容判定の表示へ
   const said=Math.round((j.scores&&j.scores.said)??0);
   const replay=!!j._replay;   // 前回の結果を開き直しただけ=記録を二重に付けない
-  const best = _recPart ? Math.max(bestScore(_recPart.id,_recIdx)||0, said) : null;   // その問題の自己ベスト(過去最高と今回の高い方)。一度100点なら100のまま残る
+  const best = _recPart ? Math.max(bestScore(_recPart,_recIdx)||0, said) : null;   // その問題の自己ベスト(過去最高と今回の高い方)。一度100点なら100のまま残る
   if(!replay){
-    try{ logBest(_recPart&&_recPart.id, _recIdx, said); }catch(e){}   // 言えた率＋自己ベストを記録
-    try{ saveLastResult(_recPart&&_recPart.id, _recIdx, j); refreshPrevBtn(_recIdx); }catch(e){}   // あとから開き直せるように保存
-    if(said>=100 && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
+    try{ logBest(_recPart, _recIdx, said); }catch(e){}   // 言えた率＋自己ベストを記録
+    try{ saveLastResult(_recPart, _recIdx, j); refreshPrevBtn(_recIdx); }catch(e){}   // あとから開き直せるように保存
+    if(said>=100 && _recPart){ try{ logDone(_recPart, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
   }
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
@@ -1189,8 +1216,8 @@ function renderQaResult(j){
   const v=j.verdict||'—', ok=(v==='正解');
   const replay=!!j._replay;   // 前回の結果を開き直しただけ=記録を二重に付けない
   if(!replay){
-    if(ok && _recPart){ try{ logDone(_recPart.id, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
-    try{ saveLastResult(_recPart&&_recPart.id, _recIdx, j); refreshPrevBtn(_recIdx); }catch(e){}   // あとから開き直せるように保存
+    if(ok && _recPart){ try{ logDone(_recPart, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
+    try{ saveLastResult(_recPart, _recIdx, j); refreshPrevBtn(_recIdx); }catch(e){}   // あとから開き直せるように保存
   }
   const cls = ok?'qa-ok':(v==='おしい'||v==='もう一度'?'qa-mid':'qa-ng');   // 「もう一度」=聞き取れなかっただけ。不正解の赤にはしない
   // 【2026-08-11】Part B(復唱)と同じ形に統一。APIが模範解答を基準に照合した結果(words/scores)を使う。

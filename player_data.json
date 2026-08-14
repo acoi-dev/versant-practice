@@ -9,6 +9,7 @@
    "chapters": [
     {
      "n": 1,
+     "qid": "A-0ba7c649",
      "start": 17.46,
      "end": 65.19,
      "en": "What do we call frozen water, ice or paper?",
@@ -58,6 +59,7 @@
     },
     {
      "n": 2,
+     "qid": "A-71e5dbd1",
      "start": 65.19,
      "end": 120.11,
      "en": "Where does a very sick person go, a hospital or a store?",
@@ -107,6 +109,7 @@
     },
     {
      "n": 3,
+     "qid": "A-4702941e",
      "start": 120.11,
      "end": 174.87,
      "en": "Where do you put a letter to mail it, a mailbox or a fridge?",
@@ -156,6 +159,7 @@
     },
     {
      "n": 4,
+     "qid": "A-b4d44075",
      "start": 174.87,
      "end": 234.42,
      "en": "Who brings your food at a restaurant, a waiter or a nurse?",
@@ -205,6 +209,7 @@
     },
     {
      "n": 5,
+     "qid": "A-24b9bdba",
      "start": 234.42,
      "end": 290.03,
      "en": "Who do you see when you feel sick, a doctor or a farmer?",
@@ -254,6 +259,7 @@
     },
     {
      "n": 6,
+     "qid": "A-fb372df2",
      "start": 290.03,
      "end": 338.68,
      "en": "What do you keep water in, a bottle or a box?",
@@ -303,6 +309,7 @@
     },
     {
      "n": 7,
+     "qid": "A-3caff0a6",
      "start": 338.68,
      "end": 392.48,
      "en": "What do you buy to ride the train, a ticket or a jacket?",
@@ -352,6 +359,7 @@
     },
     {
      "n": 8,
+     "qid": "A-553f80f8",
      "start": 392.48,
      "end": 444.73,
      "en": "How many minutes are in half an hour, thirty or thirteen?",
@@ -401,6 +409,7 @@
     },
     {
      "n": 9,
+     "qid": "A-0c60e661",
      "start": 444.73,
      "end": 496.7,
      "en": "Which is a happy event, a party or a test?",
@@ -450,6 +459,7 @@
     },
     {
      "n": 10,
+     "qid": "A-9f18de91",
      "start": 496.7,
      "end": 552.14,
      "en": "How long is a little nap, fifteen minutes or ten hours?",
@@ -499,6 +509,7 @@
     },
     {
      "n": 11,
+     "qid": "A-a9e2ed68",
      "start": 552.14,
      "end": 602.46,
      "en": "Which machine writes an email, a computer or a cup?",
@@ -548,6 +559,7 @@
     },
     {
      "n": 12,
+     "qid": "A-2cf74634",
      "start": 602.46,
      "end": 659.72,
      "en": "Where do workers hold a meeting, an office or a garden?",
@@ -597,6 +609,7 @@
     },
     {
      "n": 0,
+     "qid": "A-tail0",
      "start": 659.72,
      "end": 821.3,
      "en": "",
@@ -626,6 +639,7 @@
    "chapters": [
     {
      "n": 1,
+     "qid": "B-7fcdd217",
      "start": 33.0,
      "end": 72.34,
      "en": "I have to leave now.",
@@ -679,6 +693,7 @@
     },
     {
      "n": 2,
+     "qid": "B-5e498b07",
      "start": 72.34,
      "end": 109.63,
      "en": "Do you want to join us?",
@@ -732,6 +747,7 @@
     },
     {
      "n": 3,
+     "qid": "B-8dc0a20d",
      "start": 109.63,
      "end": 148.22,
      "en": "Can you give me a hand?",
@@ -785,6 +801,7 @@
     },
     {
      "n": 4,
+     "qid": "B-2a921412",
      "start": 148.22,
      "end": 197.84,
      "en": "Did you watch the film yesterday?",
@@ -838,6 +855,7 @@
     },
     {
      "n": 5,
+     "qid": "B-52015551",
      "start": 197.84,
      "end": 249.66,
      "en": "Please take it to the office tomorrow morning.",
@@ -891,6 +909,7 @@
     },
     {
      "n": 6,
+     "qid": "B-14706d7f",
      "start": 249.66,
      "end": 304.69,
      "en": "I will send it to you by email soon.",
@@ -944,6 +963,7 @@
     },
     {
      "n": 7,
+     "qid": "B-e585335f",
      "start": 304.69,
      "end": 369.83,
      "en": "It was kind of boring at the meeting yesterday.",
@@ -997,6 +1017,7 @@
     },
     {
      "n": 8,
+     "qid": "B-71974dd5",
      "start": 369.83,
      "end": 421.86,
      "en": "I am going to meet them at the park later.",
@@ -1050,6 +1071,7 @@
     },
     {
      "n": 9,
+     "qid": "B-e452565c",
      "start": 421.86,
      "end": 477.82,
      "en": "Would you help me move this when you have some time?",
@@ -1103,6 +1125,7 @@
     },
     {
      "n": 10,
+     "qid": "B-051e5a72",
      "start": 477.82,
      "end": 548.25,
      "en": "We are out of paper because nobody ordered more last week.",
@@ -1156,6 +1179,7 @@
     },
     {
      "n": 11,
+     "qid": "B-086d131b",
      "start": 548.25,
      "end": 600.52,
      "en": "Can you tell him to call me back if he is free?",
@@ -1209,6 +1233,7 @@
     },
     {
      "n": 12,
+     "qid": "B-2566a656",
      "start": 600.52,
      "end": 664.69,
      "en": "I used to play soccer with my friends when I was a child.",
@@ -1262,6 +1287,7 @@
     },
     {
      "n": 13,
+     "qid": "B-407fd15a",
      "start": 664.69,
      "end": 743.73,
      "en": "Please call me as soon as you get to the station tomorrow morning.",
@@ -1315,6 +1341,7 @@
     },
     {
      "n": 14,
+     "qid": "B-bb1fd6d5",
      "start": 743.73,
      "end": 822.11,
      "en": "I should have taken an umbrella yesterday because it rained all day long.",
@@ -1368,6 +1395,7 @@
     },
     {
      "n": 15,
+     "qid": "B-f4d6be84",
      "start": 822.11,
      "end": 889.68,
      "en": "We have a lot of apples, and we eat them every morning at home.",
@@ -1421,6 +1449,7 @@
     },
     {
      "n": 16,
+     "qid": "B-ae5e4028",
      "start": 889.68,
      "end": 965.85,
      "en": "She is one of the best singers in our town, without any doubt at all.",
@@ -1474,6 +1503,7 @@
     },
     {
      "n": 0,
+     "qid": "B-tail0",
      "start": 965.85,
      "end": 1301.63,
      "en": "",
@@ -1503,6 +1533,7 @@
    "chapters": [
     {
      "n": 1,
+     "qid": "C-10747fde",
      "start": 15.87,
      "end": 132.17,
      "en": "What size does she want now?",
@@ -1646,6 +1677,7 @@
     },
     {
      "n": 2,
+     "qid": "C-09f8021e",
      "start": 132.17,
      "end": 207.88,
      "en": "Who will take our order?",
@@ -1776,6 +1808,7 @@
     },
     {
      "n": 3,
+     "qid": "C-8f182940",
      "start": 207.88,
      "end": 268.11,
      "en": "Where is the nearest train station?",
@@ -1887,6 +1920,7 @@
     },
     {
      "n": 4,
+     "qid": "C-bf430581",
      "start": 268.11,
      "end": 365.26,
      "en": "When is her appointment?",
@@ -2026,6 +2060,7 @@
     },
     {
      "n": 5,
+     "qid": "C-eb25bd77",
      "start": 365.26,
      "end": 433.06,
      "en": "Which platform should we go to?",
@@ -2147,6 +2182,7 @@
     },
     {
      "n": 6,
+     "qid": "C-0c1a9010",
      "start": 433.06,
      "end": 546.02,
      "en": "What time is the meeting on Friday?",
@@ -2290,6 +2326,7 @@
     },
     {
      "n": 7,
+     "qid": "C-262b498e",
      "start": 546.02,
      "end": 616.2,
      "en": "When will the correct item arrive?",
@@ -2411,6 +2448,7 @@
     },
     {
      "n": 8,
+     "qid": "C-246cb696",
      "start": 616.2,
      "end": 682.76,
      "en": "How many days is the shipment late?",
@@ -2532,6 +2570,7 @@
     },
     {
      "n": 9,
+     "qid": "C-bda8770f",
      "start": 682.76,
      "end": 783.69,
      "en": "Why can't the man help with the report this afternoon?",
@@ -2675,6 +2714,7 @@
     },
     {
      "n": 10,
+     "qid": "C-8162fbe5",
      "start": 783.69,
      "end": 844.02,
      "en": "How many boxes of printer paper should we order?",
@@ -2795,6 +2835,7 @@
    "chapters": [
     {
      "n": 1,
+     "qid": "D-593515a8",
      "start": 17.05,
      "end": 127.18,
      "en": "What do we have to do when we leave the room?",
@@ -2950,6 +2991,7 @@
     },
     {
      "n": 2,
+     "qid": "D-9f3135b7",
      "start": 127.18,
      "end": 235.46,
      "en": "What colors does the phone come in?",
@@ -3071,6 +3113,7 @@
     },
     {
      "n": 3,
+     "qid": "D-eeb98eb8",
      "start": 235.46,
      "end": 333.83,
      "en": "When has the meeting been moved to?",
@@ -3226,6 +3269,7 @@
     },
     {
      "n": 4,
+     "qid": "D-38825859",
      "start": 333.83,
      "end": 448.65,
      "en": "What is the training session going to be about?",
@@ -3381,6 +3425,7 @@
     },
     {
      "n": 5,
+     "qid": "D-f644fdd1",
      "start": 448.65,
      "end": 547.96,
      "en": "Where did the speaker go for business?",
@@ -3536,6 +3581,7 @@
     },
     {
      "n": 6,
+     "qid": "D-ba2828b4",
      "start": 547.96,
      "end": 641.25,
      "en": "What is out of stock?",
@@ -3708,6 +3754,7 @@
     },
     {
      "n": 7,
+     "qid": "D-8d59f047",
      "start": 641.25,
      "end": 745.3,
      "en": "How many more stations do we have to stop at?",
@@ -3863,6 +3910,7 @@
     },
     {
      "n": 8,
+     "qid": "D-58b96660",
      "start": 745.3,
      "end": 840.37,
      "en": "What will the weather be like in the morning?",
@@ -4018,6 +4066,7 @@
     },
     {
      "n": 9,
+     "qid": "D-fe1613f5",
      "start": 840.37,
      "end": 942.7,
      "en": "What time would Tom like to be picked up?",
@@ -4190,6 +4239,7 @@
     },
     {
      "n": 10,
+     "qid": "D-6122b769",
      "start": 942.7,
      "end": 1040.65,
      "en": "What time does the clinic open now?",
@@ -4328,6 +4378,7 @@
     },
     {
      "n": 0,
+     "qid": "D-tail0",
      "start": 1040.65,
      "end": 1050.72,
      "en": "",
@@ -4357,6 +4408,7 @@
    "chapters": [
     {
      "n": 1,
+     "qid": "E-e5167baa",
      "start": 16.86,
      "end": 139.83,
      "en": "Tom forgot his lunch at home. He asked his coworker to share some food with him.",
@@ -4423,6 +4475,7 @@
     },
     {
      "n": 2,
+     "qid": "E-1e455a63",
      "start": 139.83,
      "end": 255.97,
      "en": "Mary finished her report early. She went to the park to relax after work.",
@@ -4489,6 +4542,7 @@
     },
     {
      "n": 3,
+     "qid": "E-6d6e94f1",
      "start": 255.97,
      "end": 378.37,
      "en": "John's meeting was canceled. He used the extra time to read a book.",
@@ -4555,6 +4609,7 @@
     },
     {
      "n": 4,
+     "qid": "E-cbfc7da8",
      "start": 378.37,
      "end": 506.73,
      "en": "Lisa bought new shoes yesterday, but they were too big. She took them back to the store today.",
@@ -4621,6 +4676,7 @@
     },
     {
      "n": 5,
+     "qid": "E-d86bb905",
      "start": 506.73,
      "end": 634.9,
      "en": "The bus was late this morning, so Ken walked to the station. He still got to work on time.",
@@ -4687,6 +4743,7 @@
     },
     {
      "n": 6,
+     "qid": "E-7a516ee4",
      "start": 634.9,
      "end": 764.87,
      "en": "Emma's cat looked sick last night. She took it to the animal doctor after work.",
@@ -4753,6 +4810,7 @@
     },
     {
      "n": 7,
+     "qid": "E-479690e7",
      "start": 764.87,
      "end": 885.22,
      "en": "It started to rain during the soccer game. The players stopped and waited inside for a while.",
@@ -4828,6 +4886,7 @@
    "chapters": [
     {
      "n": 1,
+     "qid": "F-22fc02f6",
      "start": 26.99,
      "end": 74.14,
      "en": "Do you prefer living in the city or the countryside?",
@@ -4877,6 +4936,7 @@
     },
     {
      "n": 2,
+     "qid": "F-837d469c",
      "start": 74.14,
      "end": 121.73,
      "en": "Do you like to cook at home or eat out?",
@@ -4918,6 +4978,7 @@
     },
     {
      "n": 3,
+     "qid": "F-eaf9ea87",
      "start": 121.73,
      "end": 166.06,
      "en": "Do you prefer summer or winter?",
@@ -4959,6 +5020,7 @@
     },
     {
      "n": 4,
+     "qid": "F-fa0645a9",
      "start": 166.06,
      "end": 216.14,
      "en": "Do you like to travel by train or by car?",
@@ -5000,6 +5062,7 @@
     },
     {
      "n": 5,
+     "qid": "F-3b5c9589",
      "start": 216.14,
      "end": 266.25,
      "en": "Do you prefer to wake up early or stay up late?",
@@ -5041,6 +5104,7 @@
     },
     {
      "n": 6,
+     "qid": "F-d81d7f1e",
      "start": 266.25,
      "end": 311.75,
      "en": "Is it better to work in a team or by yourself?",
@@ -5082,6 +5146,7 @@
     },
     {
      "n": 0,
+     "qid": "F-tail0",
      "start": 311.75,
      "end": 322.15,
      "en": "",
@@ -5148,7 +5213,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-08564457"
     },
     {
      "n": 2,
@@ -5185,7 +5251,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-484c2e19"
     },
     {
      "n": 3,
@@ -5226,7 +5293,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-f8572548"
     },
     {
      "n": 4,
@@ -5263,7 +5331,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-cfe894fa"
     },
     {
      "n": 5,
@@ -5304,7 +5373,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-0c905058"
     },
     {
      "n": 6,
@@ -5341,7 +5411,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-8790acc2"
     },
     {
      "n": 7,
@@ -5382,7 +5453,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-f7aaee6d"
     },
     {
      "n": 8,
@@ -5419,7 +5491,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-4dcea2fa"
     },
     {
      "n": 9,
@@ -5453,7 +5526,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-63ffa346"
     },
     {
      "n": 10,
@@ -5487,7 +5561,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-ceadc30e"
     },
     {
      "n": 11,
@@ -5521,7 +5596,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-76569627"
     },
     {
      "n": 12,
@@ -5555,7 +5631,8 @@
         ]
        ]
       }
-     ]
+     ],
+     "qid": "G-f4af10c7"
     }
    ]
   }
