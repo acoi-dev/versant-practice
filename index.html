@@ -508,7 +508,7 @@ function saveLastResult(part, idx, j){
   try{
     const l=loadLog(); const m=l.last=l.last||{};
     const keep={};   // 音声・巨大な項目は入れない
-    ["mode","verdict","reason","advice","transcript","answer","words","missing","scores","pron"].forEach(k=>{ if(j[k]!==undefined) keep[k]=j[k]; });
+    ["mode","verdict","reason","advice","transcript","mineSure","answer","words","missing","scores","pron"].forEach(k=>{ if(j[k]!==undefined) keep[k]=j[k]; });
     keep.at=todayStr();
     m[qidOf(part,idx)]=keep;
     const ks=Object.keys(m); if(ks.length>80) ks.slice(0,ks.length-80).forEach(k=>delete m[k]);   // 上限80問
@@ -735,7 +735,14 @@ function renderFeed(){
     </section>`).join('');
 
   feed.querySelectorAll('.card').forEach(card=>card.addEventListener('click',e=>{
-    if(spkRecording && !e.target.closest('[data-mic]')){ stopSpkRec(true); }   // 録音中にマイク以外(再生/もう一回/カード)を押したら録音を止める(採点せず)。以降は通常動作(再生等)
+    // 録音中にマイク以外(再生/もう一回/カード)を押したら録音を止める(採点せず)。
+    // 【2026-08-14】以前はそのまま再生まで始めていたので「押したのに何も起きず勝手に音が鳴った」と見えた。
+    // 中断したことを一言出し、**このタップは中断だけに使う**(再生は次のタップから)。
+    if(spkRecording && !e.target.closest('[data-mic]')){
+      stopSpkRec(true);
+      skOpen('<div class="sk-status">録音を中断しました。もう一度マイクを押すと録り直せます。</div>');
+      return;
+    }
     if(e.target.closest('.veil')){const i=+e.target.closest('.veil').dataset.rev;revealed[i]=true;paintText(i);return;}
     if(e.target.closest('[data-hide]')){const i=+e.target.closest('[data-hide]').dataset.hide;revealed[i]=false;paintText(i);return;}
     if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
@@ -807,6 +814,10 @@ function trySeek(start){   // seekable範囲が目標をカバーしていれば
   return false;
 }
 function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
+  // 【2026-08-14】録音中に別のカードへ移ると、教材の声が自分の録音に混ざって点が下がっていた。
+  // スワイプ・自動送り・ロック画面の番号送り・音源の自己修復まで、鳴らし始める経路はここに集まるので
+  // ここで必ず止める(採点はしない)。止めたことは画面に一言出す=黙って消えたように見せない。
+  if(spkRecording){ stopSpkRec(true); skOpen('<div class="sk-status">問題を移動したので録音を中断しました。</div>'); }
   // 済みは「再生」でなく「話すモードで100点」で付ける(renderSpkResult側)。ここでは記録しない
   const start=c.start+0.02, my=++seekSeq;
   // 各パートの1問目は先頭に約15〜22秒のイントロがあり、card開始は0秒でない。ここへ頭出しする
@@ -834,8 +845,19 @@ function stepCard(delta){   // ロック画面/イヤホンの 戻る・進む =
   playCard(i);    // ★ロック中はscrollイベントが来ないので、スクロールに頼らず直接頭出し再生する(ロック中も番号送りが効く)
   saveState();
 }
-function goNextPart(){const np=(partIdx+1)<DATA.parts.length?partIdx+1:0;openPart(np,0);}  // パート末→次パート(Eの次はAに戻る)
-function goPrevPart(){const pp=(partIdx-1+DATA.parts.length)%DATA.parts.length;const last=DATA.parts[pp].chapters.filter(c=>!c.tail).length-1;openPart(pp,Math.max(0,last));}  // パート頭→前パートの最終カードへ(Aの前はEへ)
+// パート送りの輪は「本番れんしゅう(A〜F)」と「きたえる(G=消える音トレ)」で分ける。
+// 【2026-08-14】以前は全パートを一続きで回していたので、通しでやりたい人が Part F の次に
+// いきなり別ジャンルの耳トレへ流れ込んでいた(ホームでは別グループに分けているのに矛盾していた)。
+// G を開いている時は G の中だけで回す(耳トレは繰り返し向きなので単独で回す)。
+function partRing(){
+  const idx=DATA.parts.map((p,i)=>i);
+  const isDrill=DRILL_PARTS.has((DATA.parts[partIdx]||{}).id);
+  return idx.filter(i=>DRILL_PARTS.has(DATA.parts[i].id)===isDrill);
+}
+const DRILL_PARTS=new Set(['G']);
+function goNextPart(){const r=partRing(); if(!r.length) return; const k=r.indexOf(partIdx); openPart(r[(k+1)%r.length],0);}   // 本番れんしゅうの輪はFの次がAに戻る
+function goPrevPart(){const r=partRing(); if(!r.length) return; const k=r.indexOf(partIdx); const pp=r[(k-1+r.length)%r.length];
+  const last=DATA.parts[pp].chapters.filter(c=>!c.tail).length-1; openPart(pp,Math.max(0,last));}   // パート頭→前パートの最終カードへ
 function replay(){const c=CARDS[active];if(!c)return;lastSwipe=Date.now();if(ensureAudioSource()){playCard(active);return;}trySeek(c.start+0.02);AU.play().catch(()=>{});}  // 頭からもう一回(音源が別パートなら載せ直してから。seek安全化・失敗はreconcileが補正 Bug6)
 
 // ===== 音声の位置を正として、表示(active/本文/スクロール)をそこへ追従させる =====
@@ -970,7 +992,7 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0814-03';
+const BUILD='0814-04';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1003,6 +1025,9 @@ let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null, spkLastBlob=n
 // 止め忘れの自動停止まで。本番の持ち時間に合わせてパートごとに変える
 // (E=再話30秒 / F=自由回答40秒。A〜Dは本番15秒だが言い直す余裕を見て20秒のまま)。
 const SPK_MAX_BY_PART={E:30000, F:40000};
+// 復唱(B)の「済み」の基準。100%だと a/the まで1語も落とせず、15語の文では現実的に到達できないため
+// ホームの「N/M 済み」がまったく増えなかった。画面に出す言えた率と自己ベストの数字は変えない(甘くしない)。
+const SAID_DONE=80;
 const SPK_MAX_MS=20000, SPK_MIN_MS=500;   // 既定は20秒。0.5秒未満の誤タップは無視
 function maxRecMs(pid){ return SPK_MAX_BY_PART[pid]||SPK_MAX_MS; }
 const _spkr=document.getElementById('spkr'), _spkrBody=document.getElementById('spkrBody');
@@ -1012,7 +1037,8 @@ function skEsc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','
 
 async function startSpkRec(fromSheet){
   if(spkRecording||_recStarting) return;   // 二重起動防止(getUserMedia許可待ちの間に再タップ/合成clickが来ても多重に開始しない)
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ skOpen('<div class="sk-status">この端末では録音できません</div>'); return; }
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    skOpen('<div class="sk-status">この端末・ブラウザでは録音できません。SafariかChromeでお試しください。</div>'); return; }
   _recStarting=true;
   try{
     try{AU.pause();}catch(e){}                                   // 聞く音声が録音に混じらないよう止める
@@ -1023,7 +1049,12 @@ async function startSpkRec(fromSheet){
       try{ spkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
       if(_recCancel){ _recCancel=false; return; }   // 再生等で割り込み→採点せず終了
       const ref=(CARDS[_recIdx]&&CARDS[_recIdx].en)||''; spkLastRef=ref;
-      if(!spkChunks.length||!ref||(Date.now()-_recStart)<SPK_MIN_MS){ skClose(); return; }   // 誤タップ(0.5秒未満)は採点しない
+      if(!spkChunks.length||!ref||(Date.now()-_recStart)<SPK_MIN_MS){
+        // 短すぎる録音は採点しない。ただし黙って閉じると「押したのに何も起きない=壊れている」と見える
+        skOpen('<div class="sk-status">短すぎて聞き取れませんでした。もう少し長く押して、話してから止めてください。</div>'
+          +`<div class="sk-actions"><button class="sk-btn sk-again" data-sk="again">もう一度言う</button></div>`);
+        return;
+      }
       spkLastBlob=new Blob(spkChunks,{type:(spkChunks[0]&&spkChunks[0].type)||'audio/mp4'});   // 聞き返し用(即・お手本/自分の声ボタンをすぐ使える)
       // E(再話)・F(意見)は採点しない。自分の声と解答例を並べて自分で見比べる形にする(AIを呼ばない)
       if(_recPart && REC_ONLY_PARTS.has(_recPart.id)){ renderRecOnly(CARDS[_recIdx]); return; }
@@ -1043,12 +1074,34 @@ async function startSpkRec(fromSheet){
     clearTimeout(_maxRecTimer); _maxRecTimer=setTimeout(()=>{ if(spkRecording) stopSpkRec(); }, _lim);   // 止め忘れ対策: 最長で自動停止
     document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));   // マイクボタンが赤く点滅＋真上に「録音中…」ラベル(.miclbl)。シート内録音時はシートが覆うので裏のラベルは見えない
     startRecCountdown(_lim);   // 何秒で止まるか見えるようにする(いきなり止められて驚かないため)
-  }catch(e){ document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec')); skOpen('<div class="sk-status">マイクを使えませんでした（許可を確認してください）</div>'); }
+  }catch(e){
+    document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec'));
+    stopRecCountdown();
+    // マイクを取れた後に録音の準備で失敗すると、止める処理が無く端末の「使用中」マークが残っていた
+    try{ if(spkStream) spkStream.getTracks().forEach(t=>t.stop()); }catch(_){}
+    spkRecording=false;
+    // 理由ごとに文言を分ける。同じ文言だと何を直せばよいか分からない
+    const n=(e&&e.name)||'';
+    const msg =
+      (n==='NotAllowedError'||n==='SecurityError')
+        ? 'マイクの使用が許可されていません。iPhoneのSafariなら、アドレスバー左のボタンから「Webサイトの設定」を開き、マイクを「許可」に変えてください。'
+      : (n==='NotFoundError'||n==='OverconstrainedError')
+        ? 'マイクが見つかりませんでした。イヤホンを挿し直すか、外してからもう一度お試しください。'
+      : (n==='NotReadableError'||n==='AbortError')
+        ? '他のアプリがマイクを使っているようです。通話や録音アプリを閉じてから、もう一度お試しください。'
+        : 'マイクを使えませんでした。もう一度お試しください。';
+    skOpen('<div class="sk-status">'+skEsc(msg)+'</div>');
+  }
   finally{ _recStarting=false; }
 }
 function stopSpkRec(cancel){
   if(!spkRecording) return;
-  if((Date.now()-_recStart) < 400) return;   // 開始直後(0.4秒未満)の停止要求は二重タップ/合成clickの誤爆とみなし無視(=「一瞬録音中で終わって機能しない」対策)。20秒の自動停止は400ms超なので影響なし
+  // 開始直後(0.4秒未満)の停止要求は二重タップ/合成clickの誤爆とみなし無視(=「一瞬録音中で終わって機能しない」対策)。
+  // 【2026-08-14】ただし**中断(cancel=採点しない)は無視しない**。無視すると録音が続いたまま教材音声が鳴り、その音ごと採点されていた。
+  if(!cancel && (Date.now()-_recStart) < 400){
+    skOpen('<div class="sk-status">まだ録音中です。話し終わってからもう一度押してください。</div>');   // 無反応にしない
+    return;
+  }
   spkRecording=false; _recCancel=!!cancel;   // cancel=採点せず中断(再生等で割り込み時)
   clearTimeout(_maxRecTimer); stopRecCountdown();
   document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec'));
@@ -1164,14 +1217,32 @@ _spkrBody.addEventListener('click',e=>{
 function skB64(ab){ const by=new Uint8Array(ab); let s=''; for(let i=0;i<by.length;i+=0x8000) s+=String.fromCharCode.apply(null,by.subarray(i,i+0x8000)); return btoa(s); }
 
 async function blobToB64(blob){ return skB64(await blob.arrayBuffer()); }   // 元の音声をそのままbase64化(変換なし)
+// 【2026-08-14】直しどころ2つ。
+// ①待ち時間の上限が無く、電波が細いと「採点中…」が永久に出続けていた → 25秒で打ち切る
+//   (サーバー側の持ち時間は30秒。それより手前で切って必ず日本語の案内を出す)
+// ②ブラウザが作る英語の文言(Load failed / Failed to fetch / Unexpected token '<')が
+//   そのまま学習者に見えていた → **自前のAPIが返した日本語だけ通し、それ以外は日本語の固定文**にする
+//   (「本日の利用上限に達しました」「音声が長すぎます」等の役に立つ案内は残る)
+const SCORE_TIMEOUT_MS=25000;
+const hasJa=s=>/[ぁ-んァ-ヶ一-龥]/.test(String(s||''));
 async function scoreSpk(audioB64, reference, mime){
+  const ac=new AbortController();
+  const t=setTimeout(()=>ac.abort(), SCORE_TIMEOUT_MS);
   try{
     const qa = _recPart && QA_PARTS.has(_recPart.id);   // 質問応答パートは内容判定モード(質問+模範解答も送る)
     const body = qa ? {audio:audioB64,reference,mime,mode:'qa',question:reference,answer:(CARDS[_recIdx]&&CARDS[_recIdx].answer)||''} : {audio:audioB64,reference,mime};
-    const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const j=await r.json(); if(!j.ok) throw new Error(j.error||'採点に失敗');
+    const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ac.signal});
+    let j=null; try{ j=await r.json(); }catch(e){ j=null; }   // HTMLのエラーページ等でJSONにならない場合
+    if(!j||!j.ok) throw new Error((j&&hasJa(j.error))?j.error:'');   // 日本語の案内だけ通す
     renderSpkResult(j);
-  }catch(e){ skOpen('<div class="sk-status">'+skEsc(e.message||'採点サーバーに接続できませんでした')+'</div>'); }
+  }catch(e){
+    const msg = e && e.name==='AbortError'
+      ? '時間がかかっています。電波の良いところで、もう一度お試しください。'
+      : (hasJa(e&&e.message) ? e.message : '通信がうまくいきませんでした。電波の良いところで、もう一度お試しください。');
+    skOpen('<div class="sk-status">'+skEsc(msg)+'</div>'
+      +`<div class="sk-actions"><button class="sk-btn sk-again" data-sk="again">もう一度言う</button></div>`);
+  }
+  finally{ clearTimeout(t); }
 }
 // 録音直後の"下地"表示: 英文とボタンを即出し、評価とアドバイスだけ後で埋める(体感を速く)
 function renderSpkPending(ref){
@@ -1223,7 +1294,7 @@ function renderSpkResult(j){
   if(!replay){
     try{ logBest(_recPart, _recIdx, said); }catch(e){}   // 言えた率＋自己ベストを記録
     try{ saveLastResult(_recPart, _recIdx, j); refreshPrevBtn(_recIdx); }catch(e){}   // あとから開き直せるように保存
-    if(said>=100 && _recPart){ try{ logDone(_recPart, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
+    if(said>=SAID_DONE && _recPart){ try{ logDone(_recPart, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
   }
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
