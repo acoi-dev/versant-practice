@@ -237,6 +237,20 @@
   .sk-load{font-size:15px;font-weight:500;color:var(--sub);animation:skpulse 1.2s ease-in-out infinite}   /* 採点中の待ち表示 */
   @keyframes skpulse{50%{opacity:.4}}
 
+  /* 初回だけ出す使い方。カードで囲わず、罫線と余白だけで区切る */
+  #guide{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top) + 28px) 24px calc(env(safe-area-inset-bottom) + 24px)}
+  #guide.off{display:none}
+  #guide .gtitle{font-size:19px;font-weight:700;color:var(--ink);margin-bottom:26px}
+  #guide ol{list-style:none;margin:0;padding:0;flex:1 1 auto}
+  #guide li{padding:18px 0;border-top:1px solid var(--line);line-height:1.75}
+  #guide li:last-child{border-bottom:1px solid var(--line)}
+  #guide .gk{display:block;font-size:11px;letter-spacing:.09em;color:var(--faint);margin-bottom:4px}
+  #guide .gb{font-size:15px;color:var(--ink)}
+  #guide .gs{display:block;font-size:13px;color:var(--sub);margin-top:3px}
+  #guide .gbtn{margin-top:24px;width:100%;padding:14px;border:1px solid var(--accent);border-radius:10px;
+    background:none;color:var(--accent);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+  #guide .gbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .hint{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
@@ -324,6 +338,19 @@
   <div id="feed"></div>
   <div class="pbanner" id="pbanner" aria-hidden="true"></div>   <!-- パート切替の中央バナー(境目ページの代わり・1.5秒でフェード) -->
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
+  <!-- 使い方(初回だけ)。秒数などの具体的な数字は書かない=変えたときに嘘になるため -->
+  <div id="guide" class="off" aria-hidden="true">
+    <div class="gtitle">はじめに</div>
+    <ol>
+      <li><span class="gk">問題を移動する</span><span class="gb">上下にフリックすると、次の問題・前の問題に移ります。</span>
+        <span class="gs">イヤホンやロック画面の「次へ／前へ」でも移動できます。</span></li>
+      <li><span class="gk">話して採点する</span><span class="gb">マイクを押すと録音が始まり、もう一度押すと止まって採点します。</span>
+        <span class="gs">押し忘れても、時間が来ると自動で止まります。静かな場所で、端末のマイクを使うのがおすすめです。</span></li>
+      <li><span class="gk">答えを見る</span><span class="gb">下の「見る」を押すと、解答例と解説が出ます。</span>
+        <span class="gs">その左のボタンで、聞く速さを変えられます。</span></li>
+    </ol>
+    <button class="gbtn" id="guideOk">はじめる</button>
+  </div>
   <!-- 片手操作バー（よく使う「答えを見る/隠す」は中央、ホームは右下） -->
   <div class="navbar">
     <button class="navb eye" id="eyeToggle"></button>
@@ -406,8 +433,8 @@ document.querySelectorAll('#segTheme button').forEach(b=>b.onclick=()=>{
 
 // ===== 設定シート開閉 =====
 const POP=document.getElementById('pop'),POPBG=document.getElementById('popbg');
-function openSet(){POPBG.classList.add('on');requestAnimationFrame(()=>POP.classList.add('on'));}
-function closeSet(){POP.classList.remove('on');POPBG.classList.remove('on');}
+function openSet(){POPBG.classList.add('on');requestAnimationFrame(()=>POP.classList.add('on'));pushOverlay('set', closeSet);}
+function closeSet(){POP.classList.remove('on');POPBG.classList.remove('on');popOverlay('set');}
 document.getElementById('mGear').onclick=openSet;   // 歯車の直下にその場で出す
 POPBG.onclick=closeSet;                             // 外側タップで閉じる(画面遷移なし)
 
@@ -453,9 +480,30 @@ function relWake(){try{if(wakeLock)wakeLock.release();}catch(e){}wakeLock=null;}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wakeOn)reqWake();});
 SWW.onclick=()=>{wakeOn=!wakeOn;SWW.classList.toggle('on',wakeOn);SWW.setAttribute('aria-checked',wakeOn);localStorage.setItem('wake',wakeOn?'1':'0');wakeOn?reqWake():relWake();};
 
+// ===== Androidの戻るボタン(とブラウザの戻る)で、開いているものを閉じる =====
+// 【2026-08-14】パート画面・設定・採点結果・イメージ英文法のどれを開いていても、
+// Androidの戻る操作は前のサイトへ離脱していた。閉じる動きが自然な場面が全部離脱になるので、
+// 「開いたら履歴を1つ積む」「戻るが来たら一番上のものを閉じる」形にする。
+const _ovl=[];   // 開いているものの重なり順(あとから開いたものが先に閉じる)
+function pushOverlay(name, close){
+  if(_ovl.length && _ovl[_ovl.length-1].name===name) return;   // 同じものを二重に積まない
+  _ovl.push({name, close});
+  try{ history.pushState({ovl:name}, ''); }catch(e){}
+}
+function popOverlay(name){
+  const i=_ovl.map(o=>o.name).lastIndexOf(name);
+  if(i>=0) _ovl.splice(i,1);
+}
+window.addEventListener('popstate',()=>{
+  const o=_ovl.pop();
+  if(o){ try{ o.close(); }catch(e){} }
+  // 何も開いていない=入口の画面。ここで戻ったらサイトを出るのが自然なので、引き止めない
+});
+try{ history.replaceState({root:1},''); }catch(e){}
+
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0814-05';
+const BUILD='0814-06';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -651,13 +699,30 @@ function renderHome(){
 // イメージ英文法をページ遷移でなくアプリ内オーバーレイ(iframe)で開く
 function openLesson(){
   const f=document.getElementById('lframe');
-  if(!f.getAttribute('src')) f.setAttribute('src','grammar-swipe.html?v=4');   // 初回だけ読み込む(縦スワイプ・chrome統一版)
+  if(!f.getAttribute('src')){
+    f.setAttribute('src','grammar-swipe.html?v=4');   // 初回だけ読み込む(縦スワイプ・chrome統一版)
+    // 【2026-08-14】戻る手段が中のページ側のボタンだけに依存していた。読み込みに失敗したり
+    // ファイル名が変わったりすると真っ白な画面から抜け出せなくなる。親側にも保険の戻るボタンを出す。
+    f.addEventListener('error',showLessonBack);
+    setTimeout(()=>{ try{ if(!f.contentWindow||!f.contentDocument||!f.contentDocument.body||!f.contentDocument.body.childElementCount) showLessonBack(); }catch(e){} }, 4000);
+  }
   document.querySelectorAll('.pcard.current').forEach(el=>el.classList.remove('current'));   // 現在地=イメージ英文法に。パート側の囲い線を消す(markCurrentはdata-pのみ対象で消えないため明示)
   document.querySelector('[data-lesson]')?.classList.add('current');
   const l=document.getElementById('lesson'); l.classList.remove('off'); l.setAttribute('aria-hidden','false');
   document.body.style.overflow='hidden';
+  pushOverlay('lesson', closeLesson);   // Androidの戻るで閉じる
+}
+// 読み込みに失敗した時だけ出す保険の戻るボタン(通常は中のページのボタンで戻る)
+function showLessonBack(){
+  const l=document.getElementById('lesson'); if(!l||l.classList.contains('off')) return;
+  if(document.getElementById('lessonBack')) return;
+  const b=document.createElement('button');
+  b.id='lessonBack'; b.className='prevres'; b.textContent='ホームに戻る';
+  b.style.cssText='position:absolute;right:16px;bottom:16px;z-index:3';
+  b.onclick=closeLesson; l.appendChild(b);
 }
 function closeLesson(){   // iframe内の右下ホームボタンからも window.parent.closeLesson() で呼ぶ
+  popOverlay('lesson');
   const l=document.getElementById('lesson'); l.classList.add('off'); l.setAttribute('aria-hidden','true');
   document.body.style.overflow='';
 }
@@ -695,6 +760,9 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   renderFeed();
   document.getElementById('home').classList.add('off');
   document.getElementById('app').classList.remove('off');
+  showGuideOnce();
+  // パート画面を開いたら、Androidの戻るでホーム一覧に戻す(サイトから離脱させない)
+  pushOverlay('part', ()=>{ closeSet(); renderHome(); markCurrent(); document.getElementById('home').classList.remove('off'); saveState(); });
   // 先頭に「前パート」番兵があるので実カードは表示index+1。目的カードへ移動(mandatory snapは一時解除)
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     _feed.style.scrollSnapType='none';
@@ -712,10 +780,25 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   logPracticeDay();   // パートを開いた=今日は練習した、として記録(1日1回)
   try{ preloadAudio(partAudio(PART)); const _nx=DATA.parts&&DATA.parts[(partIdx+1)%DATA.parts.length]; if(_nx&&_nx!==PART) preloadAudio(partAudio(_nx)); }catch(e){}   // オフライン対策: 現在＋次パートの音声を先読み
 }
+// 使い方は初回だけ出す。以前は「上にフリックで次の問題」の一行が毎回出るだけで、
+// マイクの使い方も答えの出し方も説明が無かった(推奨40)
+function showGuideOnce(){
+  try{ if(localStorage.getItem('guideV1')) return; }catch(e){ return; }
+  const g=document.getElementById('guide'); if(!g) return;
+  g.classList.remove('off'); g.setAttribute('aria-hidden','false');
+  pushOverlay('guide', closeGuide);
+  document.getElementById('guideOk').onclick=closeGuide;
+}
+function closeGuide(){
+  popOverlay('guide');
+  const g=document.getElementById('guide'); if(!g) return;
+  g.classList.add('off'); g.setAttribute('aria-hidden','true');
+  try{ localStorage.setItem('guideV1','1'); }catch(e){}
+}
 // ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
 // ホームはプレイヤーの上にかぶせて開く(画面遷移でなく)。プレイヤーはそのまま裏で継続
 function markCurrent(){document.querySelectorAll('.pcard').forEach(el=>el.classList.toggle('current',+el.dataset.p===partIdx));}  // 今いるパートに枠線
-document.getElementById('back').onclick=()=>{closeSet();renderHome();markCurrent();document.getElementById('home').classList.remove('off');saveState();};   // 一覧を開くたびに再描画=採点で増えた「済み」を反映
+document.getElementById('back').onclick=()=>{popOverlay('part');closeSet();renderHome();markCurrent();document.getElementById('home').classList.remove('off');saveState();};   // 一覧を開くたびに再描画=採点で増えた「済み」を反映
 // ×で閉じると、さっきのプレイヤーに位置そのまま・音も止めずに戻る
 document.getElementById('homeClose').onclick=()=>{document.getElementById('home').classList.add('off');saveState();};
 
@@ -1044,8 +1127,9 @@ const SAID_DONE=80;
 const SPK_MAX_MS=20000, SPK_MIN_MS=500;   // 既定は20秒。0.5秒未満の誤タップは無視
 function maxRecMs(pid){ return SPK_MAX_BY_PART[pid]||SPK_MAX_MS; }
 const _spkr=document.getElementById('spkr'), _spkrBody=document.getElementById('spkrBody');
-function skOpen(html){ _spkrBody.innerHTML=html; _spkr.classList.add('show'); _spkr.setAttribute('aria-hidden','false'); }
-function skClose(){ _spkr.classList.remove('show'); _spkr.setAttribute('aria-hidden','true'); try{ clearTimeout(_modelStop); if(_mineAudio)_mineAudio.pause(); AU.pause(); speechSynthesis.cancel(); }catch(e){} }   // 閉じたら再生中の音声(自分の声/お手本/読み上げ)を止める   // 閉じたら再生中の音声も止める
+function skOpen(html){ _spkrBody.innerHTML=html; _spkr.classList.add('show'); _spkr.setAttribute('aria-hidden','false');
+  pushOverlay('sheet', skClose); }   // Androidの戻るで閉じる
+function skClose(){ popOverlay('sheet'); _spkr.classList.remove('show'); _spkr.setAttribute('aria-hidden','true'); try{ clearTimeout(_modelStop); if(_mineAudio)_mineAudio.pause(); AU.pause(); speechSynthesis.cancel(); }catch(e){} }   // 閉じたら再生中の音声(自分の声/お手本/読み上げ)を止める   // 閉じたら再生中の音声も止める
 function skEsc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 
 async function startSpkRec(fromSheet){
@@ -1164,12 +1248,34 @@ function toggleSpkRec(){ if(spkRecording) stopSpkRec(); else startSpkRec(); }
 document.getElementById('spkrX').addEventListener('click',skClose);
 document.getElementById('spkrBg').addEventListener('click',skClose);
 // 結果シート内の操作: 語タップで読み上げ / 自分の声・お手本を再生 / もう一度言う
-function skSpeak(t){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=.9; const v=speechSynthesis.getVoices().find(v=>/en[-_]US/i.test(v.lang)); if(v)u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+// 【2026-08-14】iPhoneは初回に声の一覧が空で返ることがあり、その場合は端末の既定(日本語)の声で
+// 英単語を読んでしまう=学習者に間違った発音を聞かせる。一覧が揃うのを一度だけ待ってから読む。
+function _enVoice(){ try{ return speechSynthesis.getVoices().find(v=>/en[-_]US/i.test(v.lang))
+  || speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang)) || null; }catch(e){ return null; } }
+function skSpeak(t){
+  try{
+    speechSynthesis.cancel();
+    const say=()=>{ const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=.9;
+      const v=_enVoice(); if(v)u.voice=v; speechSynthesis.speak(u); };
+    if(_enVoice()) { say(); return; }
+    let done=false;
+    const on=()=>{ if(done)return; done=true; speechSynthesis.removeEventListener('voiceschanged',on); say(); };
+    speechSynthesis.addEventListener('voiceschanged',on);
+    setTimeout(on, 1000);   // 一覧が来ない端末でも黙り込まない(その時は既定の声になる)
+  }catch(e){}
+}
 function skPlayMine(){ if(!spkLastBlob) return; try{ if(_modelAudio)_modelAudio.pause(); if(_mineAudio) _mineAudio.pause(); _mineAudio=new Audio(URL.createObjectURL(spkLastBlob)); _mineAudio.play().catch(()=>{}); }catch(e){} }
 // お手本は「録音前に聞いたのと同じ実音声」＝メイン音声(AU, partB.mp3等)の該当文だけを鳴らす(合成音声にしない=声が変わらない)
 let _modelStop=0;
 function skPlayModel(){
   const c=CARDS[active]; if(!c){ skSpeak(spkLastRef); return; }
+  // 【2026-08-14】この作りは「そのカードの音声の先頭から数秒」を鳴らすもので、
+  // Part Cは会話の1文目、Part Dは本文の1文目、Part Aは質問が流れる=**模範解答ではない**。
+  // 模範解答の音声位置を持っていないパートは、模範解答そのものを読み上げる方が目的に合う。
+  // Part F(意見)も同じで、流れるのは質問。E(再話)だけは「聞いた話そのもの」が手本なので音声のまま鳴らす。
+  const pid=PART&&PART.id;
+  if(QA_PARTS.has(pid) || pid==='F'){ try{ if(_mineAudio)_mineAudio.pause(); AU.pause(); }catch(e){}
+    skSpeak(c.answer_full || c.answer || c.retell || spkLastRef); return; }
   try{ if(_mineAudio)_mineAudio.pause(); }catch(e){}
   try{ ensureAudioSource(); }catch(e){}                                        // AUに正しいパート音源を確実に載せる(既存の音ズレ対策)
   const start=(c.start||0)+0.03, dur=Math.min(8,((spkLastRef||'').split(/\s+/).filter(Boolean).length||3)*0.42+0.6);
