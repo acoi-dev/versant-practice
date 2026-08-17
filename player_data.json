@@ -5,6 +5,7 @@
    "title": "Part A 質問",
    "sub": "短い質問に1〜3語で即答する",
    "mp3": "partA.mp3",
+   "av": "a3f4dfd8",
    "total": 821.3,
    "chapters": [
     {
@@ -635,6 +636,7 @@
    "title": "Part B 復唱",
    "sub": "聞いた文をそのまま繰り返す",
    "mp3": "partB.mp3",
+   "av": "592ee469",
    "total": 1301.63,
    "chapters": [
     {
@@ -1529,6 +1531,7 @@
    "title": "Part C 会話に関する質問",
    "sub": "会話を聞いて質問に答える",
    "mp3": "partC.mp3",
+   "av": "5c75236b",
    "total": 844.02,
    "chapters": [
     {
@@ -2831,6 +2834,7 @@
    "title": "Part D 文章に関する質問",
    "sub": "話を聞いて質問に答える",
    "mp3": "partD.mp3",
+   "av": "dcbf5e39",
    "total": 1050.72,
    "chapters": [
     {
@@ -4404,6 +4408,7 @@
    "title": "Part E 再話",
    "sub": "話を自分の言葉で言い直す",
    "mp3": "partE3.mp3",
+   "av": "9afec0f1",
    "total": 885.22,
    "chapters": [
     {
@@ -4882,6 +4887,7 @@
    "title": "Part F 自由回答",
    "sub": "質問に自分の意見を答える",
    "mp3": "partF.mp3",
+   "av": "c66aad8f",
    "total": 322.15,
    "chapters": [
     {
@@ -5634,7 +5640,8 @@
      ],
      "qid": "G-f4af10c7"
     }
-   ]
+   ],
+   "av": "813493e5"
   }
  ]
 }

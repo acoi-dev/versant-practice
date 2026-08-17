@@ -453,11 +453,23 @@ function relWake(){try{if(wakeLock)wakeLock.release();}catch(e){}wakeLock=null;}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wakeOn)reqWake();});
 SWW.onclick=()=>{wakeOn=!wakeOn;SWW.classList.toggle('on',wakeOn);SWW.setAttribute('aria-checked',wakeOn);localStorage.setItem('wake',wakeOn?'1':'0');wakeOn?reqWake():relWake();};
 
+// 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
+// (後ろに置くと起動時に未定義エラーで真っ白になる)
+const BUILD='0814-05';
 boot();
 function boot(){
-  if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); }
-  else fetch('player_data.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(d=>{DATA=d;migrateRecordKeys();renderHome();restoreState();})
-       .catch(()=>{document.getElementById('plist').innerHTML='<div class="tag">データが読めません</div>';});
+  if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
+  // 【2026-08-14】以前は毎回取り直していた(?t=時刻 + no-store)。画面本体は10分キャッシュされるので、
+  // 更新直後に「古い画面が新しいデータを読む」時間が生まれていた。ビルド番号で紐付けて組み合わせを揃える。
+  fetch('player_data.json?v='+BUILD).then(r=>{ if(!r.ok) throw new Error('http'); return r.json(); })
+    .then(d=>{DATA=d;migrateRecordKeys();renderHome();restoreState();})
+    .catch(()=>{
+      // 圏外・電波が細い時。以前は一行出るだけで、やり直す手段が画面に無かった
+      document.getElementById('plist').innerHTML=
+        '<div class="tag">教材を読み込めませんでした。電波の良いところでお試しください。</div>'
+        +'<button class="prevres" id="reboot" style="margin-top:12px">もう一度読み込む</button>';
+      document.getElementById('reboot').onclick=()=>{ document.getElementById('plist').innerHTML='<div class="tag">読み込み中…</div>'; boot(); };
+    });
 }
 // ===== リロードしても今の画面(どのパート・どのカード・一覧を開いていたか)を保つ =====
 function saveState(){try{localStorage.setItem('st',JSON.stringify({p:partIdx,c:active,h:!document.getElementById('home').classList.contains('off')}));}catch(e){}}
@@ -651,7 +663,9 @@ function closeLesson(){   // iframe内の右下ホームボタンからも windo
 }
 window.closeLesson=closeLesson;
 
-function partAudio(p){ return p.audio ? p.audio : p.mp3; }  // 埋め込み時はdata URI
+// 埋め込み時はdata URI。通常は音声の版(av=mp3の内容ハッシュ)を付けて、
+// **中身が変わった時だけ**新しく取り直す(ビルド番号で付けると毎回43MB落とし直しになる)
+function partAudio(p){ return p.audio ? p.audio : (p.mp3 + (p.av?('?v='+p.av):'')); }
 // オフライン対策の先読み: mp3をfetchしてブラウザキャッシュに載せる(地下鉄・トンネルで途切れにくく)
 const _preAudio=new Set();
 function preloadAudio(url){ if(!url||/^data:/.test(url)||_preAudio.has(url)) return; _preAudio.add(url); try{ fetch(url,{cache:'force-cache'}).catch(()=>{}); }catch(e){} }
@@ -992,7 +1006,6 @@ if('mediaSession' in navigator){
   navigator.mediaSession.setActionHandler('previoustrack',()=>stepCard(-1));  // 戻る＝前の問題番号
 }
 
-const BUILD='0814-04';
 const SPEAK_ENABLED=true;   // 話すモード導線: OpenAI採点API(Vercel: versant-speaking-api-s8gk)接続済み。ホームに導線を表示
 const SPK_PARTS=new Set(['B']);   // 復唱パート: お手本をそのまま言えたか(語一致)で採点
 const QA_PARTS=new Set(['A','C','D']);   // 質問応答パート: 「質問に内容として答えられたか」をAIで判定(正解/おしい/不正解)。E(再話)F(意見)は正解が一意でないので保留
@@ -1289,7 +1302,10 @@ const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were
 function renderSpkResult(j){
   if(j.mode==='qa') return renderQaResult(j);   // 質問応答パート(A/C/D)は内容判定の表示へ
   const said=Math.round((j.scores&&j.scores.said)??0);
-  const replay=!!j._replay;   // 前回の結果を開き直しただけ=記録を二重に付けない
+  // 見本(sample)は本物でないので記録に混ぜない。開き直し(_replay)も二重に付けない。
+  // 【2026-08-14】鍵が外れているとサーバーが見本を返し、Part A/C/Dの見本は必ず「正解」なので
+  // その問題に「済み」が付き、苦手語の記録まで偽データで汚れていた(サーバー側でも返さないよう直した)
+  const replay=!!j._replay || !!j.sample;
   const best = _recPart ? Math.max(bestScore(_recPart,_recIdx)||0, said) : null;   // その問題の自己ベスト(過去最高と今回の高い方)。一度100点なら100のまま残る
   if(!replay){
     try{ logBest(_recPart, _recIdx, said); }catch(e){}   // 言えた率＋自己ベストを記録
@@ -1336,7 +1352,10 @@ function renderSpkResult(j){
 // 質問応答パート(A/C/D)の結果表示。内容判定=正解/おしい/不正解。正解でその問題を済みに
 function renderQaResult(j){
   const v=j.verdict||'—', ok=(v==='正解');
-  const replay=!!j._replay;   // 前回の結果を開き直しただけ=記録を二重に付けない
+  // 見本(sample)は本物でないので記録に混ぜない。開き直し(_replay)も二重に付けない。
+  // 【2026-08-14】鍵が外れているとサーバーが見本を返し、Part A/C/Dの見本は必ず「正解」なので
+  // その問題に「済み」が付き、苦手語の記録まで偽データで汚れていた(サーバー側でも返さないよう直した)
+  const replay=!!j._replay || !!j.sample;
   if(!replay){
     if(ok && _recPart){ try{ logDone(_recPart, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
     try{ saveLastResult(_recPart, _recIdx, j); refreshPrevBtn(_recIdx); }catch(e){}   // あとから開き直せるように保存
