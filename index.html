@@ -402,6 +402,12 @@
     <div class="lb"><b>画面をスリープさせない</b><span>学習中は画面を消さない</span></div>
     <div class="sw" id="swWake" role="switch" aria-checked="false"></div>
   </div>
+  <!-- 記録はこの端末の中だけに保存される。iPhoneは1週間開かないと消えることがあるので、
+       黙って消えて驚かせないよう先に伝え、消す手段も用意する(推奨51) -->
+  <div class="setrow col">
+    <div class="lb"><b>学習の記録</b><span>受験日・練習した日・済み・自己ベスト・にがてな語・直近の採点結果は、この端末の中だけに保存しています。外には送りません。ブラウザのデータを消したとき、また iPhone では1週間ほど開かないと、消えることがあります。</span></div>
+    <button class="prevres" id="wipeLog" style="margin-top:10px">記録を消す</button>
+  </div>
 </div>
 <audio id="au" preload="auto"></audio>
 
@@ -503,7 +509,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0814-06';
+const BUILD='0814-07';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -686,7 +692,8 @@ function renderHome(){
   const kitae=
     (gP?`<div class="pcard" data-p="${gIdx}"><div class="top"><span class="eb kt">聞く</span><span class="meta">耳トレ ・ ${gN+'問'}</span></div><div class="ttl">消える音トレ</div><div class="desc">速い英語で“消える音”を聞き取れるようにする</div></div>`:'')
     +`<div class="pcard lesson" data-lesson><div class="top"><span class="eb kt">文法</span><span class="meta">絵で理解＋クイズ</span></div><div class="ttl">イメージ英文法</div><div class="desc">訳でなく“絵”で、前置詞・冠詞などを迷わず選べる</div></div>`
-    +`<div class="pcard soon"><div class="top"><span class="eb kt">話す</span><span class="meta">近日</span></div><div class="ttl">口から出る化トレ</div><div class="desc">言い回しの“武器”を増やして、パッと口から出す</div></div>`;
+    ;   // 「口から出る化トレ(近日)」の空カードは出さない(押しても何も起きず「壊れている/中身が薄い」と映るため)。
+        // 実装できたらここに戻す
   // にがてな語。2回以上つまずいた語だけを、多い順に最大6語。1回では偶然に振り回されるので出さない
   const wl=weakList().slice(0,6);
   const weakLine = wl.length ? `<div class="ghdr">にがてな語</div><div class="wknote">${wl.map(([k,v])=>`${skEsc(k)}<span>${v.n}</span>`).join('')}</div>` : '';
@@ -780,6 +787,17 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   logPracticeDay();   // パートを開いた=今日は練習した、として記録(1日1回)
   try{ preloadAudio(partAudio(PART)); const _nx=DATA.parts&&DATA.parts[(partIdx+1)%DATA.parts.length]; if(_nx&&_nx!==PART) preloadAudio(partAudio(_nx)); }catch(e){}   // オフライン対策: 現在＋次パートの音声を先読み
 }
+// 記録を消す。プライバシーの説明で「消し方」を書く以上、アプリの中に手段が要る(推奨51)。
+// 端末内の記録だけを消し、設定(速さ・表示モード等)は残す。
+document.getElementById('wipeLog').onclick=()=>{
+  const b=document.getElementById('wipeLog');
+  if(b.dataset.confirm!=='1'){ b.dataset.confirm='1'; b.textContent='本当に消す(元に戻せません)'; setTimeout(()=>{ if(b.dataset.confirm==='1'){ b.dataset.confirm=''; b.textContent='記録を消す'; } },6000); return; }
+  try{ localStorage.removeItem('vlog'); }catch(e){}
+  b.dataset.confirm=''; b.textContent='消しました';
+  try{ renderHome(); markCurrent(); }catch(e){}
+  setTimeout(()=>{ b.textContent='記録を消す'; },2500);
+};
+
 // 使い方は初回だけ出す。以前は「上にフリックで次の問題」の一行が毎回出るだけで、
 // マイクの使い方も答えの出し方も説明が無かった(推奨40)
 function showGuideOnce(){
@@ -1099,7 +1117,9 @@ const REC_ONLY_PARTS=new Set(['E','F']);
 try{const bd=document.getElementById('build');if(bd)bd.textContent='build '+BUILD;}catch(e){}
 
 // ===== デバッグ表示(URLに debug を含めると内部状態を画面に出す) =====
-if(location.href.indexOf('debug')>=0){
+// 【2026-08-14】以前はURLに debug という文字が含まれるだけで出ていた(?q=debugger 等でも誤爆する)。
+// 明示的に ?debug=1 を付けた時だけにする。
+if(new URLSearchParams(location.search).get('debug')==='1'){
   const dbg=document.createElement('div');
   dbg.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(0,0,0,.88);color:#0f0;font:13px/1.5 ui-monospace,monospace;padding:8px 10px;pointer-events:none;white-space:pre-wrap';
   document.body.appendChild(dbg);
