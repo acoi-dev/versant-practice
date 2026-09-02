@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>声とデータの扱い｜Versant 練習</title>
+<style>
+  :root{
+    --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee; --line2:#d6d8dd;
+    --accent:#1f4fd8; --bg:#fbfbfc;
+    --ui:"Inter","Noto Sans JP",-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#e9eaee; --sub:#a3a8b2; --faint:#6d727c; --line:#252830; --line2:#3a3e48;
+      --accent:#7ea2ff; --bg:#14161a;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);
+    font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+  .wrap{max-width:680px;margin:0 auto;
+    padding:calc(env(safe-area-inset-top) + 40px) 24px calc(env(safe-area-inset-bottom) + 64px)}
+  h1{font-size:24px;font-weight:700;line-height:1.5;margin:0 0 6px}
+  .upd{font-size:12.5px;color:var(--faint);margin:0 0 32px}
+  h2{font-size:17px;font-weight:700;margin:38px 0 10px;padding-top:22px;border-top:1px solid var(--line)}
+  h2:first-of-type{border-top:0;padding-top:0}
+  p{margin:0 0 14px;color:var(--ink)}
+  .note{color:var(--sub);font-size:14px}
+  ul{margin:0 0 14px;padding-left:1.15em}
+  li{margin-bottom:7px}
+  table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:14px}
+  th,td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--sub);font-weight:600;white-space:nowrap}
+  /* 狭い画面では4列が潰れて読めないので、1件ずつ縦に積む(見出しは各行の頭に付ける) */
+  @media (max-width:560px){
+    table,tbody,tr,td{display:block;width:100%}
+    thead,table tr:first-child{display:none}
+    tr{padding:14px 0;border-bottom:1px solid var(--line)}
+    tr:last-child{border-bottom:0}
+    td{border:0;padding:0 0 3px}
+    td::before{content:attr(data-h);display:inline;color:var(--sub);font-size:12.5px}
+    td:first-child{font-size:15px;padding-bottom:6px}
+    td:first-child::before{content:none}
+  }
+  a{color:var(--accent)}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;color:var(--sub)}
+  .back{display:inline-block;margin-top:40px;color:var(--accent);text-decoration:none;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>声とデータの扱い</h1>
+<p class="upd">最終更新 2026年9月3日</p>
+
+<p>このアプリは、発音や答えを採点するために、あなたの声を録音して外部の会社に送っています。何をどこへ送っているのか、どれくらい残るのか、消し方も含めて、ここに全部書きます。</p>
+
+<h2>録音した声は、どこへ行くか</h2>
+<p>マイクを押して録音した声は、<strong>採点するときだけ</strong>、次の2社に送られます。どちらも米国の会社です。</p>
+<table>
+  <tr><th>送るもの</th><th>送り先</th><th>何のために</th><th>どれくらい残るか</th></tr>
+  <tr><td><strong>声（音声）</strong></td><td data-h="送り先：">OpenAI</td><td data-h="用途：">話した内容の文字起こし</td><td data-h="保持："><strong>残りません</strong></td></tr>
+  <tr><td><strong>声（音声）</strong></td><td data-h="送り先：">Microsoft Azure</td><td data-h="用途：">発音の採点（語ごと・音のレベル）</td><td data-h="保持："><strong>残りません</strong></td></tr>
+  <tr><td><strong>文字</strong>（文字起こしの結果・問題文・解答例）</td><td data-h="送り先：">OpenAI</td><td data-h="用途：">日本語のアドバイスを作る</td><td data-h="保持：">不正利用の監視のため最大30日間。そのあと消えます</td></tr>
+</table>
+<p>つまり、<strong>あなたの声そのものは、どこにも残りません。</strong>30日残るのは、声を文字に直したあとの文章だけです。どちらの会社も、送ったものを自社のAIの学習には使いません（当方は学習に使う設定にしていません）。</p>
+<p class="note">
+  出典：OpenAI「Data controls in the OpenAI platform」（<code>/v1/audio/transcriptions</code> は不正利用監視の保持対象外、その他は最大30日）／
+  Microsoft「Data, privacy, and security for Speech to text」（リアルタイムの文字起こしと発音採点では顧客データを保持・保存しない）。
+  2026年9月3日に各社の公表内容を確認しました。変わることがあるので、当方でも定期的に見直します。
+</p>
+<p><strong>当方のサーバーは、声を受け取って各社へ渡すだけで、保存しません。</strong></p>
+
+<h2>この端末の中だけに残るもの</h2>
+<p>次のものは、あなたの端末のブラウザの中だけに保存されます。<strong>外には送りません。</strong></p>
+<ul>
+  <li>受験予定日</li>
+  <li>練習した日</li>
+  <li>問題ごとの「済み」と自己ベスト</li>
+  <li>つまずいた語（英単語と、その回数）</li>
+  <li>直近80問ぶんの採点結果と、そのときの文字起こし</li>
+</ul>
+<p class="note">ブラウザのデータを消したとき、また iPhone では1週間ほど開かないと、これらが消えることがあります。端末をまたいで引き継ぐ機能はありません。</p>
+
+<h2>録音そのものについて</h2>
+<p>録音した音声は、<strong>端末にもサーバーにも保存していません。</strong>採点が終わると、その場で捨てられます。模試を受けているあいだは、採点のために一時的に端末のメモリに置きますが、画面を閉じると消えます。</p>
+
+<h2>使いすぎを防ぐために見ているもの</h2>
+<p>採点の窓口では、同じ場所から短時間に大量に呼ばれるのを防ぐため、<strong>接続元の番号（IPアドレス）をその日の回数を数えるためだけに一時的に扱っています。</strong>保存も、他の情報との結びつけもしていません。</p>
+
+<h2>外部から読み込んでいるもの</h2>
+<p>画面の書体を Google のサーバーから読み込んでいます。このとき、あなたの接続元の情報が Google に渡ります。書体の表示だけに使われるもので、当方はその情報を受け取りません。</p>
+
+<h2>広告・アクセス解析</h2>
+<p>使っていません。広告は表示せず、アクセス解析のツールも入れていません。</p>
+
+<h2>消し方</h2>
+<ul>
+  <li><strong>アプリの中から消す</strong>：設定（右上の歯車）→「学習の記録」→「記録を消す」</li>
+  <li><strong>まとめて消す</strong>：ブラウザの設定から、このサイトのデータを削除してください</li>
+</ul>
+<p class="note">外部に送った声は当方で保持していないため、消す対象がありません。各社での扱いは上の表のとおりです。</p>
+
+<h2>年齢について</h2>
+<p>このアプリは、社会人の方が英語の試験に備えるためのものです。13歳未満の方の利用は想定していません。</p>
+
+<h2>変わったとき</h2>
+<p>この内容を変えるときは、このページの最終更新日を書き換えます。大きな変更のときは、アプリの中でもお知らせします。</p>
+
+<h2>問い合わせ先</h2>
+<p>Nexus株式会社<br>
+<a href="mailto:contact@nexus-inc.net">contact@nexus-inc.net</a></p>
+
+<h2>このアプリについて</h2>
+<p class="note">本サービスは非公式の練習アプリです。Versant&reg; は NCS Pearson, Inc. の登録商標で、本アプリは同社および試験の運営者とは関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
+
+<a class="back" href="./">&lsaquo; アプリに戻る</a>
+</div>
+</body>
+</html>
