@@ -2847,8 +2847,8 @@
    "title": "Part C 会話に関する質問",
    "sub": "会話を聞いて質問に答える",
    "mp3": "partC.mp3",
-   "av": "5c75236b",
-   "total": 844.02,
+   "av": "723d7169",
+   "total": 874.15,
    "chapters": [
     {
      "n": 1,
@@ -2997,60 +2997,55 @@
     },
     {
      "n": 2,
-     "qid": "C-09f8021e",
+     "qid": "C-652e713d",
      "start": 132.17,
-     "end": 207.88,
-     "en": "Who will take our order?",
+     "end": 210.89,
+     "en": "Who usually takes orders at the cafe?",
      "kana": "",
-     "yaku": "誰が私たちの注文を取りますか？",
+     "yaku": "普段、カフェで注文を取るのは誰ですか？",
      "target": "",
      "target_kana": "",
      "kind": "",
-     "memo": "答えの手がかりは、男の人が『ウェイターが私たちの注文を取ります』と言ったところ。",
+     "memo": "第2発話を短くし、answer_fullを簡潔にしました。",
      "answer": "the waiter",
-     "answer_full": "The waiter will take our order.",
-     "a_yaku": "ウェイターが私たちの注文を取ります。",
+     "answer_full": "Usually, the waiter takes our order.",
+     "a_yaku": "普段はウェイターが注文を取ります。",
      "questions": [],
-     "question": "Who will take our order?",
-     "q_yaku": "誰が私たちの注文を取りますか？",
+     "question": "Who usually takes orders at the cafe?",
+     "q_yaku": "普段、カフェで注文を取るのは誰ですか？",
      "dialogue": [
       {
-       "speaker": "女の人",
-       "text": "We're finally at the cafe. I hope someone comes to take our order soon.",
-       "yaku": "やっとカフェに着きましたね。早く注文を取りに来てくれるといいな。"
+       "speaker": "A",
+       "text": "We're finally at the cafe. It looks busy today with so many people.",
+       "yaku": "やっとカフェに着いたね。今日はとても混んでいるみたい。"
       },
       {
-       "speaker": "男の人",
-       "text": "I think the waiter will come soon to take it.",
-       "yaku": "ウェイターがすぐに来て注文を取ると思います。"
+       "speaker": "B",
+       "text": "Yes, there are many people waiting. Hope we don't wait long.",
+       "yaku": "うん、たくさんの人が待っているね。あまり待たないといいけど。"
       },
       {
-       "speaker": "女の人",
-       "text": "Is it the manager who will take our order?",
-       "yaku": "私たちの注文を取るのはマネージャーですか？"
+       "speaker": "A",
+       "text": "I wonder if the chef will take our order today, or if it's someone else.",
+       "yaku": "今日、シェフが注文を取るのか、それとも別の人なのかしら。"
       },
       {
-       "speaker": "男の人",
-       "text": "It's not the manager. The waiter will take our order.",
-       "yaku": "マネージャーではありません。ウェイターが私たちの注文を取ります。"
+       "speaker": "B",
+       "text": "Usually, the waiter takes our order, so I think it will be the same today.",
+       "yaku": "普段はウェイターが注文を取るから、今日もそうだと思うよ。"
       },
       {
-       "speaker": "女の人",
-       "text": "Great, let's decide what to order now and enjoy our time here.",
-       "yaku": "いいですね、今何を注文するか決めてここでの時間を楽しみましょう。"
+       "speaker": "A",
+       "text": "Alright, let's decide quickly and enjoy our time here with a nice meal.",
+       "yaku": "よし、早く決めて、ここでの時間を素敵な食事で楽しもう。"
       },
       {
-       "speaker": "男の人",
-       "text": "Yes, let's look at the menu together and choose.",
-       "yaku": "はい、一緒にメニューを見て選びましょう。"
+       "speaker": "B",
+       "text": "Yes, let's look at the menu and choose something nice that we both like.",
+       "yaku": "そうだね、メニューを見て、二人が好きなものを選ぼう。"
       }
      ],
      "crush_spots": [
-      {
-       "phrase": "take it",
-       "kana": "テイキッ",
-       "kind": "link"
-      },
       {
        "phrase": "waiter",
        "kana": "ウェイラ",
@@ -3060,10 +3055,10 @@
      "bone": [],
      "bone_en": [],
      "kotsu": "",
-     "key_line": "It's not the manager. The waiter will take our order.",
+     "key_line": "Usually, the waiter takes our order, so I think it will be the same today.",
      "passage": "",
      "passage_yaku": "",
-     "key_line_yaku": "",
+     "key_line_yaku": "普段はウェイターが注文を取るから、今日もそうだと思うよ。",
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
@@ -3073,55 +3068,51 @@
        "w": [
         [
          134.638,
-         139.104
+         139.977
         ]
        ]
       },
       {
        "w": [
         [
-         139.254,
-         141.34
+         140.127,
+         144.051
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         144.201,
+         149.116
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         149.266,
+         154.055
         ],
         [
-         176.134,
-         178.22
+         183.453,
+         188.242
         ]
        ]
       },
       {
        "w": [
         [
-         141.49,
-         143.563
+         154.205,
+         158.559
         ]
        ]
       },
       {
        "w": [
         [
-         143.713,
-         146.662
-        ],
-        [
-         185.48,
-         188.429
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         146.812,
-         150.414
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         150.564,
-         153.668
+         158.709,
+         163.051
         ]
        ]
       }
@@ -3130,8 +3121,8 @@
     {
      "n": 3,
      "qid": "C-8f182940",
-     "start": 207.88,
-     "end": 268.11,
+     "start": 210.89,
+     "end": 270.2,
      "en": "Where is the nearest train station?",
      "kana": "",
      "yaku": "一番近い駅はどこですか？",
@@ -3147,32 +3138,32 @@
      "q_yaku": "一番近い駅はどこですか？",
      "dialogue": [
       {
-       "speaker": "女の人",
+       "speaker": "A",
        "text": "Excuse me, can you tell me where the nearest train station is?",
        "yaku": "すみません、一番近い駅がどこか教えていただけますか？"
       },
       {
-       "speaker": "男の人",
+       "speaker": "B",
        "text": "Are you talking about the station near the big park?",
        "yaku": "大きな公園の近くの駅のことを言っていますか？"
       },
       {
-       "speaker": "女の人",
+       "speaker": "A",
        "text": "No, not that one. Is it the one near the library?",
        "yaku": "いいえ、それではなく、図書館の近くのものですか？"
       },
       {
-       "speaker": "男の人",
+       "speaker": "B",
        "text": "It's not the library. The station is next to the post office.",
        "yaku": "図書館ではありません。駅は郵便局の隣にあります。"
       },
       {
-       "speaker": "女の人",
+       "speaker": "A",
        "text": "Great, I will walk there now. Thank you very much for your help!",
        "yaku": "よかった、今からそこに歩いて行きます。ご協力ありがとうございます！"
       },
       {
-       "speaker": "男の人",
+       "speaker": "B",
        "text": "You're welcome! It takes about ten minutes on foot.",
        "yaku": "どういたしまして！歩いて約10分かかります。"
       }
@@ -3193,48 +3184,48 @@
       {
        "w": [
         [
-         210.035,
-         213.467
+         213.05,
+         216.833
         ]
        ]
       },
       {
        "w": [
         [
-         213.617,
-         216.377
+         216.983,
+         219.197
         ]
        ]
       },
       {
        "w": [
         [
-         216.527,
-         219.946
+         219.347,
+         222.837
         ]
        ]
       },
       {
        "w": [
         [
-         220.096,
-         224.607
+         222.987,
+         226.831
         ]
        ]
       },
       {
        "w": [
         [
-         224.757,
-         228.985
+         226.981,
+         231.299
         ]
        ]
       },
       {
        "w": [
         [
-         229.135,
-         232.191
+         231.449,
+         234.28
         ]
        ]
       }
@@ -3242,64 +3233,59 @@
     },
     {
      "n": 4,
-     "qid": "C-bf430581",
-     "start": 268.11,
-     "end": 365.26,
-     "en": "When is her appointment?",
+     "qid": "C-6b769330",
+     "start": 270.2,
+     "end": 369.84,
+     "en": "When is her check-up appointment scheduled?",
      "kana": "",
-     "yaku": "彼女の予約はいつですか？",
+     "yaku": "彼女の健康診断の予約はいつですか？",
      "target": "",
      "target_kana": "",
      "kind": "",
-     "memo": "答えの手がかりは、女の人が「木曜日の午前中で大丈夫です」と言ったところ。",
-     "answer": "Thursday",
-     "answer_full": "Her appointment is on Thursday morning.",
-     "a_yaku": "彼女の予約は木曜日の午前中です。",
+     "memo": "第1発話を9語以上に修正し、key_lineをそのまま使用。候補と正解の順序を守り、質問はit/they/this/thatを使わずに簡潔にした。",
+     "answer": "Friday afternoon",
+     "answer_full": "Her check-up appointment is scheduled for Friday afternoon.",
+     "a_yaku": "彼女の健康診断の予約は金曜日の午後に予定されています。",
      "questions": [],
-     "question": "When is her appointment?",
-     "q_yaku": "彼女の予約はいつですか？",
+     "question": "When is her check-up appointment scheduled?",
+     "q_yaku": "彼女の健康診断の予約はいつですか？",
      "dialogue": [
       {
        "speaker": "A",
-       "text": "I'd like to book an appointment for a check-up.",
-       "yaku": "健康診断の予約を取りたいのですが。"
+       "text": "I'd like to schedule a check-up appointment very soon, if possible.",
+       "yaku": "できればすぐに健康診断の予約をしたいのですが。"
       },
       {
        "speaker": "B",
-       "text": "Sure, we have openings on Wednesday afternoon for check-ups.",
-       "yaku": "かしこまりました、健康診断は水曜日の午後に空きがあります。"
+       "text": "We have a slot on Tuesday morning available for check-ups if you like.",
+       "yaku": "火曜日の朝に健康診断の空きがありますが、いかがですか。"
       },
       {
        "speaker": "A",
-       "text": "I can't make it on Wednesday. Do you have Thursday?",
-       "yaku": "水曜日は都合が悪いです。木曜日はありますか？"
+       "text": "Tuesday morning is difficult for me. Is Friday possible instead?",
+       "yaku": "火曜日の朝は難しいです。代わりに金曜日は可能ですか？"
       },
       {
        "speaker": "B",
-       "text": "Yes, Thursday morning is available for check-ups. Would you like that?",
-       "yaku": "はい、健康診断は木曜日の午前中が空いています。それでよろしいですか？"
+       "text": "Let me check. Yes, Friday afternoon is open for check-ups.",
+       "yaku": "確認しますね。はい、金曜日の午後は健康診断の空きがあります。"
       },
       {
        "speaker": "A",
-       "text": "Thursday morning works for me. I'll take it.",
-       "yaku": "木曜日の午前中で大丈夫です。それでお願いします。"
+       "text": "Friday afternoon works perfectly for me. I'll take it, thank you.",
+       "yaku": "金曜日の午後は都合が良いです。それでお願いします、ありがとう。"
       },
       {
        "speaker": "B",
-       "text": "Great, you're all set for Thursday morning check-up. See you then.",
-       "yaku": "わかりました、木曜日の午前中に健康診断の予約を入れました。それではその時に。"
+       "text": "Great, you're all set for a Friday afternoon check-up.",
+       "yaku": "素晴らしい、金曜日の午後の健康診断で予約が完了しました。"
       }
      ],
      "crush_spots": [
       {
-       "phrase": "do you",
-       "kana": "デュ",
-       "kind": "yod"
-      },
-      {
-       "phrase": "would you",
-       "kana": "ウッジュ",
-       "kind": "yod"
+       "phrase": "let me",
+       "kana": "レミ",
+       "kind": "form"
       },
       {
        "phrase": "take it",
@@ -3310,10 +3296,10 @@
      "bone": [],
      "bone_en": [],
      "kotsu": "",
-     "key_line": "Thursday morning works for me. I'll take it.",
+     "key_line": "Great, you're all set for a Friday afternoon check-up.",
      "passage": "",
      "passage_yaku": "",
-     "key_line_yaku": "",
+     "key_line_yaku": "素晴らしい、金曜日の午後の健康診断で予約が完了しました。",
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
@@ -3322,60 +3308,56 @@
       {
        "w": [
         [
-         271.183,
-         274.002
+         273.272,
+         277.848
         ]
        ]
       },
       {
        "w": [
         [
-         274.152,
-         278.381
+         277.998,
+         282.626
         ]
        ]
       },
       {
        "w": [
         [
-         278.531,
-         281.53
+         282.776,
+         287.595
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         287.745,
+         291.852
         ],
         [
-         315.583,
-         318.582
+         328.896,
+         333.003
         ]
        ]
       },
       {
        "w": [
         [
-         281.68,
-         286.239
+         292.002,
+         297.806
         ],
         [
-         327.619,
-         332.178
+         342.039,
+         347.843
         ]
        ]
       },
       {
        "w": [
         [
-         286.389,
-         289.354
-        ],
-        [
-         344.167,
-         347.132
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         289.504,
-         293.789
+         297.956,
+         301.27
         ]
        ]
       }
@@ -3383,68 +3365,73 @@
     },
     {
      "n": 5,
-     "qid": "C-eb25bd77",
-     "start": 365.26,
-     "end": 433.06,
-     "en": "Which platform should we go to?",
+     "qid": "C-698957d5",
+     "start": 369.84,
+     "end": 462.42,
+     "en": "Which platform is the train arriving at today?",
      "kana": "",
-     "yaku": "どのホームに行くべきですか？",
+     "yaku": "今日電車が到着するホームはどこですか？",
      "target": "",
      "target_kana": "",
      "kind": "",
-     "memo": "答えの手がかりは、男の人が『プラットフォーム5に行くべきです』と言ったところ。",
-     "answer": "platform 5",
-     "answer_full": "We should go to platform 5.",
-     "a_yaku": "プラットフォーム5に行くべきです。",
+     "memo": "会話の流れを維持しつつ、各発話を9語以上に調整。key_lineを第4発話に設定。",
+     "answer": "platform 4",
+     "answer_full": "The train is arriving at platform 4 today.",
+     "a_yaku": "電車は今日プラットフォーム4に到着します。",
      "questions": [],
-     "question": "Which platform should we go to?",
-     "q_yaku": "どのホームに行くべきですか？",
+     "question": "Which platform is the train arriving at today?",
+     "q_yaku": "今日電車が到着するホームはどこですか？",
      "dialogue": [
       {
-       "speaker": "女の人",
-       "text": "The train is delayed today. I'm not sure where we should wait.",
-       "yaku": "今日は電車が遅れています。どこで待てばいいのか分かりません。"
+       "speaker": "A",
+       "text": "The train is arriving soon. Do you know which platform it is?",
+       "yaku": "電車がもうすぐ来るね。どのホームか知ってる？"
       },
       {
-       "speaker": "男の人",
-       "text": "I think we need to go to platform 5.",
-       "yaku": "プラットフォーム5に行く必要があると思います。"
+       "speaker": "B",
+       "text": "I think it's platform 2, but let me check again to be sure.",
+       "yaku": "プラットフォーム2だと思うけど、もう一度確認してみるね。"
       },
       {
-       "speaker": "女の人",
-       "text": "Are you sure it's not platform 3? I thought it was.",
-       "yaku": "プラットフォーム3ではないのですか？そうだと思っていました。"
+       "speaker": "A",
+       "text": "Platform 2? I thought someone mentioned it was platform 4 instead.",
+       "yaku": "プラットフォーム2？誰かがプラットフォーム4だと言ってたと思ったけど。"
       },
       {
-       "speaker": "男の人",
-       "text": "It's not platform 3. We should go to platform 5.",
-       "yaku": "プラットフォーム3ではありません。プラットフォーム5に行くべきです。"
+       "speaker": "B",
+       "text": "Oh, I just checked. It's actually platform 4 today, so we should head there.",
+       "yaku": "あ、今確認したよ。今日は実際にはプラットフォーム4だから、そこに行こう。"
       },
       {
-       "speaker": "女の人",
-       "text": "Alright, let's head to platform 5 now and make sure we're on time.",
-       "yaku": "わかりました、ではプラットフォーム5に向かって時間通りに行きましょう。"
+       "speaker": "A",
+       "text": "Alright, we should go to platform 4 quickly before we miss it.",
+       "yaku": "わかった、プラットフォーム4に急いで行こう、乗り遅れないように。"
       },
       {
-       "speaker": "男の人",
-       "text": "Yes, let's hurry so we don't miss the train.",
-       "yaku": "はい、急いで電車に乗り遅れないようにしましょう。"
+       "speaker": "B",
+       "text": "Yes, let's hurry and make sure we catch the train on platform 4.",
+       "yaku": "うん、急いでプラットフォーム4の電車に乗ろう。"
       }
      ],
      "crush_spots": [
       {
-       "phrase": "need to",
-       "kana": "ニーダ",
+       "phrase": "do you",
+       "kana": "デュ",
+       "kind": "yod"
+      },
+      {
+       "phrase": "let me",
+       "kana": "レミ",
        "kind": "form"
       }
      ],
      "bone": [],
      "bone_en": [],
      "kotsu": "",
-     "key_line": "It's not platform 3. We should go to platform 5.",
+     "key_line": "Oh, I just checked. It's actually platform 4 today, so we should head there.",
      "passage": "",
      "passage_yaku": "",
-     "key_line_yaku": "",
+     "key_line_yaku": "あ、今確認したよ。今日は実際にはプラットフォーム4だから、そこに行こう。",
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
@@ -3453,52 +3440,56 @@
       {
        "w": [
         [
-         367.558,
-         371.035
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         371.185,
-         373.374
+         372.139,
+         375.951
         ],
         [
-         410.047,
-         412.236
+         423.298,
+         427.11
         ]
        ]
       },
       {
        "w": [
         [
-         373.524,
-         376.598
+         376.101,
+         379.653
+        ],
+        [
+         437.471,
+         441.023
         ]
        ]
       },
       {
        "w": [
         [
-         376.748,
-         380.111
+         379.803,
+         384.629
         ]
        ]
       },
       {
        "w": [
         [
-         380.261,
-         384.285
+         384.779,
+         390.12
         ]
        ]
       },
       {
        "w": [
         [
-         384.435,
-         386.933
+         390.27,
+         394.816
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         394.966,
+         399.224
         ]
        ]
       }
@@ -3507,8 +3498,8 @@
     {
      "n": 6,
      "qid": "C-0c1a9010",
-     "start": 433.06,
-     "end": 546.02,
+     "start": 462.42,
+     "end": 575.38,
      "en": "What time is the meeting on Friday?",
      "kana": "",
      "yaku": "金曜日の会議は何時ですか？",
@@ -3586,64 +3577,64 @@
       {
        "w": [
         [
-         435.316,
-         439.607
+         464.675,
+         468.966
         ],
         [
-         481.093,
-         485.384
+         510.452,
+         514.743
         ]
        ]
       },
       {
        "w": [
         [
-         439.757,
-         443.589
+         469.116,
+         472.948
         ],
         [
-         495.423,
-         499.255
+         524.782,
+         528.614
         ]
        ]
       },
       {
        "w": [
         [
-         443.739,
-         448.256
+         473.098,
+         477.615
         ],
         [
-         509.641,
-         514.158
+         538.999,
+         543.516
         ]
        ]
       },
       {
        "w": [
         [
-         448.406,
-         451.334
+         477.765,
+         480.693
         ],
         [
-         523.992,
-         526.92
+         553.351,
+         556.279
         ]
        ]
       },
       {
        "w": [
         [
-         451.484,
-         455.343
+         480.843,
+         484.702
         ]
        ]
       },
       {
        "w": [
         [
-         455.493,
-         459.707
+         484.852,
+         489.066
         ]
        ]
       }
@@ -3652,67 +3643,72 @@
     {
      "n": 7,
      "qid": "C-262b498e",
-     "start": 546.02,
-     "end": 616.2,
+     "start": 575.38,
+     "end": 654.39,
      "en": "When will the correct item arrive?",
      "kana": "",
-     "yaku": "正しい商品はいつ届きますか？",
+     "yaku": "正しい品物はいつ届きますか。",
      "target": "",
      "target_kana": "",
      "kind": "",
-     "memo": "答えの手がかりは、男の人が『明日の午後には届くはずです』と言ったところ。",
-     "answer": "tomorrow afternoon",
-     "answer_full": "The correct item will arrive by tomorrow afternoon.",
-     "a_yaku": "正しい商品は明日の午後に届きます。",
+     "memo": "先に「今日の午後」が出てきますが、それはできないと言われています。",
+     "answer": "tomorrow morning",
+     "answer_full": "It will arrive by tomorrow morning.",
+     "a_yaku": "明日の朝",
      "questions": [],
      "question": "When will the correct item arrive?",
-     "q_yaku": "正しい商品はいつ届きますか？",
+     "q_yaku": "正しい品物はいつ届きますか。",
      "dialogue": [
       {
        "speaker": "A",
-       "text": "Hello, I received the wrong item in my order.",
-       "yaku": "こんにちは、注文に間違った商品が届きました。"
+       "text": "Hi, I think there is an issue with my order today.",
+       "yaku": "すみません、今日の注文に問題があると思います。"
       },
       {
        "speaker": "B",
-       "text": "I'm sorry to hear that. What did you receive?",
-       "yaku": "それは申し訳ありません。何を受け取りましたか？"
+       "text": "I am sorry to hear that. Did you receive the wrong item?",
+       "yaku": "申し訳ありません。違う品物が届きましたか。"
       },
       {
        "speaker": "A",
-       "text": "I ordered a blue shirt, but got a red one.",
-       "yaku": "青いシャツを注文したのに、赤いシャツが届きました。"
+       "text": "Yes, and I really need the right one by this afternoon.",
+       "yaku": "はい、それに今日の午後までに正しいものが要るんです。"
       },
       {
        "speaker": "B",
-       "text": "I see, we'll replace it with the blue one right away.",
-       "yaku": "わかりました、すぐに青いシャツと交換します。"
+       "text": "I am afraid this afternoon is not possible for the delivery.",
+       "yaku": "申し訳ありませんが、今日の午後の配達はできません。"
       },
       {
        "speaker": "A",
-       "text": "Thank you. When can I expect the correct item?",
-       "yaku": "ありがとうございます。正しい商品はいつ届きますか？"
+       "text": "I see. Then could you tell me when it will arrive?",
+       "yaku": "わかりました。ではいつ届くか教えてもらえますか。"
       },
       {
        "speaker": "B",
-       "text": "It should arrive by tomorrow afternoon. Please let us know if it doesn't.",
-       "yaku": "明日の午後には届くはずです。届かない場合はお知らせください。"
+       "text": "It should be delivered by tomorrow morning, without any delay.",
+       "yaku": "明日の朝までには、遅れずにお届けできるはずです。"
       }
      ],
      "crush_spots": [
       {
-       "phrase": "what did you",
-       "kana": "ワッディジュ",
+       "phrase": "did you",
+       "kana": "ディジュ",
+       "kind": "yod"
+      },
+      {
+       "phrase": "could you",
+       "kana": "クッジュ",
        "kind": "yod"
       }
      ],
      "bone": [],
      "bone_en": [],
      "kotsu": "",
-     "key_line": "It should arrive by tomorrow afternoon. Please let us know if it doesn't.",
+     "key_line": "It should be delivered by tomorrow morning, without any delay.",
      "passage": "",
      "passage_yaku": "",
-     "key_line_yaku": "",
+     "key_line_yaku": "明日の朝までには、遅れずにお届けできるはずです。",
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
@@ -3721,52 +3717,56 @@
       {
        "w": [
         [
-         548.181,
-         551.137
+         577.539,
+         580.806
         ]
        ]
       },
       {
        "w": [
         [
-         551.287,
-         554.134
+         580.956,
+         584.543
         ],
         [
-         592.225,
-         595.072
+         619.696,
+         623.283
         ]
        ]
       },
       {
        "w": [
         [
-         554.284,
-         557.582
+         584.693,
+         587.904
         ]
        ]
       },
       {
        "w": [
         [
-         557.732,
-         561.178
+         588.054,
+         591.681
         ]
        ]
       },
       {
        "w": [
         [
-         561.328,
-         564.796
+         591.831,
+         595.276
+        ],
+        [
+         631.94,
+         635.385
         ]
        ]
       },
       {
        "w": [
         [
-         564.946,
-         569.663
+         595.426,
+         599.078
         ]
        ]
       }
@@ -3774,68 +3774,68 @@
     },
     {
      "n": 8,
-     "qid": "C-246cb696",
-     "start": 616.2,
-     "end": 682.76,
-     "en": "How many days is the shipment late?",
+     "qid": "C-160715de",
+     "start": 654.39,
+     "end": 723.06,
+     "en": "How many days is the shipment delayed?",
      "kana": "",
      "yaku": "出荷は何日遅れていますか？",
      "target": "",
      "target_kana": "",
      "kind": "",
-     "memo": "答えの手がかりは、女の人が「残念ながら2日遅れます」と言ったところ。",
+     "memo": "第2発話を9語以上にし、key_lineを会話の発話と一致させました。",
      "answer": "two days",
      "answer_full": "The shipment is delayed by two days.",
      "a_yaku": "出荷は2日遅れています。",
      "questions": [],
-     "question": "How many days is the shipment late?",
+     "question": "How many days is the shipment delayed?",
      "q_yaku": "出荷は何日遅れていますか？",
      "dialogue": [
       {
        "speaker": "A",
-       "text": "We've got a problem with the delivery schedule for this week.",
-       "yaku": "今週の納品スケジュールに問題があります。"
+       "text": "We need to discuss the delivery schedule for this week.",
+       "yaku": "今週の配送スケジュールについて話し合う必要があります。"
       },
       {
        "speaker": "B",
-       "text": "What seems to be the issue with the delivery?",
-       "yaku": "納品に関して何が問題のようですか？"
+       "text": "Did the shipment arrive yesterday as it was originally planned?",
+       "yaku": "出荷は予定通り昨日到着しましたか？"
       },
       {
        "speaker": "A",
-       "text": "The shipment was supposed to arrive today, but it's delayed.",
-       "yaku": "今日到着するはずの出荷が遅れています。"
+       "text": "No, it didn't arrive yesterday, but it should today.",
+       "yaku": "いいえ、昨日は到着しませんでしたが、今日は到着するはずです。"
       },
       {
        "speaker": "B",
-       "text": "How long is the delay for the shipment? Is it serious?",
-       "yaku": "出荷の遅れはどのくらいですか？深刻ですか？"
+       "text": "So, is the shipment delayed by one day then, or more?",
+       "yaku": "では、出荷は1日遅れですか、それとももっとですか？"
       },
       {
        "speaker": "A",
-       "text": "It's going to be two days late, I'm afraid.",
-       "yaku": "残念ながら2日遅れます。"
+       "text": "The shipment will be two days late, not just one day.",
+       "yaku": "出荷は1日ではなく、2日遅れます。"
       },
       {
        "speaker": "B",
-       "text": "Alright, let's inform the client about the delay and see what they say.",
-       "yaku": "わかりました、クライアントに遅延を知らせて彼らの反応を見ましょう。"
+       "text": "Let's notify the client about the two-day delay right away.",
+       "yaku": "すぐにクライアントに2日遅れることを通知しましょう。"
       }
      ],
      "crush_spots": [
       {
-       "phrase": "going to",
-       "kana": "ガナ",
+       "phrase": "need to",
+       "kana": "ニーダ",
        "kind": "form"
       }
      ],
      "bone": [],
      "bone_en": [],
      "kotsu": "",
-     "key_line": "It's going to be two days late, I'm afraid.",
+     "key_line": "The shipment will be two days late, not just one day.",
      "passage": "",
      "passage_yaku": "",
-     "key_line_yaku": "",
+     "key_line_yaku": "出荷は1日ではなく、2日遅れます。",
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
@@ -3844,52 +3844,52 @@
       {
        "w": [
         [
-         618.358,
-         621.853
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         622.003,
-         624.926
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         625.076,
-         629.35
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         629.5,
-         633.522
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         633.672,
-         636.919
+         656.552,
+         660.073
         ],
         [
-         661.524,
-         664.771
+         700.643,
+         704.164
         ]
        ]
       },
       {
        "w": [
         [
-         637.069,
-         641.17
+         660.223,
+         663.786
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         663.936,
+         668.152
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         668.302,
+         671.754
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         671.904,
+         676.003
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         676.153,
+         679.881
         ]
        ]
       }
@@ -3897,78 +3897,68 @@
     },
     {
      "n": 9,
-     "qid": "C-bda8770f",
-     "start": 682.76,
-     "end": 783.69,
-     "en": "Why can't the man help with the report this afternoon?",
+     "qid": "C-5aacdf4f",
+     "start": 723.06,
+     "end": 814.19,
+     "en": "What keeps the man busy this afternoon?",
      "kana": "",
-     "yaku": "なぜ男の人は今日の午後レポートを手伝えないのですか？",
+     "yaku": "男の人は今日の午後、何で手が離せませんか。",
      "target": "",
      "target_kana": "",
      "kind": "",
-     "memo": "答えの手がかりは、男の人が『今日は別の仕事を終わらせなければなりません』と言ったところ。",
-     "answer": "another task",
-     "answer_full": "He has to finish another task today.",
-     "a_yaku": "彼は別の仕事を終わらせなければなりません。",
+     "memo": "先に「研修」が出てきますが、そのあと予定が変わっています。",
+     "answer": "a meeting",
+     "answer_full": "He has a meeting this afternoon.",
+     "a_yaku": "会議",
      "questions": [],
-     "question": "Why can't the man help with the report this afternoon?",
-     "q_yaku": "なぜ男の人は今日の午後レポートを手伝えないのですか？",
+     "question": "What keeps the man busy this afternoon?",
+     "q_yaku": "男の人は今日の午後、何で手が離せませんか。",
      "dialogue": [
       {
-       "speaker": "女の人",
-       "text": "Can you help me with the report this afternoon?",
-       "yaku": "今日の午後、レポートを手伝ってくれませんか？"
+       "speaker": "A",
+       "text": "Can you assist me with the report this afternoon, please?",
+       "yaku": "今日の午後、レポートを手伝ってもらえますか。"
       },
       {
-       "speaker": "男の人",
-       "text": "Why can't you do it by yourself this time?",
-       "yaku": "今回は自分でできないのですか？"
+       "speaker": "B",
+       "text": "I would like to, but I have a training class today.",
+       "yaku": "手伝いたいのですが、今日は研修があります。"
       },
       {
-       "speaker": "女の人",
-       "text": "I have a lot to prepare for tomorrow's meeting.",
-       "yaku": "明日の会議の準備がたくさんあります。"
+       "speaker": "A",
+       "text": "Oh, I did not know your training class was today.",
+       "yaku": "え、研修が今日だとは知りませんでした。"
       },
       {
-       "speaker": "男の人",
-       "text": "It's not the meeting. I have to finish another task today.",
-       "yaku": "会議ではありません。今日は別の仕事を終わらせなければなりません。"
+       "speaker": "B",
+       "text": "Actually the training was moved, so now I have a meeting.",
+       "yaku": "じつは研修は移動になって、いまは会議が入っています。"
       },
       {
-       "speaker": "女の人",
-       "text": "I see. Can you help me tomorrow morning instead?",
-       "yaku": "わかりました。それでは、明日の朝に手伝ってもらえますか？"
+       "speaker": "A",
+       "text": "I see, so the meeting is what keeps you busy today.",
+       "yaku": "なるほど、今日は会議で手が離せないんですね。"
       },
       {
-       "speaker": "男の人",
-       "text": "Yes, I can help you tomorrow morning after my meeting.",
-       "yaku": "はい、明日の朝なら会議の後に手伝えます。"
+       "speaker": "B",
+       "text": "Yes, but I can help you tomorrow morning after that meeting.",
+       "yaku": "はい、でも明日の朝、会議のあとなら手伝えます。"
       }
      ],
      "crush_spots": [
       {
-       "phrase": "can't you",
-       "kana": "キャンチュ",
-       "kind": "yod"
-      },
-      {
        "phrase": "meeting",
        "kana": "ミーリン",
        "kind": "flap"
-      },
-      {
-       "phrase": "have to",
-       "kana": "ハフタ",
-       "kind": "form"
       }
      ],
      "bone": [],
      "bone_en": [],
      "kotsu": "",
-     "key_line": "It's not the meeting. I have to finish another task today.",
+     "key_line": "Actually the training was moved, so now I have a meeting.",
      "passage": "",
      "passage_yaku": "",
-     "key_line_yaku": "",
+     "key_line_yaku": "じつは研修は移動になって、いまは会議が入っています。",
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
@@ -3977,64 +3967,60 @@
       {
        "w": [
         [
-         685.321,
-         687.795
+         725.622,
+         728.901
         ]
        ]
       },
       {
        "w": [
         [
-         687.945,
-         690.462
+         729.051,
+         731.957
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         732.107,
+         735.95
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         736.1,
+         739.284
         ],
         [
-         726.906,
-         729.423
+         766.402,
+         769.586
         ]
        ]
       },
       {
        "w": [
         [
-         690.612,
-         692.87
+         739.434,
+         742.761
         ],
         [
-         738.29,
-         740.548
+         778.271,
+         781.598
         ]
        ]
       },
       {
        "w": [
         [
-         693.02,
-         696.522
+         742.911,
+         746.288
         ],
         [
-         747.897,
-         751.399
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         696.672,
-         699.453
-        ]
-       ]
-      },
-      {
-       "w": [
-        [
-         699.603,
-         702.52
-        ],
-        [
-         760.9,
-         763.817
+         791.084,
+         794.461
         ]
        ]
       }
@@ -4042,62 +4028,62 @@
     },
     {
      "n": 10,
-     "qid": "C-8162fbe5",
-     "start": 783.69,
-     "end": 844.02,
-     "en": "How many boxes of printer paper should we order?",
+     "qid": "C-d5831973",
+     "start": 814.19,
+     "end": 874.15,
+     "en": "How many boxes of printer paper will be ordered?",
      "kana": "",
-     "yaku": "プリンタ用紙を何箱注文すべきですか？",
+     "yaku": "プリンター用紙は何箱注文されますか？",
      "target": "",
      "target_kana": "",
      "kind": "",
-     "memo": "答えの手がかりは、女の人が「今回は安全のために5箱注文しましょう」と言ったところ。",
+     "memo": "第2発話を9語以上にし、質問文から代名詞を除去しました。",
      "answer": "five boxes",
-     "answer_full": "They will order five boxes.",
-     "a_yaku": "彼らは5箱注文します。",
+     "answer_full": "They will order five boxes of printer paper.",
+     "a_yaku": "プリンター用紙を5箱注文します。",
      "questions": [],
-     "question": "How many boxes of printer paper should we order?",
-     "q_yaku": "プリンタ用紙を何箱注文すべきですか？",
+     "question": "How many boxes of printer paper will be ordered?",
+     "q_yaku": "プリンター用紙は何箱注文されますか？",
      "dialogue": [
       {
        "speaker": "A",
-       "text": "We're running low on printer paper again. It's almost out.",
-       "yaku": "またプリンタ用紙が少なくなっています。ほとんど無くなりそうです。"
+       "text": "The printer paper is almost gone again. We need more paper soon.",
+       "yaku": "プリンター用紙がまたほとんどなくなってしまいました。すぐにもっと必要です。"
       },
       {
        "speaker": "B",
-       "text": "Didn't we just order some last week for the office?",
-       "yaku": "先週、オフィス用に注文したばかりではありませんか？"
+       "text": "I remember we ordered three boxes of paper last time, right?",
+       "yaku": "前回、プリンター用紙を3箱注文したのを覚えていますよね？"
       },
       {
        "speaker": "A",
-       "text": "Yes, but we had a big project that used a lot.",
-       "yaku": "はい、大きなプロジェクトでたくさん使いました。"
+       "text": "Yes, but we used them up quickly for the project we had.",
+       "yaku": "はい、でもプロジェクトでそれらをすぐに使い切ってしまいました。"
       },
       {
        "speaker": "B",
-       "text": "Alright, how many boxes should we order this time?",
-       "yaku": "わかりました、今回は何箱注文しますか？"
+       "text": "Should we get three boxes again, or maybe we need more this time?",
+       "yaku": "また3箱注文するべきですか、それとも今回はもっと必要ですか？"
       },
       {
        "speaker": "A",
-       "text": "Let's order five boxes to be safe this time.",
-       "yaku": "今回は安全のために5箱注文しましょう。"
+       "text": "I think we should order five boxes this time for future use.",
+       "yaku": "今回は将来のために5箱注文するべきだと思います。"
       },
       {
        "speaker": "B",
-       "text": "Okay, I'll place the order for five boxes today.",
-       "yaku": "わかりました、今日5箱注文します。"
+       "text": "Alright, I'll go ahead and order five boxes today for us.",
+       "yaku": "わかりました、私たちのために今日5箱注文します。"
       }
      ],
      "crush_spots": [],
      "bone": [],
      "bone_en": [],
      "kotsu": "",
-     "key_line": "Let's order five boxes to be safe this time.",
+     "key_line": "I think we should order five boxes this time for future use.",
      "passage": "",
      "passage_yaku": "",
-     "key_line_yaku": "",
+     "key_line_yaku": "今回は将来のために5箱注文するべきだと思います。",
      "retell": "",
      "retell_yaku": "",
      "retell_min": "",
@@ -4106,48 +4092,48 @@
       {
        "w": [
         [
-         786.596,
-         790.993
+         817.088,
+         821.372
         ]
        ]
       },
       {
        "w": [
         [
-         791.143,
-         794.554
+         821.522,
+         825.762
         ]
        ]
       },
       {
        "w": [
         [
-         794.704,
-         798.498
+         825.912,
+         829.906
         ]
        ]
       },
       {
        "w": [
         [
-         798.648,
-         801.893
+         830.056,
+         834.854
         ]
        ]
       },
       {
        "w": [
         [
-         802.043,
-         804.822
+         835.004,
+         838.824
         ]
        ]
       },
       {
        "w": [
         [
-         804.972,
-         807.903
+         838.974,
+         842.356
         ]
        ]
       }
