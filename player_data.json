@@ -5,17 +5,17 @@
    "title": "Part A 質問",
    "sub": "短い質問に1〜3語で即答する",
    "mp3": "partA.mp3",
-   "av": "a3f4dfd8",
-   "total": 821.3,
+   "av": "03b56ce6",
+   "total": 1296.08,
    "chapters": [
     {
      "n": 1,
      "qid": "A-0ba7c649",
      "start": 17.46,
-     "end": 65.19,
+     "end": 64.42,
      "en": "What do we call frozen water, ice or paper?",
-     "kana": "ワダウィ コール フローズン ウォーラ アイス オア ペイパー",
-     "yaku": "凍った水を何と呼びますか、氷ですか、それとも紙ですか？",
+     "kana": "ワダ ウィ コール フローズン ウォーラ アイス オア ペイパー",
+     "yaku": "凍った水は何と呼びますか、アイスかペーパーか。",
      "target": "water",
      "target_kana": "ウォーラ",
      "kind": "flap",
@@ -51,8 +51,8 @@
          24.908
         ],
         [
-         50.363,
-         53.579
+         49.595,
+         52.811
         ]
        ]
       }
@@ -61,17 +61,17 @@
     {
      "n": 2,
      "qid": "A-71e5dbd1",
-     "start": 65.19,
-     "end": 120.11,
+     "start": 64.42,
+     "end": 118.24,
      "en": "Where does a very sick person go, a hospital or a store?",
-     "kana": "ウェア ダズ ア ベリー シック パーソン ゴー ア ハスピロー オア ア ストア",
-     "yaku": "とても病気の人はどこに行きますか、病院ですか、それともお店ですか？",
+     "kana": "ウェア ダズ ア ベリ シック パーソン ゴー ア ハスピロー オア ア ストア",
+     "yaku": "とても具合の悪い人はどこに行きますか、病院か店か。",
      "target": "hospital",
      "target_kana": "ハスピロー",
      "kind": "flap",
      "memo": "hospital が ハスピロー に聞こえます",
      "answer": "a hospital",
-     "answer_full": "A sick person goes to a hospital.",
+     "answer_full": "A very sick person goes to a hospital.",
      "a_yaku": "",
      "question": "Where does a very sick person go, a hospital or a store?",
      "q_yaku": "",
@@ -93,16 +93,16 @@
        "s": "Where does a very sick person go, a hospital or a store?",
        "w": [
         [
-         66.067,
-         70.435
+         65.299,
+         69.667
         ],
         [
-         70.575,
-         74.943
+         69.807,
+         74.175
         ],
         [
-         102.501,
-         106.869
+         100.629,
+         104.997
         ]
        ]
       }
@@ -110,20 +110,20 @@
     },
     {
      "n": 3,
-     "qid": "A-4702941e",
-     "start": 120.11,
-     "end": 174.87,
-     "en": "Where do you put a letter to mail it, a mailbox or a fridge?",
-     "kana": "ウェア ドゥ ユー プッタ レラ トゥ メイリッ ア メイルボックス オア ア フリッジ",
-     "yaku": "手紙をどこに入れて郵送しますか、郵便箱ですか、それとも冷蔵庫ですか？",
+     "qid": "A-11d4e5b3",
+     "start": 118.24,
+     "end": 171.47,
+     "en": "Where do you put a letter at home, a mailbox or a fridge?",
+     "kana": "ウェア デュ プッタ レラ アット ホーム ア メイルボックス オア ア フリッジ",
+     "yaku": "家で手紙をどこに置きますか、郵便箱か冷蔵庫か。",
      "target": "Where do you",
      "target_kana": "ウェアデュ",
      "kind": "yod",
      "memo": "Where do you が ウェアデュ に聞こえます",
      "answer": "a mailbox",
-     "answer_full": "You put a letter in a mailbox.",
+     "answer_full": "You put a letter in a mailbox at home.",
      "a_yaku": "",
-     "question": "Where do you put a letter to mail it, a mailbox or a fridge?",
+     "question": "Where do you put a letter at home, a mailbox or a fridge?",
      "q_yaku": "",
      "dialogue": [],
      "crush_spots": [],
@@ -140,19 +140,19 @@
      "retell_min_yaku": "",
      "hl": [
       {
-       "s": "Where do you put a letter to mail it, a mailbox or a fridge?",
+       "s": "Where do you put a letter at home, a mailbox or a fridge?",
        "w": [
         [
-         120.989,
-         125.045
+         119.117,
+         122.981
         ],
         [
-         125.185,
-         129.241
+         123.121,
+         126.985
         ],
         [
-         157.906,
-         161.962
+         154.702,
+         158.566
         ]
        ]
       }
@@ -161,17 +161,17 @@
     {
      "n": 4,
      "qid": "A-b4d44075",
-     "start": 174.87,
-     "end": 234.42,
+     "start": 171.47,
+     "end": 231.09,
      "en": "Who brings your food at a restaurant, a waiter or a nurse?",
-     "kana": "フー ブリングス ユア フード アタ レストラン ア ウェイラ オア ア ナース",
-     "yaku": "レストランで食べ物を持ってくるのは誰ですか、ウェイターですか、それとも看護師ですか？",
+     "kana": "フー ブリングス ユア フード アッタ レストラン ア ウェイラ オア ア ナース",
+     "yaku": "レストランで食事を運んでくれるのは誰ですか、ウェイターか看護師か。",
      "target": "waiter",
      "target_kana": "ウェイラ",
      "kind": "flap",
      "memo": "waiter が ウェイラ に聞こえます",
      "answer": "a waiter",
-     "answer_full": "A waiter brings your food.",
+     "answer_full": "A waiter brings your food at a restaurant.",
      "a_yaku": "",
      "question": "Who brings your food at a restaurant, a waiter or a nurse?",
      "q_yaku": "",
@@ -193,16 +193,16 @@
        "s": "Who brings your food at a restaurant, a waiter or a nurse?",
        "w": [
         [
-         175.746,
-         180.402
+         172.35,
+         177.006
         ],
         [
-         180.542,
-         185.198
+         177.146,
+         181.802
         ],
         [
-         214.025,
-         218.681
+         210.702,
+         215.358
         ]
        ]
       }
@@ -211,17 +211,17 @@
     {
      "n": 5,
      "qid": "A-24b9bdba",
-     "start": 234.42,
-     "end": 290.03,
+     "start": 231.09,
+     "end": 284.78,
      "en": "Who do you see when you feel sick, a doctor or a farmer?",
-     "kana": "フー ドゥ ユー シー ウェン ユー フィール シック ア ダクター オア ア ファーマー",
-     "yaku": "具合が悪い時に会うのは誰ですか、医者ですか、それとも農家の人ですか？",
+     "kana": "フーデュ シー ウェン ユ フィール シック ア ドクター オア ア ファーマー",
+     "yaku": "具合が悪いときに会うのは誰ですか、医者か農家か。",
      "target": "Who do you",
      "target_kana": "フーデュ",
      "kind": "yod",
      "memo": "Who do you が フーデュ に聞こえます",
      "answer": "a doctor",
-     "answer_full": "You see a doctor when you feel sick.",
+     "answer_full": "When you feel sick, you see a doctor.",
      "a_yaku": "",
      "question": "Who do you see when you feel sick, a doctor or a farmer?",
      "q_yaku": "",
@@ -243,16 +243,16 @@
        "s": "Who do you see when you feel sick, a doctor or a farmer?",
        "w": [
         [
-         235.297,
-         239.401
+         231.974,
+         236.078
         ],
         [
-         239.541,
-         243.645
+         236.218,
+         240.322
         ],
         [
-         272.395,
-         276.499
+         267.152,
+         271.256
         ]
        ]
       }
@@ -261,11 +261,11 @@
     {
      "n": 6,
      "qid": "A-fb372df2",
-     "start": 290.03,
-     "end": 338.68,
+     "start": 284.78,
+     "end": 332.79,
      "en": "What do you keep water in, a bottle or a box?",
-     "kana": "ワダ ユー キープ ウォーラ イン ア バロー オア ア ボックス",
-     "yaku": "水を何に入れておきますか、ボトルですか、それとも箱ですか？",
+     "kana": "ワッデュ キープ ウォーラ イン ア バロー オア ア ボックス",
+     "yaku": "水を入れておくのは何ですか、ボトルか箱か。",
      "target": "What do you",
      "target_kana": "ワッデュ",
      "kind": "yod",
@@ -293,16 +293,16 @@
        "s": "What do you keep water in, a bottle or a box?",
        "w": [
         [
-         290.907,
-         294.363
+         285.664,
+         289.12
         ],
         [
-         294.503,
-         297.959
+         289.26,
+         292.716
         ],
         [
-         323.328,
-         326.784
+         317.436,
+         320.892
         ]
        ]
       }
@@ -311,17 +311,17 @@
     {
      "n": 7,
      "qid": "A-3caff0a6",
-     "start": 338.68,
-     "end": 392.48,
+     "start": 332.79,
+     "end": 386.95,
      "en": "What do you buy to ride the train, a ticket or a jacket?",
-     "kana": "ワダ ユー バイ トゥ ライド ザ トレイン ア ティケッ オア ア ジャケット",
-     "yaku": "電車に乗るために何を買いますか、切符ですか、それともジャケットですか？",
+     "kana": "ワッデュ バイトゥ ライド ザ トレイン ア チケット オア ア ジャケット",
+     "yaku": "電車に乗るために買うのは何ですか、チケットかジャケットか。",
      "target": "do you",
      "target_kana": "デュ",
      "kind": "yod",
      "memo": "do you が デュ に聞こえます",
      "answer": "a ticket",
-     "answer_full": "You buy a ticket to ride the train.",
+     "answer_full": "To ride the train, you buy a ticket.",
      "a_yaku": "",
      "question": "What do you buy to ride the train, a ticket or a jacket?",
      "q_yaku": "",
@@ -343,16 +343,16 @@
        "s": "What do you buy to ride the train, a ticket or a jacket?",
        "w": [
         [
-         339.56,
-         343.472
+         333.668,
+         337.58
         ],
         [
-         343.612,
-         347.524
+         337.72,
+         341.632
         ],
         [
-         374.561,
-         378.473
+         369.029,
+         372.941
         ]
        ]
       }
@@ -361,11 +361,11 @@
     {
      "n": 8,
      "qid": "A-553f80f8",
-     "start": 392.48,
-     "end": 444.73,
+     "start": 386.95,
+     "end": 437.74,
      "en": "How many minutes are in half an hour, thirty or thirteen?",
-     "kana": "ハウ メニー ミニッツ アー イン ハーフ アン アワー サーリ オア サーティーン",
-     "yaku": "30分は何分ですか、30ですか、それとも13ですか？",
+     "kana": "ハウ メニ ミニッツ アー イン ハーフ アン アワー サーリ オア サーティーン",
+     "yaku": "30分は何分ですか、30か13か。",
      "target": "an hour",
      "target_kana": "アナワー",
      "kind": "link",
@@ -393,16 +393,16 @@
        "s": "How many minutes are in half an hour, thirty or thirteen?",
        "w": [
         [
-         393.361,
-         397.417
+         387.829,
+         391.885
         ],
         [
-         397.557,
-         401.613
+         392.025,
+         396.081
         ],
         [
-         428.636,
-         432.692
+         421.641,
+         425.697
         ]
        ]
       }
@@ -410,20 +410,20 @@
     },
     {
      "n": 9,
-     "qid": "A-0c60e661",
-     "start": 444.73,
-     "end": 496.7,
-     "en": "Which is a happy event, a party or a test?",
-     "kana": "ウィッチ イズ ア ハッピー イベント ア パーリ オア ア テスト",
-     "yaku": "どちらが楽しいイベントですか、パーティーですか、それともテストですか？",
+     "qid": "A-0b23448f",
+     "start": 437.74,
+     "end": 491.56,
+     "en": "Which is a happy event on a birthday, a party or a test?",
+     "kana": "ウィッチ イズ ア ハッピー イベント オンナ バースデー ア パーリ オア ア テスト",
+     "yaku": "誕生日の嬉しいイベントはどれですか、パーティーかテストか。",
      "target": "party",
      "target_kana": "パーリ",
      "kind": "flap",
      "memo": "party が パーリ に聞こえます",
      "answer": "a party",
-     "answer_full": "A party is a happy event.",
+     "answer_full": "A party is a happy event on a birthday.",
      "a_yaku": "",
-     "question": "Which is a happy event, a party or a test?",
+     "question": "Which is a happy event on a birthday, a party or a test?",
      "q_yaku": "",
      "dialogue": [],
      "crush_spots": [],
@@ -440,19 +440,19 @@
      "retell_min_yaku": "",
      "hl": [
       {
-       "s": "Which is a happy event, a party or a test?",
+       "s": "Which is a happy event on a birthday, a party or a test?",
        "w": [
         [
-         445.612,
-         448.972
+         438.617,
+         442.985
         ],
         [
-         449.112,
-         452.472
+         443.125,
+         447.493
         ],
         [
-         480.536,
-         483.896
+         474.381,
+         478.749
         ]
        ]
       }
@@ -461,17 +461,17 @@
     {
      "n": 10,
      "qid": "A-9f18de91",
-     "start": 496.7,
-     "end": 552.14,
+     "start": 491.56,
+     "end": 545.07,
      "en": "How long is a little nap, fifteen minutes or ten hours?",
      "kana": "ハウ ロング イズ ア リル ナップ フィフティーン ミニッツ オア テン アワーズ",
-     "yaku": "短い昼寝はどのくらいですか、15分ですか、それとも10時間ですか？",
+     "yaku": "短い昼寝はどれくらいですか、15分か10時間か。",
      "target": "little",
      "target_kana": "リル",
      "kind": "flap",
      "memo": "little が リル に聞こえます",
      "answer": "fifteen minutes",
-     "answer_full": "A little nap is about fifteen minutes.",
+     "answer_full": "A little nap is fifteen minutes long.",
      "a_yaku": "",
      "question": "How long is a little nap, fifteen minutes or ten hours?",
      "q_yaku": "",
@@ -493,16 +493,16 @@
        "s": "How long is a little nap, fifteen minutes or ten hours?",
        "w": [
         [
-         497.584,
-         501.904
+         492.437,
+         496.757
         ],
         [
-         502.044,
-         506.364
+         496.897,
+         501.217
         ],
         [
-         534.575,
-         538.895
+         527.508,
+         531.828
         ]
        ]
       }
@@ -511,17 +511,17 @@
     {
      "n": 11,
      "qid": "A-a9e2ed68",
-     "start": 552.14,
-     "end": 602.46,
+     "start": 545.07,
+     "end": 594.15,
      "en": "Which machine writes an email, a computer or a cup?",
-     "kana": "ウィッチ マシーン ライツ アン イーメール ア コンピューラ オア ア カップ",
-     "yaku": "どの機械がメールを書きますか、コンピュータですか、それともカップですか？",
+     "kana": "ウィッチ マシーン ライツ アン イーメイル ア コンピューラ オア ア カップ",
+     "yaku": "メールを書く機械はどれですか、コンピューターかカップか。",
      "target": "computer",
      "target_kana": "コンピューラ",
      "kind": "flap",
      "memo": "computer が コンピューラ に聞こえます",
      "answer": "a computer",
-     "answer_full": "You write an email on a computer.",
+     "answer_full": "A computer writes an email.",
      "a_yaku": "",
      "question": "Which machine writes an email, a computer or a cup?",
      "q_yaku": "",
@@ -543,16 +543,16 @@
        "s": "Which machine writes an email, a computer or a cup?",
        "w": [
         [
-         553.015,
-         556.663
+         545.948,
+         549.596
         ],
         [
-         556.803,
-         560.451
+         549.736,
+         553.384
         ],
         [
-         587.205,
-         590.853
+         578.89,
+         582.538
         ]
        ]
       }
@@ -561,11 +561,11 @@
     {
      "n": 12,
      "qid": "A-2cf74634",
-     "start": 602.46,
-     "end": 659.72,
+     "start": 594.15,
+     "end": 649.87,
      "en": "Where do workers hold a meeting, an office or a garden?",
      "kana": "ウェア ドゥ ワーカーズ ホールド ア ミーリン アン オフィス オア ア ガーデン",
-     "yaku": "労働者が会議を開くのはどこですか、オフィスですか、それとも庭ですか？",
+     "yaku": "労働者が会議を開くのはどこですか、オフィスか庭か。",
      "target": "meeting",
      "target_kana": "ミーリン",
      "kind": "flap",
@@ -593,16 +593,416 @@
        "s": "Where do workers hold a meeting, an office or a garden?",
        "w": [
         [
-         603.341,
-         607.709
+         595.026,
+         599.394
         ],
         [
-         607.849,
-         612.217
+         599.534,
+         603.902
         ],
         [
-         641.056,
-         645.424
+         631.204,
+         635.572
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 13,
+     "qid": "A-b1e1a14a",
+     "start": 649.87,
+     "end": 706.03,
+     "en": "How do you send a document to a coworker far away?",
+     "kana": "ハウデュ センド ア ドキュメント トゥ ア コウワーカー ファー アウェイ",
+     "yaku": "遠くの同僚に書類を送る方法は何ですか。",
+     "target": "How do you",
+     "target_kana": "ハウデュ",
+     "kind": "yod",
+     "memo": "How do you が ハウデュ に聞こえます",
+     "answer": "by email",
+     "answer_full": "You send a document to a coworker far away by email.",
+     "a_yaku": "",
+     "question": "How do you send a document to a coworker far away?",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "How do you send a document to a coworker far away?",
+       "w": [
+        [
+         650.748,
+         655.404
+        ],
+        [
+         655.544,
+         660.2
+        ],
+        [
+         688.946,
+         693.602
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 14,
+     "qid": "A-65138505",
+     "start": 706.03,
+     "end": 754.27,
+     "en": "What does a company give you at the end of each month?",
+     "kana": "ワッダズ ア カンパニー ギブ ユー アット ジ エンド オブ イーチ マンス",
+     "yaku": "会社が毎月末にくれるものは何ですか。",
+     "target": "What does",
+     "target_kana": "ワッダズ",
+     "kind": "link",
+     "memo": "What does が ワッダズ に聞こえます",
+     "answer": "a salary",
+     "answer_full": "A company gives you a salary at the end of each month.",
+     "a_yaku": "",
+     "question": "What does a company give you at the end of each month?",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "What does a company give you at the end of each month?",
+       "w": [
+        [
+         706.906,
+         709.762
+        ],
+        [
+         709.902,
+         712.758
+        ],
+        [
+         739.084,
+         741.94
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 15,
+     "qid": "A-ed2e296b",
+     "start": 754.27,
+     "end": 801.36,
+     "en": "Who is the person that leads a team at work?",
+     "kana": "フーズ ザ パーソン ザット リーズ ア チーム アット ワーク",
+     "yaku": "職場でチームを率いる人は誰ですか。",
+     "target": "Who is",
+     "target_kana": "フーズ",
+     "kind": "link",
+     "memo": "Who is が フーズ に聞こえます",
+     "answer": "a manager",
+     "answer_full": "The person that leads a team at work is a manager.",
+     "a_yaku": "",
+     "question": "Who is the person that leads a team at work?",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Who is the person that leads a team at work?",
+       "w": [
+        [
+         755.148,
+         757.956
+        ],
+        [
+         758.096,
+         760.904
+        ],
+        [
+         785.313,
+         788.121
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 16,
+     "qid": "A-d13ce35f",
+     "start": 801.36,
+     "end": 853.49,
+     "en": "What do you get when you start a job for the first time?",
+     "kana": "ワッデュ ゲット ウェン ユ スタート ア ジョブ フォーザ ファースタイム",
+     "yaku": "初めて仕事を始めるときに受けるものは何ですか。",
+     "target": "first time",
+     "target_kana": "ファースタイム",
+     "kind": "drop_t",
+     "memo": "first time が ファースタイム に聞こえます",
+     "answer": "training",
+     "answer_full": "When you start a job for the first time, you get training.",
+     "a_yaku": "",
+     "question": "What do you get when you start a job for the first time?",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "What do you get when you start a job for the first time?",
+       "w": [
+        [
+         802.241,
+         805.457
+        ],
+        [
+         805.597,
+         808.813
+        ],
+        [
+         837.846,
+         841.062
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 17,
+     "qid": "A-8d16b61b",
+     "start": 853.49,
+     "end": 899.97,
+     "en": "What do you use at the office when there is a fire?",
+     "kana": "ワッデュ ユーズ アット ジ オフィス ウェン ゼアリザ ファイア",
+     "yaku": "オフィスで火事のときに使うものは何ですか。",
+     "target": "there is a",
+     "target_kana": "ゼアリザ",
+     "kind": "link",
+     "memo": "there is a が ゼアリザ に聞こえます",
+     "answer": "the stairs",
+     "answer_full": "You use the stairs at the office when there is a fire.",
+     "a_yaku": "",
+     "question": "What do you use at the office when there is a fire?",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "What do you use at the office when there is a fire?",
+       "w": [
+        [
+         854.366,
+         856.886
+        ],
+        [
+         857.026,
+         859.546
+        ],
+        [
+         885.558,
+         888.078
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 18,
+     "qid": "A-5459e734",
+     "start": 899.97,
+     "end": 947.92,
+     "en": "What do you call one part of a long report?",
+     "kana": "ワダ ウィ コール ワン パーラヴァ ロング レポート",
+     "yaku": "長いレポートの一部を何と呼びますか。",
+     "target": "part of",
+     "target_kana": "パーラ",
+     "kind": "flap",
+     "memo": "part of が パーラ に聞こえます",
+     "answer": "a section",
+     "answer_full": "One part of a long report is called a section.",
+     "a_yaku": "",
+     "question": "What do you call one part of a long report?",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "What do you call one part of a long report?",
+       "w": [
+        [
+         900.854,
+         904.214
+        ],
+        [
+         904.354,
+         907.714
+        ],
+        [
+         932.661,
+         936.021
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 19,
+     "qid": "A-2bb859ec",
+     "start": 947.92,
+     "end": 995.54,
+     "en": "What do you say when a client comes to meet you?",
+     "kana": "ワダ ユー セイ ウェン ア クライアント カムズ トゥ ミーチュ",
+     "yaku": "クライアントが会いに来たときに言う言葉は何ですか。",
+     "target": "meet you",
+     "target_kana": "ミーチュ",
+     "kind": "yod",
+     "memo": "meet you が ミーチュ に聞こえます",
+     "answer": "hello",
+     "answer_full": "When a client comes to meet you, you say hello.",
+     "a_yaku": "",
+     "question": "What do you say when a client comes to meet you?",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "What do you say when a client comes to meet you?",
+       "w": [
+        [
+         948.797,
+         951.845
+        ],
+        [
+         951.985,
+         955.033
+        ],
+        [
+         980.885,
+         983.933
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 20,
+     "qid": "A-4a5feb9a",
+     "start": 995.54,
+     "end": 1043.2,
+     "en": "What is the paper that shows how much you must pay?",
+     "kana": "ワッツ ザ ペイパー ザット ショーズ ハウ マッチ ユー マスト ペイ",
+     "yaku": "支払うべき金額が書かれた紙を何と呼びますか。",
+     "target": "What is",
+     "target_kana": "ワッツ",
+     "kind": "link",
+     "memo": "What is が ワッツ に聞こえます",
+     "answer": "a bill",
+     "answer_full": "The paper that shows how much you must pay is a bill.",
+     "a_yaku": "",
+     "question": "What is the paper that shows how much you must pay?",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "What is the paper that shows how much you must pay?",
+       "w": [
+        [
+         996.421,
+         999.877
+        ],
+        [
+         1000.017,
+         1003.473
+        ],
+        [
+         1028.425,
+         1031.881
         ]
        ]
       }
@@ -611,8 +1011,8 @@
     {
      "n": 0,
      "qid": "A-tail0",
-     "start": 659.72,
-     "end": 821.3,
+     "start": 1043.2,
+     "end": 1296.08,
      "en": "",
      "kana": "",
      "yaku": "",
