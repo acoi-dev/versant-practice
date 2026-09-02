@@ -4887,26 +4887,226 @@
    "title": "Part F 自由回答",
    "sub": "質問に自分の意見を答える",
    "mp3": "partF.mp3",
-   "av": "c66aad8f",
-   "total": 322.15,
+   "av": "05ea2b04",
+   "total": 505.7,
    "chapters": [
     {
      "n": 1,
-     "qid": "F-22fc02f6",
-     "start": 26.99,
-     "end": 74.14,
-     "en": "Do you prefer living in the city or the countryside?",
+     "qid": "F-2dde70c8",
+     "start": 34.55,
+     "end": 93.8,
+     "en": "What are two advantages and two disadvantages of living in a big city?",
      "kana": "",
-     "yaku": "都会に住むのと田舎に住むの、どちらが好きですか？",
+     "yaku": "大都市に住むことの利点を2つ、欠点を2つ教えてください。",
      "target": "",
      "target_kana": "",
      "kind": "",
      "memo": "",
-     "answer": "I prefer living in the city.",
-     "answer_full": "I prefer living in the city. There are more shops and activities. I enjoy going to the movies.",
-     "a_yaku": "私は都会に住む方が好きです。",
-     "question": "Do you prefer living in the city or the countryside?",
-     "q_yaku": "都会に住むのと田舎に住むの、どちらが好きですか？",
+     "answer": "One good thing is there are many job opportunities.",
+     "answer_full": "One good thing is there are many job opportunities. Another is you can find many activities to do. But it can be very noisy. And it is often expensive to live there.",
+     "a_yaku": "良い点の一つは、多くの仕事の機会があることです。",
+     "question": "What are two advantages and two disadvantages of living in a big city?",
+     "q_yaku": "大都市に住むことの利点を2つ、欠点を2つ教えてください。",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [
+      "まず良い点を一つ",
+      "次にもう一つ",
+      "そのあと悪い点を二つ"
+     ],
+     "bone_en": [
+      "One good thing is ...",
+      "Another is ...",
+      "But ..."
+     ],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "One good thing is there are many job opportunities.",
+     "retell_min_yaku": "良い点の一つは、多くの仕事の機会があることです。",
+     "hl": [
+      {
+       "s": "What are two advantages and two disadvantages of living in a big city?",
+       "w": [
+        [
+         34.548,
+         38.556
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "qid": "F-f3e64fa6",
+     "start": 93.8,
+     "end": 157.9,
+     "en": "What are two advantages and two disadvantages of working from home?",
+     "kana": "",
+     "yaku": "在宅勤務の利点を2つ、欠点を2つ教えてください。",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "",
+     "answer": "One good thing is you can save time on commuting.",
+     "answer_full": "One good thing is you can save time on commuting. Another is you can work in a comfortable place. But it can be lonely. And it is hard to separate work and home life.",
+     "a_yaku": "良い点の一つは、通勤時間を節約できることです。",
+     "question": "What are two advantages and two disadvantages of working from home?",
+     "q_yaku": "在宅勤務の利点を2つ、欠点を2つ教えてください。",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [
+      "まず良い点を一つ",
+      "次にもう一つ",
+      "そのあと悪い点を二つ"
+     ],
+     "bone_en": [
+      "One good thing is ...",
+      "Another is ...",
+      "But ..."
+     ],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "One good thing is you can save time on commuting.",
+     "retell_min_yaku": "良い点の一つは、通勤時間を節約できることです。",
+     "hl": [
+      {
+       "s": "What are two advantages and two disadvantages of working from home?",
+       "w": [
+        [
+         93.8,
+         98.864
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "qid": "F-5a639d09",
+     "start": 157.9,
+     "end": 214.03,
+     "en": "Tell me two things a person can do to stay healthy.",
+     "kana": "",
+     "yaku": "健康を保つためにできることを2つ教えてください。",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "",
+     "answer": "One way is to eat fruits and vegetables every day.",
+     "answer_full": "One way is to eat fruits and vegetables every day. It helps because they have vitamins. Another way is to exercise regularly.",
+     "a_yaku": "一つの方法は、毎日果物と野菜を食べることです。",
+     "question": "Tell me two things a person can do to stay healthy.",
+     "q_yaku": "健康を保つためにできることを2つ教えてください。",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [
+      "まず一つ目の方法",
+      "なぜ良いかを一言",
+      "次に二つ目の方法"
+     ],
+     "bone_en": [
+      "One way is ...",
+      "It helps because ...",
+      "Another way is ..."
+     ],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "One way is to eat fruits and vegetables every day.",
+     "retell_min_yaku": "一つの方法は、毎日果物と野菜を食べることです。",
+     "hl": [
+      {
+       "s": "Tell me two things a person can do to stay healthy.",
+       "w": [
+        [
+         157.9,
+         161.86
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "qid": "F-59276480",
+     "start": 214.03,
+     "end": 273.14,
+     "en": "Tell me two things a person can do to learn a new skill at work.",
+     "kana": "",
+     "yaku": "職場で新しいスキルを学ぶためにできることを2つ教えてください。",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "",
+     "answer": "One way is to take online courses.",
+     "answer_full": "One way is to take online courses. It helps because you can learn at your own pace. Another way is to ask colleagues for guidance.",
+     "a_yaku": "一つの方法は、オンラインコースを受けることです。",
+     "question": "Tell me two things a person can do to learn a new skill at work.",
+     "q_yaku": "職場で新しいスキルを学ぶためにできることを2つ教えてください。",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [
+      "まず一つ目の方法",
+      "なぜ良いかを一言",
+      "次に二つ目の方法"
+     ],
+     "bone_en": [
+      "One way is ...",
+      "It helps because ...",
+      "Another way is ..."
+     ],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "One way is to take online courses.",
+     "retell_min_yaku": "一つの方法は、オンラインコースを受けることです。",
+     "hl": [
+      {
+       "s": "Tell me two things a person can do to learn a new skill at work.",
+       "w": [
+        [
+         214.032,
+         218.784
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "qid": "F-22c08ce3",
+     "start": 273.14,
+     "end": 326.37,
+     "en": "Do you prefer reading books or watching movies? Explain why.",
+     "kana": "",
+     "yaku": "本を読むのと映画を見るの、どちらが好きですか。理由を教えてください。",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "",
+     "answer": "I prefer reading books.",
+     "answer_full": "I prefer reading books. Because I can imagine the story in my mind. For example, when I read, I feel like I am in another world.",
+     "a_yaku": "私は本を読む方が好きです。",
+     "question": "Do you prefer reading books or watching movies? Explain why.",
+     "q_yaku": "本を読むのと映画を見るの、どちらが好きですか。理由を教えてください。",
      "dialogue": [],
      "crush_spots": [],
      "bone": [
@@ -4915,9 +5115,9 @@
       "短い例か気持ち"
      ],
      "bone_en": [
-      "I think ...",
-      "because ...",
-      "For example ..."
+      "I prefer ...",
+      "Because ...",
+      "For example, ..."
      ],
      "kotsu": "",
      "key_line": "",
@@ -4926,183 +5126,15 @@
      "key_line_yaku": "",
      "retell": "",
      "retell_yaku": "",
-     "retell_min": "I prefer living in the city.",
-     "retell_min_yaku": "私は都会に住む方が好きです。",
+     "retell_min": "I prefer reading books.",
+     "retell_min_yaku": "私は本を読む方が好きです。",
      "hl": [
       {
-       "s": "Do you prefer living in the city or the countryside?",
+       "s": "Do you prefer reading books or watching movies? Explain why.",
        "w": [
         [
-         26.988,
-         30.756
-        ]
-       ]
-      }
-     ]
-    },
-    {
-     "n": 2,
-     "qid": "F-837d469c",
-     "start": 74.14,
-     "end": 121.73,
-     "en": "Do you like to cook at home or eat out?",
-     "kana": "",
-     "yaku": "家で料理をするのと外食するの、どちらが好きですか？",
-     "target": "",
-     "target_kana": "",
-     "kind": "",
-     "memo": "",
-     "answer": "I like to cook at home.",
-     "answer_full": "I like to cook at home. It is healthier and cheaper. I enjoy trying new recipes.",
-     "a_yaku": "私は家で料理をするのが好きです。",
-     "question": "Do you like to cook at home or eat out?",
-     "q_yaku": "家で料理をするのと外食するの、どちらが好きですか？",
-     "dialogue": [],
-     "crush_spots": [],
-     "bone": [],
-     "bone_en": [],
-     "kotsu": "",
-     "key_line": "",
-     "passage": "",
-     "passage_yaku": "",
-     "key_line_yaku": "",
-     "retell": "",
-     "retell_yaku": "",
-     "retell_min": "I like to cook at home.",
-     "retell_min_yaku": "私は家で料理をするのが好きです。",
-     "hl": [
-      {
-       "s": "Do you like to cook at home or eat out?",
-       "w": [
-        [
-         74.144,
-         77.144
-        ]
-       ]
-      }
-     ]
-    },
-    {
-     "n": 3,
-     "qid": "F-eaf9ea87",
-     "start": 121.73,
-     "end": 166.06,
-     "en": "Do you prefer summer or winter?",
-     "kana": "",
-     "yaku": "夏と冬、どちらが好きですか？",
-     "target": "",
-     "target_kana": "",
-     "kind": "",
-     "memo": "",
-     "answer": "I prefer summer.",
-     "answer_full": "I prefer summer. The weather is warm and sunny. I like going to the beach.",
-     "a_yaku": "私は夏の方が好きです。",
-     "question": "Do you prefer summer or winter?",
-     "q_yaku": "夏と冬、どちらが好きですか？",
-     "dialogue": [],
-     "crush_spots": [],
-     "bone": [],
-     "bone_en": [],
-     "kotsu": "",
-     "key_line": "",
-     "passage": "",
-     "passage_yaku": "",
-     "key_line_yaku": "",
-     "retell": "",
-     "retell_yaku": "",
-     "retell_min": "I prefer summer.",
-     "retell_min_yaku": "私は夏の方が好きです。",
-     "hl": [
-      {
-       "s": "Do you prefer summer or winter?",
-       "w": [
-        [
-         121.732,
-         125.044
-        ]
-       ]
-      }
-     ]
-    },
-    {
-     "n": 4,
-     "qid": "F-fa0645a9",
-     "start": 166.06,
-     "end": 216.14,
-     "en": "Do you like to travel by train or by car?",
-     "kana": "",
-     "yaku": "電車で旅行するのと車で旅行するの、どちらが好きですか？",
-     "target": "",
-     "target_kana": "",
-     "kind": "",
-     "memo": "",
-     "answer": "I like to travel by train.",
-     "answer_full": "I like to travel by train. It is more relaxing and I can read a book. The view is also nice.",
-     "a_yaku": "私は電車で旅行するのが好きです。",
-     "question": "Do you like to travel by train or by car?",
-     "q_yaku": "電車で旅行するのと車で旅行するの、どちらが好きですか？",
-     "dialogue": [],
-     "crush_spots": [],
-     "bone": [],
-     "bone_en": [],
-     "kotsu": "",
-     "key_line": "",
-     "passage": "",
-     "passage_yaku": "",
-     "key_line_yaku": "",
-     "retell": "",
-     "retell_yaku": "",
-     "retell_min": "I like to travel by train.",
-     "retell_min_yaku": "私は電車で旅行するのが好きです。",
-     "hl": [
-      {
-       "s": "Do you like to travel by train or by car?",
-       "w": [
-        [
-         166.056,
-         169.464
-        ]
-       ]
-      }
-     ]
-    },
-    {
-     "n": 5,
-     "qid": "F-3b5c9589",
-     "start": 216.14,
-     "end": 266.25,
-     "en": "Do you prefer to wake up early or stay up late?",
-     "kana": "",
-     "yaku": "早起きするのと夜更かしするの、どちらが好きですか？",
-     "target": "",
-     "target_kana": "",
-     "kind": "",
-     "memo": "",
-     "answer": "I prefer to wake up early.",
-     "answer_full": "I prefer to wake up early. I feel more energetic in the morning. I can enjoy a quiet breakfast.",
-     "a_yaku": "私は早起きする方が好きです。",
-     "question": "Do you prefer to wake up early or stay up late?",
-     "q_yaku": "早起きするのと夜更かしするの、どちらが好きですか？",
-     "dialogue": [],
-     "crush_spots": [],
-     "bone": [],
-     "bone_en": [],
-     "kotsu": "",
-     "key_line": "",
-     "passage": "",
-     "passage_yaku": "",
-     "key_line_yaku": "",
-     "retell": "",
-     "retell_yaku": "",
-     "retell_min": "I prefer to wake up early.",
-     "retell_min_yaku": "私は早起きする方が好きです。",
-     "hl": [
-      {
-       "s": "Do you prefer to wake up early or stay up late?",
-       "w": [
-        [
-         216.14,
-         220.004
+         273.14,
+         277.892
         ]
        ]
       }
@@ -5110,25 +5142,33 @@
     },
     {
      "n": 6,
-     "qid": "F-d81d7f1e",
-     "start": 266.25,
-     "end": 311.75,
-     "en": "Is it better to work in a team or by yourself?",
+     "qid": "F-0435d838",
+     "start": 326.37,
+     "end": 382.72,
+     "en": "Do you prefer working in a team or working alone? Explain why.",
      "kana": "",
-     "yaku": "チームで働くのと一人で働くの、どちらが良いですか？",
+     "yaku": "チームで働くのと一人で働くの、どちらが好きですか。理由を教えてください。",
      "target": "",
      "target_kana": "",
      "kind": "",
      "memo": "",
-     "answer": "It is better to work in a team.",
-     "answer_full": "It is better to work in a team. We can share ideas and help each other. I feel more motivated.",
-     "a_yaku": "チームで働く方が良いです。",
-     "question": "Is it better to work in a team or by yourself?",
-     "q_yaku": "チームで働くのと一人で働くの、どちらが良いですか？",
+     "answer": "I prefer working in a team.",
+     "answer_full": "I prefer working in a team. Because I can get new ideas from others. For example, teamwork helps me solve problems better.",
+     "a_yaku": "私はチームで働く方が好きです。",
+     "question": "Do you prefer working in a team or working alone? Explain why.",
+     "q_yaku": "チームで働くのと一人で働くの、どちらが好きですか。理由を教えてください。",
      "dialogue": [],
      "crush_spots": [],
-     "bone": [],
-     "bone_en": [],
+     "bone": [
+      "まず自分の意見",
+      "次に理由を一つ",
+      "短い例か気持ち"
+     ],
+     "bone_en": [
+      "I prefer ...",
+      "Because ...",
+      "For example, ..."
+     ],
      "kotsu": "",
      "key_line": "",
      "passage": "",
@@ -5136,15 +5176,115 @@
      "key_line_yaku": "",
      "retell": "",
      "retell_yaku": "",
-     "retell_min": "It is better to work in a team.",
-     "retell_min_yaku": "チームで働く方が良いです。",
+     "retell_min": "I prefer working in a team.",
+     "retell_min_yaku": "私はチームで働く方が好きです。",
      "hl": [
       {
-       "s": "Is it better to work in a team or by yourself?",
+       "s": "Do you prefer working in a team or working alone? Explain why.",
        "w": [
         [
-         266.248,
-         269.704
+         326.368,
+         331.072
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "qid": "F-a5035165",
+     "start": 382.72,
+     "end": 440.38,
+     "en": "How are trains and buses similar? How are they different?",
+     "kana": "",
+     "yaku": "電車とバスはどのように似ていますか。どのように違いますか。",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "",
+     "answer": "Both trains and buses are public transport.",
+     "answer_full": "Both trains and buses are public transport. Both take you to places. But trains are usually faster. Buses can go to more places.",
+     "a_yaku": "電車もバスも公共交通機関です。",
+     "question": "How are trains and buses similar? How are they different?",
+     "q_yaku": "電車とバスはどのように似ていますか。どのように違いますか。",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [
+      "まず似ている点を二つ",
+      "そのあと違う点を二つ",
+      "一言でまとめる"
+     ],
+     "bone_en": [
+      "Both ...",
+      "But ...",
+      "In summary, ..."
+     ],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "Both trains and buses are public transport.",
+     "retell_min_yaku": "電車もバスも公共交通機関です。",
+     "hl": [
+      {
+       "s": "How are trains and buses similar? How are they different?",
+       "w": [
+        [
+         382.716,
+         386.82
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "qid": "F-273a7882",
+     "start": 440.38,
+     "end": 495.29,
+     "en": "How are a teacher and a manager similar? How are they different?",
+     "kana": "",
+     "yaku": "教師とマネージャーはどのように似ていますか。どのように違いますか。",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "",
+     "answer": "Both a teacher and a manager guide people.",
+     "answer_full": "Both a teacher and a manager guide people. Both help others learn. But a teacher works with students. A manager works with employees.",
+     "a_yaku": "教師もマネージャーも人を導きます。",
+     "question": "How are a teacher and a manager similar? How are they different?",
+     "q_yaku": "教師とマネージャーはどのように似ていますか。どのように違いますか。",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [
+      "まず似ている点を二つ",
+      "そのあと違う点を二つ",
+      "一言でまとめる"
+     ],
+     "bone_en": [
+      "Both ...",
+      "But ...",
+      "In summary, ..."
+     ],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "Both a teacher and a manager guide people.",
+     "retell_min_yaku": "教師もマネージャーも人を導きます。",
+     "hl": [
+      {
+       "s": "How are a teacher and a manager similar? How are they different?",
+       "w": [
+        [
+         440.384,
+         444.584
         ]
        ]
       }
@@ -5153,8 +5293,8 @@
     {
      "n": 0,
      "qid": "F-tail0",
-     "start": 311.75,
-     "end": 322.15,
+     "start": 495.29,
+     "end": 505.7,
      "en": "",
      "kana": "",
      "yaku": "",
