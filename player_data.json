@@ -4408,17 +4408,17 @@
    "title": "Part E 再話",
    "sub": "話を自分の言葉で言い直す",
    "mp3": "partE3.mp3",
-   "av": "9afec0f1",
-   "total": 885.22,
+   "av": "67104e5e",
+   "total": 1394.72,
    "chapters": [
     {
      "n": 1,
-     "qid": "E-e5167baa",
-     "start": 16.86,
-     "end": 139.83,
-     "en": "Tom forgot his lunch at home. He asked his coworker to share some food with him.",
+     "qid": "E-cd2741aa",
+     "start": 17.15,
+     "end": 232.97,
+     "en": "Yuki started her new job on Monday. She was very nervous in the morning. Her manager showed her the office and introduced her to the team. Everyone was friendly and helped her. At lunch, two coworkers invited her to eat with them. In the afternoon, she learned how to use the company computer system. It was difficult at first, but her manager was patient. By the end of the day, Yuki felt much better.",
      "kana": "",
-     "yaku": "トムは家にお弁当を忘れました。彼は同僚に食べ物を分けてもらうよう頼みました。",
+     "yaku": "ユキは月曜日に新しい仕事を始めました。朝はとても緊張していました。マネージャーはオフィスを案内し、チームに紹介しました。みんな親切で彼女を助けてくれました。昼食時に、2人の同僚が一緒に食事をしようと誘ってくれました。午後には会社のコンピュータシステムの使い方を学びました。最初は難しかったですが、マネージャーは辛抱強かったです。1日の終わりには、ユキはずっと気持ちが楽になりました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -4431,48 +4431,132 @@
      "dialogue": [],
      "crush_spots": [],
      "bone": [
-      "トムが",
-      "お弁当を",
-      "忘れた"
+      "ユキ/仕事を始めた/月曜日に",
+      "マネージャー/紹介した/チームに",
+      "同僚/誘った/昼食に"
      ],
      "bone_en": [
-      "Tom",
-      "his lunch",
-      "forgot"
+      "Yuki",
+      "started a job",
+      "on Monday",
+      "The manager",
+      "introduced",
+      "to the team",
+      "Coworkers",
+      "invited",
+      "to lunch"
      ],
      "kotsu": "",
      "key_line": "",
-     "passage": "Tom forgot his lunch at home. He asked his coworker to share some food with him.",
-     "passage_yaku": "トムは家にお弁当を忘れました。彼は同僚に食べ物を分けてもらうよう頼みました。",
+     "passage": "Yuki started her new job on Monday. She was very nervous in the morning. Her manager showed her the office and introduced her to the team. Everyone was friendly and helped her. At lunch, two coworkers invited her to eat with them. In the afternoon, she learned how to use the company computer system. It was difficult at first, but her manager was patient. By the end of the day, Yuki felt much better.",
+     "passage_yaku": "ユキは月曜日に新しい仕事を始めました。朝はとても緊張していました。マネージャーはオフィスを案内し、チームに紹介しました。みんな親切で彼女を助けてくれました。昼食時に、2人の同僚が一緒に食事をしようと誘ってくれました。午後には会社のコンピュータシステムの使い方を学びました。最初は難しかったですが、マネージャーは辛抱強かったです。1日の終わりには、ユキはずっと気持ちが楽になりました。",
      "key_line_yaku": "",
-     "retell": "Tom didn't bring his lunch and asked a coworker for food.",
-     "retell_yaku": "トムはお弁当を持ってこなかったので、同僚に食べ物を頼みました。",
-     "retell_min": "Tom forgot his lunch.",
-     "retell_min_yaku": "トムはお弁当を忘れました。",
+     "retell": "Yuki started her new job on Monday. Her manager introduced her to the team, and coworkers invited her to lunch.",
+     "retell_yaku": "ユキは月曜日に新しい仕事を始めました。マネージャーはチームに紹介し、同僚は昼食に誘いました。",
+     "retell_min": "Yuki started her job and met the team.",
+     "retell_min_yaku": "ユキは仕事を始めてチームに会いました。",
      "hl": [
       {
-       "s": "Tom forgot his lunch at home.",
+       "s": "Yuki started her new job on Monday.",
        "w": [
         [
-         21.472,
-         23.199
+         21.4,
+         23.558
         ],
         [
-         121.09,
-         122.817
+         191.432,
+         193.59
         ]
        ]
       },
       {
-       "s": "He asked his coworker to share some food with him.",
+       "s": "She was very nervous in the morning.",
        "w": [
         [
-         23.199,
-         26.176
+         23.558,
+         25.779
         ],
         [
-         122.817,
-         125.794
+         193.59,
+         195.811
+        ]
+       ]
+      },
+      {
+       "s": "Her manager showed her the office and introduced her to the team.",
+       "w": [
+        [
+         25.779,
+         29.787
+        ],
+        [
+         195.811,
+         199.819
+        ]
+       ]
+      },
+      {
+       "s": "Everyone was friendly and helped her.",
+       "w": [
+        [
+         29.787,
+         32.069
+        ],
+        [
+         199.819,
+         202.101
+        ]
+       ]
+      },
+      {
+       "s": "At lunch, two coworkers invited her to eat with them.",
+       "w": [
+        [
+         32.069,
+         35.338
+        ],
+        [
+         202.101,
+         205.37
+        ]
+       ]
+      },
+      {
+       "s": "In the afternoon, she learned how to use the company computer system.",
+       "w": [
+        [
+         35.338,
+         39.593
+        ],
+        [
+         205.37,
+         209.625
+        ]
+       ]
+      },
+      {
+       "s": "It was difficult at first, but her manager was patient.",
+       "w": [
+        [
+         39.593,
+         42.985
+        ],
+        [
+         209.625,
+         213.017
+        ]
+       ]
+      },
+      {
+       "s": "By the end of the day, Yuki felt much better.",
+       "w": [
+        [
+         42.985,
+         45.76
+        ],
+        [
+         213.017,
+         215.792
         ]
        ]
       }
@@ -4480,12 +4564,12 @@
     },
     {
      "n": 2,
-     "qid": "E-1e455a63",
-     "start": 139.83,
-     "end": 255.97,
-     "en": "Mary finished her report early. She went to the park to relax after work.",
+     "qid": "E-28028157",
+     "start": 232.97,
+     "end": 435.56,
+     "en": "David had to give a presentation to his team on Thursday. He spent two days making his slides. The night before, he practiced in front of a mirror. He was still worried about his English. On Thursday morning, he arrived early and tested the projector. The presentation went well. His team asked good questions, and he answered most of them. His manager said he did a great job.",
      "kana": "",
-     "yaku": "メアリーは早くレポートを終えました。彼女は仕事の後、公園にリラックスしに行きました。",
+     "yaku": "デイビッドは木曜日にチームにプレゼンをしなければなりませんでした。彼はスライドを作るのに2日間かけました。前夜、鏡の前で練習しました。それでも英語が心配でした。木曜日の朝、彼は早く到着し、プロジェクターをテストしました。プレゼンはうまくいきました。チームは良い質問をし、彼はほとんど答えました。マネージャーは彼が素晴らしい仕事をしたと言いました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -4498,48 +4582,132 @@
      "dialogue": [],
      "crush_spots": [],
      "bone": [
-      "メアリーが",
-      "レポートを",
-      "早く終えた"
+      "デイビッド/プレゼンをした/チームに",
+      "彼/練習した/前夜に",
+      "マネージャー/言った/彼が良い仕事をしたと"
      ],
      "bone_en": [
-      "Mary",
-      "her report",
-      "finished early"
+      "David",
+      "gave a presentation",
+      "to the team",
+      "He",
+      "practiced",
+      "the night before",
+      "The manager",
+      "said",
+      "he did a great job"
      ],
      "kotsu": "",
      "key_line": "",
-     "passage": "Mary finished her report early. She went to the park to relax after work.",
-     "passage_yaku": "メアリーは早くレポートを終えました。彼女は仕事の後、公園にリラックスしに行きました。",
+     "passage": "David had to give a presentation to his team on Thursday. He spent two days making his slides. The night before, he practiced in front of a mirror. He was still worried about his English. On Thursday morning, he arrived early and tested the projector. The presentation went well. His team asked good questions, and he answered most of them. His manager said he did a great job.",
+     "passage_yaku": "デイビッドは木曜日にチームにプレゼンをしなければなりませんでした。彼はスライドを作るのに2日間かけました。前夜、鏡の前で練習しました。それでも英語が心配でした。木曜日の朝、彼は早く到着し、プロジェクターをテストしました。プレゼンはうまくいきました。チームは良い質問をし、彼はほとんど答えました。マネージャーは彼が素晴らしい仕事をしたと言いました。",
      "key_line_yaku": "",
-     "retell": "Mary completed her report early and went to the park to relax.",
-     "retell_yaku": "メアリーはレポートを早く終えて、公園にリラックスしに行きました。",
-     "retell_min": "Mary finished her report.",
-     "retell_min_yaku": "メアリーはレポートを終えました。",
+     "retell": "David gave a presentation to his team on Thursday. He practiced a lot, and his manager praised him.",
+     "retell_yaku": "デイビッドは木曜日にチームにプレゼンをしました。彼はたくさん練習して、マネージャーに褒められました。",
+     "retell_min": "David gave a presentation and was praised.",
+     "retell_min_yaku": "デイビッドはプレゼンをして褒められました。",
      "hl": [
       {
-       "s": "Mary finished her report early.",
+       "s": "David had to give a presentation to his team on Thursday.",
        "w": [
         [
-         144.25,
-         146.337
+         237.44,
+         240.993
         ],
         [
-         238.623,
-         240.71
+         397.188,
+         400.741
         ]
        ]
       },
       {
-       "s": "She went to the park to relax after work.",
+       "s": "He spent two days making his slides.",
        "w": [
         [
-         146.337,
-         149.098
+         240.993,
+         243.237
         ],
         [
-         240.71,
-         243.471
+         400.741,
+         402.985
+        ]
+       ]
+      },
+      {
+       "s": "The night before, he practiced in front of a mirror.",
+       "w": [
+        [
+         243.237,
+         246.479
+        ],
+        [
+         402.985,
+         406.227
+        ]
+       ]
+      },
+      {
+       "s": "He was still worried about his English.",
+       "w": [
+        [
+         246.479,
+         248.91
+        ],
+        [
+         406.227,
+         408.658
+        ]
+       ]
+      },
+      {
+       "s": "On Thursday morning, he arrived early and tested the projector.",
+       "w": [
+        [
+         248.91,
+         252.837
+        ],
+        [
+         408.658,
+         412.585
+        ]
+       ]
+      },
+      {
+       "s": "The presentation went well.",
+       "w": [
+        [
+         252.837,
+         254.52
+        ],
+        [
+         412.585,
+         414.268
+        ]
+       ]
+      },
+      {
+       "s": "His team asked good questions, and he answered most of them.",
+       "w": [
+        [
+         254.52,
+         258.26
+        ],
+        [
+         414.268,
+         418.008
+        ]
+       ]
+      },
+      {
+       "s": "His manager said he did a great job.",
+       "w": [
+        [
+         258.26,
+         260.504
+        ],
+        [
+         418.008,
+         420.252
         ]
        ]
       }
@@ -4547,12 +4715,12 @@
     },
     {
      "n": 3,
-     "qid": "E-6d6e94f1",
-     "start": 255.97,
-     "end": 378.37,
-     "en": "John's meeting was canceled. He used the extra time to read a book.",
+     "qid": "E-86c67aa9",
+     "start": 435.56,
+     "end": 634.25,
+     "en": "On Tuesday, Sara worked from home for the first time. She woke up early and made coffee. When she tried to join the morning video call, her internet stopped working. She called her phone company, but they could not help right away. So she used her phone to join the call instead. The sound was not perfect, but her team understood her. After lunch, the internet came back.",
      "kana": "",
-     "yaku": "ジョンの会議はキャンセルされました。彼はその余った時間を使って本を読みました。",
+     "yaku": "火曜日に、サラは初めて在宅勤務をしました。早起きしてコーヒーを作りました。朝のビデオ通話に参加しようとしたとき、インターネットが止まりました。彼女は電話会社に連絡しましたが、すぐには助けてもらえませんでした。それで、代わりに電話を使って通話に参加しました。音は完璧ではありませんでしたが、チームは彼女を理解しました。昼食後、インターネットが復旧しました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -4565,48 +4733,119 @@
      "dialogue": [],
      "crush_spots": [],
      "bone": [
-      "ジョンの",
-      "会議が",
-      "キャンセルされた"
+      "サラ/在宅勤務をした/火曜日に",
+      "インターネット/止まった/朝の通話中に",
+      "彼女/電話を使った/通話に参加するため"
      ],
      "bone_en": [
-      "John's",
-      "meeting",
-      "was canceled"
+      "Sara",
+      "worked from home",
+      "on Tuesday",
+      "Internet",
+      "stopped working",
+      "during the morning call",
+      "She",
+      "used her phone",
+      "to join the call"
      ],
      "kotsu": "",
      "key_line": "",
-     "passage": "John's meeting was canceled. He used the extra time to read a book.",
-     "passage_yaku": "ジョンの会議はキャンセルされました。彼はその余った時間を使って本を読みました。",
+     "passage": "On Tuesday, Sara worked from home for the first time. She woke up early and made coffee. When she tried to join the morning video call, her internet stopped working. She called her phone company, but they could not help right away. So she used her phone to join the call instead. The sound was not perfect, but her team understood her. After lunch, the internet came back.",
+     "passage_yaku": "火曜日に、サラは初めて在宅勤務をしました。早起きしてコーヒーを作りました。朝のビデオ通話に参加しようとしたとき、インターネットが止まりました。彼女は電話会社に連絡しましたが、すぐには助けてもらえませんでした。それで、代わりに電話を使って通話に参加しました。音は完璧ではありませんでしたが、チームは彼女を理解しました。昼食後、インターネットが復旧しました。",
      "key_line_yaku": "",
-     "retell": "John's meeting was canceled, so he read a book with the extra time.",
-     "retell_yaku": "ジョンの会議はキャンセルされ、その余った時間で彼は本を読みました。",
-     "retell_min": "John's meeting was canceled.",
-     "retell_min_yaku": "ジョンの会議はキャンセルされました。",
+     "retell": "Sara worked from home for the first time. Her internet stopped, so she used her phone to join the call.",
+     "retell_yaku": "サラは初めて在宅勤務をしました。インターネットが止まったので、電話を使って通話に参加しました。",
+     "retell_min": "Sara worked from home and used her phone for calls.",
+     "retell_min_yaku": "サラは在宅勤務をして、電話で通話しました。",
      "hl": [
       {
-       "s": "John's meeting was canceled.",
+       "s": "On Tuesday, Sara worked from home for the first time.",
        "w": [
         [
-         260.487,
-         262.381
+         440.124,
+         442.963
         ],
         [
-         360.875,
-         362.769
+         598.979,
+         601.818
         ]
        ]
       },
       {
-       "s": "He used the extra time to read a book.",
+       "s": "She woke up early and made coffee.",
        "w": [
         [
-         262.381,
-         264.951
+         442.963,
+         444.785
         ],
         [
-         362.769,
-         365.339
+         601.818,
+         603.64
+        ]
+       ]
+      },
+      {
+       "s": "When she tried to join the morning video call, her internet stopped working.",
+       "w": [
+        [
+         444.785,
+         448.857
+        ],
+        [
+         603.64,
+         607.712
+        ]
+       ]
+      },
+      {
+       "s": "She called her phone company, but they could not help right away.",
+       "w": [
+        [
+         448.857,
+         452.339
+        ],
+        [
+         607.712,
+         611.194
+        ]
+       ]
+      },
+      {
+       "s": "So she used her phone to join the call instead.",
+       "w": [
+        [
+         452.339,
+         454.857
+        ],
+        [
+         611.194,
+         613.712
+        ]
+       ]
+      },
+      {
+       "s": "The sound was not perfect, but her team understood her.",
+       "w": [
+        [
+         454.857,
+         457.803
+        ],
+        [
+         613.712,
+         616.658
+        ]
+       ]
+      },
+      {
+       "s": "After lunch, the internet came back.",
+       "w": [
+        [
+         457.803,
+         459.732
+        ],
+        [
+         616.658,
+         618.587
         ]
        ]
       }
@@ -4614,12 +4853,12 @@
     },
     {
      "n": 4,
-     "qid": "E-cbfc7da8",
-     "start": 378.37,
-     "end": 506.73,
-     "en": "Lisa bought new shoes yesterday, but they were too big. She took them back to the store today.",
+     "qid": "E-2ba55ddf",
+     "start": 634.25,
+     "end": 811.19,
+     "en": "Last Friday, our office had a fire drill. The alarm started at ten in the morning. Everyone stopped working and walked to the stairs. We were not allowed to use the elevator. Outside, our manager counted the people in our team. It took about fifteen minutes. Then we went back to our desks.",
      "kana": "",
-     "yaku": "リサは昨日新しい靴を買いましたが、大きすぎました。彼女は今日それを店に戻しました。",
+     "yaku": "先週の金曜日、私たちのオフィスで避難訓練がありました。午前10時にアラームが鳴りました。みんな仕事をやめて階段へ歩いて行きました。エレベーターは使えませんでした。外で、マネージャーがチームの人数を数えました。約15分かかりました。それからデスクに戻りました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -4632,48 +4871,119 @@
      "dialogue": [],
      "crush_spots": [],
      "bone": [
-      "リサが",
-      "新しい靴を",
-      "買った"
+      "オフィス/避難訓練をした/金曜日に",
+      "みんな/階段へ歩いた/アラームの後",
+      "マネージャー/数えた/チームの人数"
      ],
      "bone_en": [
-      "Lisa",
-      "new shoes",
-      "bought"
+      "Office",
+      "had a fire drill",
+      "on Friday",
+      "Everyone",
+      "walked to stairs",
+      "after the alarm",
+      "The manager",
+      "counted",
+      "team members"
      ],
      "kotsu": "",
      "key_line": "",
-     "passage": "Lisa bought new shoes yesterday, but they were too big. She took them back to the store today.",
-     "passage_yaku": "リサは昨日新しい靴を買いましたが、大きすぎました。彼女は今日それを店に戻しました。",
+     "passage": "Last Friday, our office had a fire drill. The alarm started at ten in the morning. Everyone stopped working and walked to the stairs. We were not allowed to use the elevator. Outside, our manager counted the people in our team. It took about fifteen minutes. Then we went back to our desks.",
+     "passage_yaku": "先週の金曜日、私たちのオフィスで避難訓練がありました。午前10時にアラームが鳴りました。みんな仕事をやめて階段へ歩いて行きました。エレベーターは使えませんでした。外で、マネージャーがチームの人数を数えました。約15分かかりました。それからデスクに戻りました。",
      "key_line_yaku": "",
-     "retell": "Lisa got new shoes that were too big, so she returned them today.",
-     "retell_yaku": "リサは新しい靴を買いましたが大きすぎたので、今日それを返しました。",
-     "retell_min": "Lisa returned the shoes.",
-     "retell_min_yaku": "リサは靴を返しました。",
+     "retell": "Our office had a fire drill on Friday. Everyone walked to the stairs, and the manager counted us.",
+     "retell_yaku": "私たちのオフィスは金曜日に避難訓練をしました。みんな階段へ歩いて行き、マネージャーが私たちを数えました。",
+     "retell_min": "Office had a fire drill, and manager counted us.",
+     "retell_min_yaku": "オフィスで避難訓練があり、マネージャーが私たちを数えました。",
      "hl": [
       {
-       "s": "Lisa bought new shoes yesterday, but they were too big.",
+       "s": "Last Friday, our office had a fire drill.",
        "w": [
         [
-         382.379,
-         385.785
+         638.363,
+         640.428
         ],
         [
-         486.068,
-         489.474
+         780.378,
+         782.443
         ]
        ]
       },
       {
-       "s": "She took them back to the store today.",
+       "s": "The alarm started at ten in the morning.",
        "w": [
         [
-         385.785,
-         388.139
+         640.428,
+         642.443
         ],
         [
-         489.474,
-         491.828
+         782.443,
+         784.458
+        ]
+       ]
+      },
+      {
+       "s": "Everyone stopped working and walked to the stairs.",
+       "w": [
+        [
+         642.443,
+         644.961
+        ],
+        [
+         784.458,
+         786.976
+        ]
+       ]
+      },
+      {
+       "s": "We were not allowed to use the elevator.",
+       "w": [
+        [
+         644.961,
+         646.976
+        ],
+        [
+         786.976,
+         788.991
+        ]
+       ]
+      },
+      {
+       "s": "Outside, our manager counted the people in our team.",
+       "w": [
+        [
+         646.976,
+         649.595
+        ],
+        [
+         788.991,
+         791.61
+        ]
+       ]
+      },
+      {
+       "s": "It took about fifteen minutes.",
+       "w": [
+        [
+         649.595,
+         651.106
+        ],
+        [
+         791.61,
+         793.121
+        ]
+       ]
+      },
+      {
+       "s": "Then we went back to our desks.",
+       "w": [
+        [
+         651.106,
+         652.667
+        ],
+        [
+         793.121,
+         794.682
         ]
        ]
       }
@@ -4681,12 +4991,12 @@
     },
     {
      "n": 5,
-     "qid": "E-d86bb905",
-     "start": 506.73,
-     "end": 634.9,
-     "en": "The bus was late this morning, so Ken walked to the station. He still got to work on time.",
+     "qid": "E-8d8759f2",
+     "start": 811.19,
+     "end": 1002.84,
+     "en": "Kenji moved into a new apartment last weekend. His friends helped him carry the boxes. The apartment was small but bright. On Sunday, he tried to build a bookshelf by himself. The instructions were hard to understand, and he put one part in the wrong place. He had to take it apart and start again. It took three hours.",
      "kana": "",
-     "yaku": "今朝バスが遅れたので、ケンは駅まで歩きました。それでも彼は時間通りに仕事に着きました。",
+     "yaku": "ケンジは先週末に新しいアパートに引っ越しました。友達が箱を運ぶのを手伝ってくれました。アパートは小さいけれど明るかったです。日曜日に、彼は一人で本棚を組み立てようとしました。説明書がわかりにくく、部品を一つ間違った場所に置きました。彼はそれを分解してやり直さなければなりませんでした。3時間かかりました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -4699,48 +5009,119 @@
      "dialogue": [],
      "crush_spots": [],
      "bone": [
-      "バスが",
-      "遅れて",
-      "ケンが歩いた"
+      "ケンジ/引っ越した/先週末に",
+      "友達/手伝った/箱を運ぶのを",
+      "彼/本棚を組み立てた/日曜日に"
      ],
      "bone_en": [
-      "bus",
-      "was late",
-      "Ken walked"
+      "Kenji",
+      "moved to a new apartment",
+      "last weekend",
+      "Friends",
+      "helped",
+      "carry boxes",
+      "He",
+      "built a bookshelf",
+      "on Sunday"
      ],
      "kotsu": "",
      "key_line": "",
-     "passage": "The bus was late this morning, so Ken walked to the station. He still got to work on time.",
-     "passage_yaku": "今朝バスが遅れたので、ケンは駅まで歩きました。それでも彼は時間通りに仕事に着きました。",
+     "passage": "Kenji moved into a new apartment last weekend. His friends helped him carry the boxes. The apartment was small but bright. On Sunday, he tried to build a bookshelf by himself. The instructions were hard to understand, and he put one part in the wrong place. He had to take it apart and start again. It took three hours.",
+     "passage_yaku": "ケンジは先週末に新しいアパートに引っ越しました。友達が箱を運ぶのを手伝ってくれました。アパートは小さいけれど明るかったです。日曜日に、彼は一人で本棚を組み立てようとしました。説明書がわかりにくく、部品を一つ間違った場所に置きました。彼はそれを分解してやり直さなければなりませんでした。3時間かかりました。",
      "key_line_yaku": "",
-     "retell": "The bus was late, so Ken walked to the station and was on time for work.",
-     "retell_yaku": "バスが遅れたので、ケンは駅まで歩き、仕事には時間通りに着きました。",
-     "retell_min": "Ken walked to the station.",
-     "retell_min_yaku": "ケンは駅まで歩きました。",
+     "retell": "Kenji moved to a new apartment last weekend. His friends helped with boxes, and he built a bookshelf.",
+     "retell_yaku": "ケンジは先週末に新しいアパートに引っ越しました。友達が箱を運ぶのを手伝い、彼は本棚を組み立てました。",
+     "retell_min": "Kenji moved and built a bookshelf.",
+     "retell_min_yaku": "ケンジは引っ越して本棚を組み立てました。",
      "hl": [
       {
-       "s": "The bus was late this morning, so Ken walked to the station.",
+       "s": "Kenji moved into a new apartment last weekend.",
        "w": [
         [
-         510.644,
-         514.624
+         815.25,
+         817.991
         ],
         [
-         614.668,
-         618.648
+         967.73,
+         970.471
         ]
        ]
       },
       {
-       "s": "He still got to work on time.",
+       "s": "His friends helped him carry the boxes.",
        "w": [
         [
-         514.624,
-         516.548
+         817.991,
+         820.314
         ],
         [
-         618.648,
-         620.572
+         970.471,
+         972.794
+        ]
+       ]
+      },
+      {
+       "s": "The apartment was small but bright.",
+       "w": [
+        [
+         820.314,
+         822.399
+        ],
+        [
+         972.794,
+         974.879
+        ]
+       ]
+      },
+      {
+       "s": "On Sunday, he tried to build a bookshelf by himself.",
+       "w": [
+        [
+         822.399,
+         825.497
+        ],
+        [
+         974.879,
+         977.977
+        ]
+       ]
+      },
+      {
+       "s": "The instructions were hard to understand, and he put one part in the wrong place.",
+       "w": [
+        [
+         825.497,
+         830.323
+        ],
+        [
+         977.977,
+         982.803
+        ]
+       ]
+      },
+      {
+       "s": "He had to take it apart and start again.",
+       "w": [
+        [
+         830.323,
+         832.706
+        ],
+        [
+         982.803,
+         985.186
+        ]
+       ]
+      },
+      {
+       "s": "It took three hours.",
+       "w": [
+        [
+         832.706,
+         833.898
+        ],
+        [
+         985.186,
+         986.378
         ]
        ]
       }
@@ -4748,12 +5129,12 @@
     },
     {
      "n": 6,
-     "qid": "E-7a516ee4",
-     "start": 634.9,
-     "end": 764.87,
-     "en": "Emma's cat looked sick last night. She took it to the animal doctor after work.",
+     "qid": "E-bc8700f8",
+     "start": 1002.84,
+     "end": 1205.49,
+     "en": "Aya loves reading, so she goes to the library every month. Last time, she borrowed three books about cooking. She read two of them quickly, but she forgot about the third one. When she remembered, the book was already five days late. She went to the library and paid a small fee. The librarian was kind and told her not to worry.",
      "kana": "",
-     "yaku": "エマの猫は昨夜具合が悪そうでした。彼女は仕事の後、それを動物病院に連れて行きました。",
+     "yaku": "アヤは読書が大好きなので、毎月図書館に行きます。前回、彼女は料理に関する本を3冊借りました。2冊はすぐに読んだのですが、3冊目を忘れてしまいました。思い出したときには、その本はすでに5日遅れていました。彼女は図書館に行き、小さな料金を支払いました。司書は親切で、心配しないように言ってくれました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -4766,48 +5147,106 @@
      "dialogue": [],
      "crush_spots": [],
      "bone": [
-      "エマの猫が",
-      "具合が悪そうで",
-      "病院に連れて行った"
+      "アヤ/図書館に行く/毎月",
+      "彼女/本を借りた/料理に関する",
+      "司書/言った/心配しないように"
      ],
      "bone_en": [
-      "Emma's cat",
-      "looked sick",
-      "took to doctor"
+      "Aya",
+      "goes to the library",
+      "every month",
+      "She",
+      "borrowed books",
+      "about cooking",
+      "The librarian",
+      "told her",
+      "not to worry"
      ],
      "kotsu": "",
      "key_line": "",
-     "passage": "Emma's cat looked sick last night. She took it to the animal doctor after work.",
-     "passage_yaku": "エマの猫は昨夜具合が悪そうでした。彼女は仕事の後、それを動物病院に連れて行きました。",
+     "passage": "Aya loves reading, so she goes to the library every month. Last time, she borrowed three books about cooking. She read two of them quickly, but she forgot about the third one. When she remembered, the book was already five days late. She went to the library and paid a small fee. The librarian was kind and told her not to worry.",
+     "passage_yaku": "アヤは読書が大好きなので、毎月図書館に行きます。前回、彼女は料理に関する本を3冊借りました。2冊はすぐに読んだのですが、3冊目を忘れてしまいました。思い出したときには、その本はすでに5日遅れていました。彼女は図書館に行き、小さな料金を支払いました。司書は親切で、心配しないように言ってくれました。",
      "key_line_yaku": "",
-     "retell": "Emma's cat seemed sick, so she took it to the vet after work.",
-     "retell_yaku": "エマの猫は具合が悪そうだったので、彼女は仕事の後にそれを動物病院に連れて行きました。",
-     "retell_min": "Emma took her cat to the vet.",
-     "retell_min_yaku": "エマは猫を動物病院に連れて行きました。",
+     "retell": "Aya goes to the library every month. She borrowed cooking books, and the librarian was kind when she paid a late fee.",
+     "retell_yaku": "アヤは毎月図書館に行きます。料理の本を借り、遅延料金を支払ったときに司書は親切でした。",
+     "retell_min": "Aya borrowed books and paid a late fee.",
+     "retell_min_yaku": "アヤは本を借りて遅延料金を支払いました。",
      "hl": [
       {
-       "s": "Emma's cat looked sick last night.",
+       "s": "Aya loves reading, so she goes to the library every month.",
        "w": [
         [
-         639.004,
-         641.232
+         1006.754,
+         1010.346
         ],
         [
-         745.532,
-         747.76
+         1168.609,
+         1172.201
         ]
        ]
       },
       {
-       "s": "She took it to the animal doctor after work.",
+       "s": "Last time, she borrowed three books about cooking.",
        "w": [
         [
-         641.232,
-         644.116
+         1010.346,
+         1013.442
         ],
         [
-         747.76,
-         750.644
+         1172.201,
+         1175.297
+        ]
+       ]
+      },
+      {
+       "s": "She read two of them quickly, but she forgot about the third one.",
+       "w": [
+        [
+         1013.442,
+         1017.467
+        ],
+        [
+         1175.297,
+         1179.322
+        ]
+       ]
+      },
+      {
+       "s": "When she remembered, the book was already five days late.",
+       "w": [
+        [
+         1017.467,
+         1020.997
+        ],
+        [
+         1179.322,
+         1182.852
+        ]
+       ]
+      },
+      {
+       "s": "She went to the library and paid a small fee.",
+       "w": [
+        [
+         1020.997,
+         1023.784
+        ],
+        [
+         1182.852,
+         1185.639
+        ]
+       ]
+      },
+      {
+       "s": "The librarian was kind and told her not to worry.",
+       "w": [
+        [
+         1023.784,
+         1026.818
+        ],
+        [
+         1185.639,
+         1188.673
         ]
        ]
       }
@@ -4815,12 +5254,12 @@
     },
     {
      "n": 7,
-     "qid": "E-479690e7",
-     "start": 764.87,
-     "end": 885.22,
-     "en": "It started to rain during the soccer game. The players stopped and waited inside for a while.",
+     "qid": "E-5c9cb2df",
+     "start": 1205.49,
+     "end": 1394.72,
+     "en": "Hiro wanted to learn how to cook, so he joined a cooking class. The class meets every Saturday morning. On the first day, the teacher showed them how to make soup. Hiro cut the vegetables too slowly, and everyone else finished before him. But the soup tasted good. He took a photo and sent it to his family.",
      "kana": "",
-     "yaku": "サッカーの試合中に雨が降り始めました。選手たちは中でしばらく待ちました。",
+     "yaku": "ヒロは料理を学びたかったので、料理教室に参加しました。クラスは毎週土曜日の朝にあります。初日に、先生がスープの作り方を教えてくれました。ヒロは野菜を切るのが遅すぎて、他のみんなは彼より先に終わりました。しかし、スープは美味しかったです。彼は写真を撮って家族に送りました。",
      "target": "",
      "target_kana": "",
      "kind": "",
@@ -4833,48 +5272,106 @@
      "dialogue": [],
      "crush_spots": [],
      "bone": [
-      "雨が",
-      "試合中に",
-      "降り始めた"
+      "ヒロ/料理教室に参加した/学ぶために",
+      "先生/教えた/スープの作り方を",
+      "彼/写真を送った/家族に"
      ],
      "bone_en": [
-      "rain",
-      "during game",
-      "started"
+      "Hiro",
+      "joined a cooking class",
+      "to learn",
+      "The teacher",
+      "showed",
+      "how to make soup",
+      "He",
+      "sent a photo",
+      "to his family"
      ],
      "kotsu": "",
      "key_line": "",
-     "passage": "It started to rain during the soccer game. The players stopped and waited inside for a while.",
-     "passage_yaku": "サッカーの試合中に雨が降り始めました。選手たちは中でしばらく待ちました。",
+     "passage": "Hiro wanted to learn how to cook, so he joined a cooking class. The class meets every Saturday morning. On the first day, the teacher showed them how to make soup. Hiro cut the vegetables too slowly, and everyone else finished before him. But the soup tasted good. He took a photo and sent it to his family.",
+     "passage_yaku": "ヒロは料理を学びたかったので、料理教室に参加しました。クラスは毎週土曜日の朝にあります。初日に、先生がスープの作り方を教えてくれました。ヒロは野菜を切るのが遅すぎて、他のみんなは彼より先に終わりました。しかし、スープは美味しかったです。彼は写真を撮って家族に送りました。",
      "key_line_yaku": "",
-     "retell": "Rain started during the soccer game, so players waited inside.",
-     "retell_yaku": "サッカーの試合中に雨が降り始めたので、選手たちは中で待ちました。",
-     "retell_min": "Rain started during the game.",
-     "retell_min_yaku": "試合中に雨が降り始めました。",
+     "retell": "Hiro joined a cooking class to learn how to cook. He made soup and sent a photo to his family.",
+     "retell_yaku": "ヒロは料理を学ぶために料理教室に参加しました。スープを作り、家族に写真を送りました。",
+     "retell_min": "Hiro joined a class and made soup.",
+     "retell_min_yaku": "ヒロはクラスに参加してスープを作りました。",
      "hl": [
       {
-       "s": "It started to rain during the soccer game.",
+       "s": "Hiro wanted to learn how to cook, so he joined a cooking class.",
        "w": [
         [
-         768.428,
-         771.079
+         1210.945,
+         1214.795
         ],
         [
-         866.483,
-         869.134
+         1361.291,
+         1365.141
         ]
        ]
       },
       {
-       "s": "The players stopped and waited inside for a while.",
+       "s": "The class meets every Saturday morning.",
        "w": [
         [
-         771.079,
-         774.236
+         1214.795,
+         1217.178
         ],
         [
-         869.134,
-         872.291
+         1365.141,
+         1367.524
+        ]
+       ]
+      },
+      {
+       "s": "On the first day, the teacher showed them how to make soup.",
+       "w": [
+        [
+         1217.178,
+         1220.784
+        ],
+        [
+         1367.524,
+         1371.13
+        ]
+       ]
+      },
+      {
+       "s": "Hiro cut the vegetables too slowly, and everyone else finished before him.",
+       "w": [
+        [
+         1220.784,
+         1225.306
+        ],
+        [
+         1371.13,
+         1375.652
+        ]
+       ]
+      },
+      {
+       "s": "But the soup tasted good.",
+       "w": [
+        [
+         1225.306,
+         1226.834
+        ],
+        [
+         1375.652,
+         1377.18
+        ]
+       ]
+      },
+      {
+       "s": "He took a photo and sent it to his family.",
+       "w": [
+        [
+         1226.834,
+         1229.401
+        ],
+        [
+         1377.18,
+         1379.747
         ]
        ]
       }
