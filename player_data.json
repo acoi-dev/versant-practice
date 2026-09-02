@@ -2847,8 +2847,8 @@
    "title": "Part C 会話に関する質問",
    "sub": "会話を聞いて質問に答える",
    "mp3": "partC.mp3",
-   "av": "723d7169",
-   "total": 874.15,
+   "av": "28996efc",
+   "total": 1049.75,
    "chapters": [
     {
      "n": 1,
@@ -4134,6 +4134,274 @@
         [
          838.974,
          842.356
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 11,
+     "qid": "C-39359360",
+     "start": 874.15,
+     "end": 976.25,
+     "en": "What time is the team meeting today?",
+     "kana": "",
+     "yaku": "今日のチームミーティングは何時ですか？",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "第3発話と第6発話を9語以上に修正しました。",
+     "answer": "4 PM",
+     "answer_full": "The team meeting is scheduled for 4 PM today.",
+     "a_yaku": "チームミーティングは今日の午後4時に予定されています。",
+     "questions": [],
+     "question": "What time is the team meeting today?",
+     "q_yaku": "今日のチームミーティングは何時ですか？",
+     "dialogue": [
+      {
+       "speaker": "A",
+       "text": "Hi, do you know when the team meeting is today?",
+       "yaku": "こんにちは、今日のチームミーティングが何時か知っていますか？"
+      },
+      {
+       "speaker": "B",
+       "text": "I thought it was at 2 PM, but let me check.",
+       "yaku": "2時だと思っていましたが、確認してみます。"
+      },
+      {
+       "speaker": "A",
+       "text": "Thanks for checking. I have another meeting scheduled at 3 PM.",
+       "yaku": "確認してくれてありがとう。3時に別のミーティングが予定されています。"
+      },
+      {
+       "speaker": "B",
+       "text": "Actually, the team meeting is at 4 PM today.",
+       "yaku": "実際には、今日のチームミーティングは4時です。"
+      },
+      {
+       "speaker": "A",
+       "text": "Oh, that’s a relief. I can join both meetings.",
+       "yaku": "ああ、それは安心です。両方のミーティングに参加できます。"
+      },
+      {
+       "speaker": "B",
+       "text": "Yes, you’ll have enough time between the two meetings today.",
+       "yaku": "はい、今日は2つのミーティングの間に十分な時間があります。"
+      }
+     ],
+     "crush_spots": [
+      {
+       "phrase": "do you",
+       "kana": "デュ",
+       "kind": "yod"
+      },
+      {
+       "phrase": "let me",
+       "kana": "レミ",
+       "kind": "form"
+      },
+      {
+       "phrase": "meeting",
+       "kana": "ミーリン",
+       "kind": "flap"
+      }
+     ],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "Actually, the team meeting is at 4 PM today.",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "実際には、今日のチームミーティングは4時です。",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "w": [
+        [
+         876.548,
+         879.764
+        ],
+        [
+         916.738,
+         919.954
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         879.914,
+         882.827
+        ],
+        [
+         928.541,
+         931.454
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         882.977,
+         886.633
+        ],
+        [
+         940.723,
+         944.379
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         886.783,
+         889.65
+        ],
+        [
+         954.92,
+         957.787
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         889.8,
+         893.215
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         893.365,
+         896.48
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 12,
+     "qid": "C-c5606cb7",
+     "start": 976.25,
+     "end": 1049.75,
+     "en": "Why is the blue bag being chosen?",
+     "kana": "",
+     "yaku": "なぜ青いバッグが選ばれているのですか？",
+     "target": "",
+     "target_kana": "",
+     "kind": "",
+     "memo": "質問の型をwhyに変更し、根拠の台詞を正しいものに修正しました。候補と正解は会話内に存在するものにしました。",
+     "answer": "bigger",
+     "answer_full": "The blue bag is being chosen because it's bigger.",
+     "a_yaku": "青いバッグは大きいので選ばれています。",
+     "questions": [],
+     "question": "Why is the blue bag being chosen?",
+     "q_yaku": "なぜ青いバッグが選ばれているのですか？",
+     "dialogue": [
+      {
+       "speaker": "A",
+       "text": "Are you bringing the blue bag today or the red one?",
+       "yaku": "今日は青いバッグを持ってくるの？それとも赤いの？"
+      },
+      {
+       "speaker": "B",
+       "text": "I was thinking of bringing the blue bag. It's bigger.",
+       "yaku": "青いバッグを持っていこうと思ってた。大きいからね。"
+      },
+      {
+       "speaker": "A",
+       "text": "Oh, I see. Can you also bring the notebook?",
+       "yaku": "ああ、そうなんだ。ノートも持ってきてくれる？"
+      },
+      {
+       "speaker": "B",
+       "text": "Sure, I can bring the notebook. Do you need anything else?",
+       "yaku": "もちろん、ノートを持っていくよ。他に何か必要？"
+      },
+      {
+       "speaker": "A",
+       "text": "No, just the notebook is fine. Thanks for bringing it.",
+       "yaku": "いいえ、ノートだけで大丈夫。持ってきてくれてありがとう。"
+      },
+      {
+       "speaker": "B",
+       "text": "You're welcome. I'll see you at 10 AM then.",
+       "yaku": "どういたしまして。それじゃあ、10時に会いましょう。"
+      }
+     ],
+     "crush_spots": [
+      {
+       "phrase": "do you",
+       "kana": "デュ",
+       "kind": "yod"
+      }
+     ],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "I was thinking of bringing the blue bag. It's bigger.",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "青いバッグを持っていこうと思ってた。大きいからね。",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "w": [
+        [
+         978.365,
+         981.641
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         981.791,
+         985.308
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         985.458,
+         989.041
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         989.191,
+         993.304
+        ],
+        [
+         1025.443,
+         1029.556
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         993.454,
+         997.277
+        ]
+       ]
+      },
+      {
+       "w": [
+        [
+         997.427,
+         999.977
         ]
        ]
       }
