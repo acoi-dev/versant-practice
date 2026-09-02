@@ -237,6 +237,25 @@
   .sk-load{font-size:15px;font-weight:500;color:var(--sub);animation:skpulse 1.2s ease-in-out infinite}   /* 採点中の待ち表示 */
   @keyframes skpulse{50%{opacity:.4}}
 
+  /* 本番形式の模試。試験中は余計なものを一切出さない(本番と同じ緊張感にする) */
+  #mock{position:fixed;inset:0;z-index:45;background:var(--bg);display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top) + 22px) 24px calc(env(safe-area-inset-bottom) + 22px)}
+  #mock.off{display:none}
+  #mock .mtop{display:flex;align-items:baseline;justify-content:space-between;font-size:12px;color:var(--sub)}
+  #mock .mpart{font-weight:700;color:var(--ink);font-size:13px;letter-spacing:.04em}
+  #mock .mbody{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:20px;min-height:0}
+  #mock .mstate{font-size:13px;color:var(--sub);letter-spacing:.06em}
+  #mock .mcount{font-size:64px;font-weight:300;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+  #mock .mcount.warn{color:var(--accent)}
+  #mock .mhint{font-size:14px;color:var(--sub);line-height:1.8;max-width:34ch}
+  #mock .mbar{height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+  #mock .mbar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s linear}
+  #mock .mrec{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--accent)}
+  #mock .mrec b{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:mblink 1s infinite}
+  @keyframes mblink{0%,100%{opacity:1}50%{opacity:.25}}
+  #mock .mquit{align-self:flex-start;border:0;background:none;color:var(--faint);font:inherit;font-size:12px;
+    cursor:pointer;padding:6px 0;text-decoration:underline}
+  #mock .mprov{font-size:11px;color:var(--faint)}
   /* 初回だけ出す使い方。カードで囲わず、罫線と余白だけで区切る */
   #guide{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;
     padding:calc(env(safe-area-inset-top) + 28px) 24px calc(env(safe-area-inset-bottom) + 24px)}
@@ -317,7 +336,7 @@
 <div id="home">
   <button class="closex" id="homeClose" aria-label="閉じる" hidden>&times;</button>
   <div class="brand">Versant 練習</div>
-  <div class="tag">本番と同じ例題を、耳で無限反復</div>
+  <div class="tag">本番例題レベルを、耳で無限反復</div>
   <div class="cdown" id="cdown"></div>
   <div class="plist" id="plist"></div>
   <p class="disc">非公式の練習アプリです。Versant<span class="r">®</span> は Pearson Education 社の商標で、本アプリは Pearson 社および Versant と関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
@@ -338,6 +357,19 @@
   <div id="feed"></div>
   <div class="pbanner" id="pbanner" aria-hidden="true"></div>   <!-- パート切替の中央バナー(境目ページの代わり・1.5秒でフェード) -->
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
+  <!-- 本番形式の模試。音声は1回だけ・途中で戻れない・時間が来たら次へ -->
+  <div id="mock" class="off" aria-hidden="true">
+    <div class="mtop"><span class="mpart" id="mkPart">Part A</span><span id="mkNum">1 / 42</span></div>
+    <div class="mbar"><i id="mkBar"></i></div>
+    <div class="mbody">
+      <div class="mstate" id="mkState">問題を聞いてください</div>
+      <div class="mcount" id="mkCount"></div>
+      <div class="mrec" id="mkRec" hidden><b></b>録音中</div>
+      <div class="mhint" id="mkHint"></div>
+      <div class="mprov" id="mkProv" hidden></div>
+    </div>
+    <button class="mquit" id="mkQuit">試験をやめる</button>
+  </div>
   <!-- 使い方(初回だけ)。秒数などの具体的な数字は書かない=変えたときに嘘になるため -->
   <div id="guide" class="off" aria-hidden="true">
     <div class="gtitle">はじめに</div>
@@ -509,7 +541,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0902-07';
+const BUILD='0902-09';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -697,8 +729,16 @@ function renderHome(){
   // にがてな語。2回以上つまずいた語だけを、多い順に最大6語。1回では偶然に振り回されるので出さない
   const wl=weakList().slice(0,6);
   const weakLine = wl.length ? `<div class="ghdr">にがてな語</div><div class="wknote">${wl.map(([k,v])=>`${skEsc(k)}<span>${v.n}</span>`).join('')}</div>` : '';
+  // 本番形式の模試(通し)。40問前後を止めずに受ける。練習と混ざらないよう先頭に別グループで置く
+  const mockCard = MOCK ? MOCK.sets.map((st,si)=>
+      `<div class="pcard" data-mock="${si}"><div class="top"><span class="eb kt">本番形式</span>`
+      +`<span class="meta">${st.items.length}問 ・ 約${Math.round(st.total/60)}分</span></div>`
+      +`<div class="ttl">模試 ${si+1}</div>`
+      +`<div class="desc">本番と同じ流れで通しで受ける。音声は1回だけ・途中で戻れない</div></div>`).join('') : '';
   document.getElementById('plist').innerHTML=
-    `<div class="ghdr">本番れんしゅう</div>${test}<div class="ghdr">きたえる</div>${kitae}${weakLine}`;
+    (mockCard?`<div class="ghdr">本番と同じ形で受ける</div>${mockCard}`:'')
+    +`<div class="ghdr">本番れんしゅう</div>${test}<div class="ghdr">きたえる</div>${kitae}${weakLine}`;
+  document.querySelectorAll('.pcard[data-mock]').forEach(el=>el.onclick=()=>startMock(+el.dataset.mock));
   document.querySelectorAll('.pcard[data-p]').forEach(el=>el.onclick=()=>openPart(+el.dataset.p));
   document.querySelectorAll('[data-lesson]').forEach(el=>el.onclick=openLesson);   // イメージ英文法=アプリ内オーバーレイ
   renderCountdown();   // ホーム上部の受験日カウントダウン
@@ -796,6 +836,112 @@ document.getElementById('wipeLog').onclick=()=>{
   b.dataset.confirm=''; b.textContent='消しました';
   try{ renderHome(); markCurrent(); }catch(e){}
   setTimeout(()=>{ b.textContent='記録を消す'; },2500);
+};
+
+// ===== 本番形式の模試 =====
+// 本番と同じ: 音声は1回だけ流れる / 途中で戻れない / 答える時間が来たら自動で次へ。
+// 音声(mock1.mp3)には答える間の無音まで入っているので、再生を止めずに流し切る。
+// 画面は mock_data.json の q_end(=答える時間の始まり)と end で今どこかを判断する。
+let MOCK=null, mkSet=null, mkAU=null, mkTimer=0, mkIdx=-1, mkPhase='', mkRecs=[];
+fetch('mock_data.json?v='+BUILD).then(r=>r.ok?r.json():null).then(d=>{ MOCK=d; try{ if(DATA) renderHome(); }catch(e){} }).catch(()=>{});
+
+function startMock(si){
+  if(!MOCK||!MOCK.sets[si]) return;
+  mkSet=MOCK.sets[si]; mkIdx=-1; mkPhase=''; mkRecs=[];   // mkPhase は「問番号:状態」を持つ
+  const el=document.getElementById('mock');
+  el.classList.remove('off'); el.setAttribute('aria-hidden','false');
+  pushOverlay('mock', quitMock);
+  try{ AU.pause(); }catch(e){}                       // 練習側の音声が鳴っていたら止める
+  mkAU=new Audio(mkSet.mp3+(mkSet.av?('?v='+mkSet.av):''));
+  mkAU.preload='auto';
+  document.getElementById('mkState').textContent='読み込み中…';
+  document.getElementById('mkHint').textContent='英語の指示が流れます。指示のあと、問題が始まります。';
+  document.getElementById('mkCount').textContent='';
+  mkAU.addEventListener('ended', finishMock);
+  mkAU.play().then(()=>{ mkTimer=setInterval(mkTick,120); })
+    .catch(()=>{ document.getElementById('mkState').textContent='画面をタップすると始まります';
+                 el.addEventListener('click',()=>mkAU.play().then(()=>{mkTimer=setInterval(mkTick,120);}),{once:true}); });
+}
+
+function mkTick(){
+  if(!mkAU||!mkSet) return;
+  const t=mkAU.currentTime, items=mkSet.items;
+  let i=items.findIndex(x=>t<x.end);
+  if(i<0) i=items.length-1;
+  const it=items[i];
+  if(i!==mkIdx){                                     // 問が変わった
+    mkIdx=i;
+    document.getElementById('mkPart').textContent='Part '+it.part;
+    document.getElementById('mkNum').textContent=(i+1)+' / '+items.length;
+    document.getElementById('mkProv').hidden=!it.provisional;
+    if(it.provisional) document.getElementById('mkProv').textContent='※このパートの解答時間は公式に記載が無く、暫定の秒数です';
+  }
+  document.getElementById('mkBar').style.width=Math.min(100,t/mkSet.total*100)+'%';
+  const answering = t>=it.q_end;                     // 答える時間に入ったか
+  const phase = answering?'ans':'listen';
+  // 【重要】問が変わったときも更新する。phaseだけで見ると、パートが変わっても指示文が
+  // 前のパートのまま残る(Part Bなのに「一語で答えて」と出た)。問+状態の組で判定する。
+  const key = i+':'+phase;
+  if(key!==mkPhase){
+    mkPhase=key;
+    if(answering){ mkStartRec(it); document.getElementById('mkState').textContent='答えてください';
+      document.getElementById('mkHint').textContent = it.part==='B' ? '聞こえたとおりに、そのまま繰り返してください。'
+        : it.part==='E' ? '聞いた話を、自分の言葉で言い直してください。'
+        : it.part==='F' ? '自分の意見を、理由もつけて話してください。'
+        : '一語か短いフレーズで答えてください。'; }
+    else { mkStopRec(); document.getElementById('mkState').textContent='問題を聞いてください';
+      document.getElementById('mkHint').textContent=''; document.getElementById('mkCount').textContent=''; }
+  }
+  if(answering){
+    const left=Math.max(0,Math.ceil(it.end-t));
+    const c=document.getElementById('mkCount');
+    c.textContent=left; c.classList.toggle('warn',left<=3);
+  }
+}
+
+// 録音は問ごとに切る。採点は試験のあとにまとめて行う(試験中に通信を待たせない)
+let mkRec=null, mkStream=null, mkChunks=[];
+async function mkStartRec(it){
+  try{
+    if(!mkStream) mkStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    mkChunks=[]; mkRec=new MediaRecorder(mkStream);
+    mkRec.ondataavailable=e=>{ if(e.data.size) mkChunks.push(e.data); };
+    mkRec.onstop=()=>{ if(mkChunks.length) mkRecs.push({qid:it.qid, part:it.part, n:it.n,
+      en:it.en, answer:it.answer, blob:new Blob(mkChunks,{type:(mkChunks[0]&&mkChunks[0].type)||'audio/mp4'})}); };
+    mkRec.start();
+    document.getElementById('mkRec').hidden=false;
+  }catch(e){ document.getElementById('mkRec').hidden=true; }
+}
+function mkStopRec(){
+  document.getElementById('mkRec').hidden=true;
+  try{ if(mkRec&&mkRec.state!=='inactive') mkRec.stop(); }catch(e){}
+}
+
+function quitMock(){
+  popOverlay('mock');
+  clearInterval(mkTimer); mkTimer=0;
+  mkStopRec();
+  try{ if(mkStream) mkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+  mkStream=null;
+  try{ if(mkAU){ mkAU.pause(); mkAU.src=''; } }catch(e){}
+  mkAU=null; mkIdx=-1; mkPhase='';
+  const el=document.getElementById('mock');
+  el.classList.add('off'); el.setAttribute('aria-hidden','true');
+}
+function finishMock(){
+  clearInterval(mkTimer); mkTimer=0; mkStopRec();
+  document.getElementById('mkState').textContent='お疲れさまでした';
+  document.getElementById('mkCount').textContent='';
+  document.getElementById('mkHint').textContent=`${mkRecs.length}問ぶんの録音が残っています。`;
+  document.getElementById('mkBar').style.width='100%';
+  setTimeout(()=>{ try{ logPracticeDay(); }catch(e){} }, 100);
+}
+// ブラウザのモーダルは出さない(操作が止まる・見た目もアプリと合わない)。2段タップで確認する
+document.getElementById('mkQuit').onclick=(e)=>{
+  const b=e.currentTarget;
+  if(b.dataset.confirm!=='1'){ b.dataset.confirm='1'; b.textContent='本当にやめる（録音は残りません）';
+    setTimeout(()=>{ if(b.dataset.confirm==='1'){ b.dataset.confirm=''; b.textContent='試験をやめる'; } },6000); return; }
+  b.dataset.confirm=''; b.textContent='試験をやめる'; quitMock();
 };
 
 // 使い方は初回だけ出す。以前は「上にフリックで次の問題」の一行が毎回出るだけで、
