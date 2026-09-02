@@ -636,17 +636,17 @@
    "title": "Part B 復唱",
    "sub": "聞いた文をそのまま繰り返す",
    "mp3": "partB.mp3",
-   "av": "592ee469",
-   "total": 1301.63,
+   "av": "62d7fdf5",
+   "total": 2248.68,
    "chapters": [
     {
      "n": 1,
      "qid": "B-7fcdd217",
      "start": 33.0,
-     "end": 72.34,
+     "end": 72.8,
      "en": "I have to leave now.",
      "kana": "アイ <b>ハフタ</b> <b>リーヴ</b> <b>ナウ</b>.",
-     "yaku": "もう行かなきゃ。",
+     "yaku": "もう行かないといけないんだ。",
      "target": "have to",
      "target_kana": "ハフタ",
      "kind": "form",
@@ -682,12 +682,12 @@
          37.438
         ],
         [
-         65.153,
-         66.953
+         65.609,
+         67.409
         ],
         [
-         67.653,
-         69.453
+         68.109,
+         69.909
         ]
        ]
       }
@@ -696,8 +696,8 @@
     {
      "n": 2,
      "qid": "B-5e498b07",
-     "start": 72.34,
-     "end": 109.63,
+     "start": 72.8,
+     "end": 110.08,
      "en": "Do you want to join us?",
      "kana": "ドゥユ <b>ワナ</b> <b>ジョイナス</b>?",
      "yaku": "一緒に来る？",
@@ -728,20 +728,20 @@
        "s": "Do you want to join us?",
        "w": [
         [
-         72.343,
-         73.903
+         72.799,
+         74.359
         ],
         [
-         74.743,
-         76.303
+         75.199,
+         76.759
         ],
         [
-         102.915,
-         104.475
+         103.371,
+         104.931
         ],
         [
-         105.175,
-         106.735
+         105.631,
+         107.191
         ]
        ]
       }
@@ -750,8 +750,8 @@
     {
      "n": 3,
      "qid": "B-8dc0a20d",
-     "start": 109.63,
-     "end": 148.22,
+     "start": 110.08,
+     "end": 148.68,
      "en": "Can you give me a hand?",
      "kana": "キャニュ <b>ギミ</b>ァ <b>ハンド</b>?",
      "yaku": "手伝ってくれる？",
@@ -782,20 +782,20 @@
        "s": "Can you give me a hand?",
        "w": [
         [
-         109.625,
-         111.329
+         110.081,
+         111.785
         ],
         [
-         112.169,
-         113.873
+         112.625,
+         114.329
         ],
         [
-         141.225,
-         142.929
+         141.681,
+         143.385
         ],
         [
-         143.629,
-         145.333
+         144.085,
+         145.789
         ]
        ]
       }
@@ -804,11 +804,11 @@
     {
      "n": 4,
      "qid": "B-2a921412",
-     "start": 148.22,
-     "end": 197.84,
+     "start": 148.68,
+     "end": 198.65,
      "en": "Did you watch the film yesterday?",
      "kana": "<b>ディジュ</b> <b>ウォッチ</b> ザ <b>フィルム</b> <b>イエスタデイ</b>?",
-     "yaku": "昨日映画見た？",
+     "yaku": "昨日その映画見た？",
      "target": "Did you",
      "target_kana": "ディジュ",
      "kind": "yod",
@@ -836,20 +836,20 @@
        "s": "Did you watch the film yesterday?",
        "w": [
         [
-         148.223,
-         151.079
+         148.679,
+         151.535
         ],
         [
-         151.919,
-         154.775
+         152.375,
+         155.231
         ],
         [
-         188.537,
-         191.393
+         189.353,
+         192.209
         ],
         [
-         192.093,
-         194.949
+         192.909,
+         195.765
         ]
        ]
       }
@@ -857,12 +857,390 @@
     },
     {
      "n": 5,
+     "qid": "B-8f8d995d",
+     "start": 198.65,
+     "end": 249.62,
+     "en": "I can help if you let me.",
+     "kana": "",
+     "yaku": "手伝えるよ、もしよければ。",
+     "target": "let me",
+     "target_kana": "レミ",
+     "kind": "form",
+     "memo": "let me が レミ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "I can help if you let me.",
+       "w": [
+        [
+         198.655,
+         202.375
+        ],
+        [
+         203.215,
+         206.935
+        ],
+        [
+         238.588,
+         242.308
+        ],
+        [
+         243.008,
+         246.728
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "qid": "B-777657b3",
+     "start": 249.62,
+     "end": 296.4,
+     "en": "I will start when you got it.",
+     "kana": "",
+     "yaku": "君が準備できたら始めるよ。",
+     "target": "got it",
+     "target_kana": "ガリッ",
+     "kind": "flap",
+     "memo": "got it が ガリッ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "I will start when you got it.",
+       "w": [
+        [
+         249.618,
+         252.738
+        ],
+        [
+         253.578,
+         256.698
+        ],
+        [
+         286.568,
+         289.688
+        ],
+        [
+         290.388,
+         293.508
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "qid": "B-4acd4a69",
+     "start": 296.4,
+     "end": 337.15,
+     "en": "Do you know what time it starts?",
+     "kana": "",
+     "yaku": "何時に始まるか知ってる？",
+     "target": "what time",
+     "target_kana": "ワッタイム",
+     "kind": "drop_t",
+     "memo": "what time が ワッタイム に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Do you know what time it starts?",
+       "w": [
+        [
+         296.398,
+         298.798
+        ],
+        [
+         299.638,
+         302.038
+        ],
+        [
+         328.761,
+         331.161
+        ],
+        [
+         331.861,
+         334.261
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "qid": "B-7bed8b0a",
+     "start": 337.15,
+     "end": 378.42,
+     "en": "We need to go because it's late.",
+     "kana": "",
+     "yaku": "遅いから行かないと。",
+     "target": "need to",
+     "target_kana": "ニーダ",
+     "kind": "form",
+     "memo": "need to が ニーダ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "We need to go because it's late.",
+       "w": [
+        [
+         337.151,
+         339.863
+        ],
+        [
+         340.703,
+         343.415
+        ],
+        [
+         369.402,
+         372.114
+        ],
+        [
+         372.814,
+         375.526
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 9,
+     "qid": "B-7bdada69",
+     "start": 378.42,
+     "end": 420.49,
+     "en": "Can you check it when you have time?",
+     "kana": "",
+     "yaku": "時間があるときに確認してくれる？",
+     "target": "check it",
+     "target_kana": "チェッキッ",
+     "kind": "link",
+     "memo": "check it が チェッキッ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Can you check it when you have time?",
+       "w": [
+        [
+         378.416,
+         380.864
+        ],
+        [
+         381.704,
+         384.152
+        ],
+        [
+         412.002,
+         414.45
+        ],
+        [
+         415.15,
+         417.598
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 10,
+     "qid": "B-c1437a1c",
+     "start": 420.49,
+     "end": 478.22,
+     "en": "You like coffee, don't you, if I remember?",
+     "kana": "",
+     "yaku": "コーヒー好きだよね、確か。",
+     "target": "don't you",
+     "target_kana": "ドンチュ",
+     "kind": "yod",
+     "memo": "don't you が ドンチュ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "You like coffee, don't you, if I remember?",
+       "w": [
+        [
+         420.488,
+         425.0
+        ],
+        [
+         425.84,
+         430.352
+        ],
+        [
+         465.607,
+         470.119
+        ],
+        [
+         470.819,
+         475.331
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 11,
+     "qid": "B-62cbc26a",
+     "start": 478.22,
+     "end": 526.02,
+     "en": "What are you doing if it's raining tomorrow?",
+     "kana": "",
+     "yaku": "明日雨だったら何するの？",
+     "target": "What are you",
+     "target_kana": "ワラユ",
+     "kind": "flap",
+     "memo": "What are you が ワラユ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "What are you doing if it's raining tomorrow?",
+       "w": [
+        [
+         478.221,
+         481.437
+        ],
+        [
+         482.277,
+         485.493
+        ],
+        [
+         515.997,
+         519.213
+        ],
+        [
+         519.913,
+         523.129
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 12,
      "qid": "B-52015551",
-     "start": 197.84,
-     "end": 249.66,
+     "start": 526.02,
+     "end": 590.24,
      "en": "Please take it to the office tomorrow morning.",
      "kana": "プリーズ <b>テイキッ</b> トゥ ジ <b>オフィス</b> トゥモロウ <b>モーニン</b>.",
-     "yaku": "明日の朝、事務所に持って行ってね。",
+     "yaku": "明日の朝、事務所に持っていってね。",
      "target": "take it",
      "target_kana": "テイキッ",
      "kind": "link",
@@ -890,30 +1268,30 @@
        "s": "Please take it to the office tomorrow morning.",
        "w": [
         [
-         197.839,
-         200.599
+         526.019,
+         530.171
         ],
         [
-         201.439,
-         204.199
+         531.011,
+         535.163
         ],
         [
-         240.548,
-         243.308
+         578.344,
+         582.496
         ],
         [
-         244.008,
-         246.768
+         583.196,
+         587.348
         ]
        ]
       }
      ]
     },
     {
-     "n": 6,
+     "n": 13,
      "qid": "B-14706d7f",
-     "start": 249.66,
-     "end": 304.69,
+     "start": 590.24,
+     "end": 642.83,
      "en": "I will send it to you by email soon.",
      "kana": "アイ ウィル <b>センディッ</b> トゥ ユー バイ <b>イーメイル</b> <b>スーン</b>.",
      "yaku": "すぐにメールで送るね。",
@@ -944,30 +1322,30 @@
        "s": "I will send it to you by email soon.",
        "w": [
         [
-         249.658,
-         252.778
+         590.238,
+         592.95
         ],
         [
-         253.618,
-         256.738
+         593.79,
+         596.502
         ],
         [
-         294.86,
-         297.98
+         633.82,
+         636.532
         ],
         [
-         298.68,
-         301.8
+         637.232,
+         639.944
         ]
        ]
       }
      ]
     },
     {
-     "n": 7,
+     "n": 14,
      "qid": "B-e585335f",
-     "start": 304.69,
-     "end": 369.83,
+     "start": 642.83,
+     "end": 700.19,
      "en": "It was kind of boring at the meeting yesterday.",
      "kana": "イッ ワズ <b>カインダ</b> <b>ボーリン</b> アット ザ <b>ミーティン</b> <b>イエスタデイ</b>.",
      "yaku": "昨日の会議、ちょっと退屈だったよ。",
@@ -998,33 +1376,33 @@
        "s": "It was kind of boring at the meeting yesterday.",
        "w": [
         [
-         304.69,
-         308.602
+         642.834,
+         645.546
         ],
         [
-         309.442,
-         313.354
+         646.386,
+         649.098
         ],
         [
-         358.412,
-         362.324
+         691.18,
+         693.892
         ],
         [
-         363.024,
-         366.936
+         694.592,
+         697.304
         ]
        ]
       }
      ]
     },
     {
-     "n": 8,
+     "n": 15,
      "qid": "B-71974dd5",
-     "start": 369.83,
-     "end": 421.86,
+     "start": 700.19,
+     "end": 753.37,
      "en": "I am going to meet them at the park later.",
      "kana": "アイ アム <b>ガナ</b> <b>ミート</b> ゼム アット ザ <b>パーク</b> <b>レイター</b>.",
-     "yaku": "後で公園で会うよ。",
+     "yaku": "あとで公園で彼らに会うんだ。",
      "target": "going to",
      "target_kana": "ガナ",
      "kind": "form",
@@ -1052,33 +1430,141 @@
        "s": "I am going to meet them at the park later.",
        "w": [
         [
-         369.826,
-         372.49
+         700.194,
+         703.05
         ],
         [
-         373.33,
-         375.994
+         703.89,
+         706.746
         ],
         [
-         412.946,
-         415.61
+         744.072,
+         746.928
         ],
         [
-         416.31,
-         418.974
+         747.628,
+         750.484
         ]
        ]
       }
      ]
     },
     {
-     "n": 9,
+     "n": 16,
+     "qid": "B-d262fea9",
+     "start": 753.37,
+     "end": 798.78,
+     "en": "The report has to be ready because of the meeting.",
+     "kana": "",
+     "yaku": "会議のために報告書を準備しないとね。",
+     "target": "has to",
+     "target_kana": "ハスタ",
+     "kind": "form",
+     "memo": "has to が ハスタ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "The report has to be ready because of the meeting.",
+       "w": [
+        [
+         753.374,
+         756.278
+        ],
+        [
+         757.118,
+         760.022
+        ],
+        [
+         789.384,
+         792.288
+        ],
+        [
+         792.988,
+         795.892
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 17,
+     "qid": "B-d0c689e7",
+     "start": 798.78,
+     "end": 843.8,
+     "en": "We could have won if we played better at the park.",
+     "kana": "",
+     "yaku": "もっと上手くプレーしてたら勝てたかもね。",
+     "target": "could have",
+     "target_kana": "クダヴ",
+     "kind": "form",
+     "memo": "could have が クダヴ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "We could have won if we played better at the park.",
+       "w": [
+        [
+         798.782,
+         801.638
+        ],
+        [
+         802.478,
+         805.334
+        ],
+        [
+         834.503,
+         837.359
+        ],
+        [
+         838.059,
+         840.915
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 18,
      "qid": "B-e452565c",
-     "start": 421.86,
-     "end": 477.82,
+     "start": 843.8,
+     "end": 900.93,
      "en": "Would you help me move this when you have some time?",
      "kana": "<b>ウッジュ</b> <b>ヘルプ</b> ミー <b>ムーブ</b> ディス ウェン ユー ハヴ サム <b>タイム</b>?",
-     "yaku": "時間あるときにこれを動かすの手伝ってくれる？",
+     "yaku": "時間があるときにこれを動かすの手伝ってくれる？",
      "target": "Would you",
      "target_kana": "ウッジュ",
      "kind": "yod",
@@ -1106,33 +1592,87 @@
        "s": "Would you help me move this when you have some time?",
        "w": [
         [
-         421.864,
-         424.816
+         843.805,
+         846.853
         ],
         [
-         425.656,
-         428.608
+         847.693,
+         850.741
         ],
         [
-         468.328,
-         471.28
+         891.244,
+         894.292
         ],
         [
-         471.98,
-         474.932
+         894.992,
+         898.04
         ]
        ]
       }
      ]
     },
     {
-     "n": 10,
+     "n": 19,
+     "qid": "B-3566caa3",
+     "start": 900.93,
+     "end": 946.68,
+     "en": "Please pick it up from the office when you leave today.",
+     "kana": "",
+     "yaku": "今日帰るときに事務所から取ってきてね。",
+     "target": "pick it up",
+     "target_kana": "ピッキラップ",
+     "kind": "link",
+     "memo": "pick it up が ピッキラップ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Please pick it up from the office when you leave today.",
+       "w": [
+        [
+         900.93,
+         903.93
+        ],
+        [
+         904.77,
+         907.77
+        ],
+        [
+         937.089,
+         940.089
+        ],
+        [
+         940.789,
+         943.789
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 20,
      "qid": "B-051e5a72",
-     "start": 477.82,
-     "end": 548.25,
+     "start": 946.68,
+     "end": 1017.97,
      "en": "We are out of paper because nobody ordered more last week.",
      "kana": "ウィ アー <b>アウラ</b> <b>ペーパー</b> ビコーズ <b>ノーバディ</b> <b>オーダード</b> モア <b>ラストウィーク</b>.",
-     "yaku": "先週誰も注文しなかったから紙がないよ。",
+     "yaku": "先週誰も注文しなかったから紙がないんだ。",
      "target": "out of",
      "target_kana": "アウラ",
      "kind": "form",
@@ -1160,33 +1700,33 @@
        "s": "We are out of paper because nobody ordered more last week.",
        "w": [
         [
-         477.822,
-         481.878
+         946.679,
+         950.831
         ],
         [
-         482.718,
-         486.774
+         951.671,
+         955.823
         ],
         [
-         536.551,
-         540.607
+         1006.078,
+         1010.23
         ],
         [
-         541.307,
-         545.363
+         1010.93,
+         1015.082
         ]
        ]
       }
      ]
     },
     {
-     "n": 11,
+     "n": 21,
      "qid": "B-086d131b",
-     "start": 548.25,
-     "end": 600.52,
+     "start": 1017.97,
+     "end": 1072.49,
      "en": "Can you tell him to call me back if he is free?",
      "kana": "キャニュ <b>テリム</b> トゥ <b>コール</b> ミー <b>バック</b> イフ ヒー イズ <b>フリー</b>?",
-     "yaku": "彼が暇なら電話くれるように言ってくれる？",
+     "yaku": "彼が暇なら電話するように伝えてくれる？",
      "target": "tell him",
      "target_kana": "テリム",
      "kind": "drop_h",
@@ -1214,30 +1754,84 @@
        "s": "Can you tell him to call me back if he is free?",
        "w": [
         [
-         548.253,
-         550.965
+         1017.972,
+         1021.188
         ],
         [
-         551.805,
-         554.517
+         1022.028,
+         1025.244
         ],
         [
-         591.511,
-         594.223
+         1062.463,
+         1065.679
         ],
         [
-         594.923,
-         597.635
+         1066.379,
+         1069.595
         ]
        ]
       }
      ]
     },
     {
-     "n": 12,
+     "n": 22,
+     "qid": "B-275935a6",
+     "start": 1072.49,
+     "end": 1127.71,
+     "en": "You need to turn it on before you use the machine here.",
+     "kana": "",
+     "yaku": "ここで機械を使う前に電源を入れないとね。",
+     "target": "turn it on",
+     "target_kana": "ターニロン",
+     "kind": "link",
+     "memo": "turn it on が ターニロン に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "You need to turn it on before you use the machine here.",
+       "w": [
+        [
+         1072.485,
+         1076.541
+        ],
+        [
+         1077.381,
+         1081.437
+        ],
+        [
+         1116.008,
+         1120.064
+        ],
+        [
+         1120.764,
+         1124.82
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 23,
      "qid": "B-2566a656",
-     "start": 600.52,
-     "end": 664.69,
+     "start": 1127.71,
+     "end": 1190.88,
      "en": "I used to play soccer with my friends when I was a child.",
      "kana": "アイ <b>ユースタ</b> <b>プレイ</b> <b>サッカー</b> ウィズ マイ <b>フレンズ</b> ウェン アイ ワズァ <b>チャイルド</b>.",
      "yaku": "子どもの頃、友達とサッカーしてたよ。",
@@ -1268,30 +1862,138 @@
        "s": "I used to play soccer with my friends when I was a child.",
        "w": [
         [
-         600.525,
-         604.893
+         1127.71,
+         1131.814
         ],
         [
-         605.733,
-         610.101
+         1132.654,
+         1136.758
         ],
         [
-         652.368,
-         656.736
+         1179.08,
+         1183.184
         ],
         [
-         657.436,
-         661.804
+         1183.884,
+         1187.988
         ]
        ]
       }
      ]
     },
     {
-     "n": 13,
+     "n": 24,
+     "qid": "B-281bc778",
+     "start": 1190.88,
+     "end": 1245.88,
+     "en": "What did you do last weekend at the park because it was sunny?",
+     "kana": "",
+     "yaku": "先週末、公園で何したの？天気良かったよね。",
+     "target": "What did you",
+     "target_kana": "ワッディジュ",
+     "kind": "yod",
+     "memo": "What did you が ワッディジュ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "What did you do last weekend at the park because it was sunny?",
+       "w": [
+        [
+         1190.878,
+         1194.838
+        ],
+        [
+         1195.678,
+         1199.638
+        ],
+        [
+         1234.374,
+         1238.334
+        ],
+        [
+         1239.034,
+         1242.994
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 25,
+     "qid": "B-5a96fa19",
+     "start": 1245.88,
+     "end": 1304.38,
+     "en": "Please feel free to ask for help, not at all a problem anytime.",
+     "kana": "",
+     "yaku": "いつでも気軽に助けを求めてね、全然問題ないよ。",
+     "target": "not at all",
+     "target_kana": "ナラロー",
+     "kind": "flap",
+     "memo": "not at all が ナラロー に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "Please feel free to ask for help, not at all a problem anytime.",
+       "w": [
+        [
+         1245.884,
+         1250.084
+        ],
+        [
+         1250.924,
+         1255.124
+        ],
+        [
+         1292.394,
+         1296.594
+        ],
+        [
+         1297.294,
+         1301.494
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 26,
      "qid": "B-407fd15a",
-     "start": 664.69,
-     "end": 743.73,
+     "start": 1304.38,
+     "end": 1381.19,
      "en": "Please call me as soon as you get to the station tomorrow morning.",
      "kana": "プリーズ <b>コール</b> ミー <b>アスーナズ</b> ユー <b>ゲット</b> トゥ ザ <b>ステーション</b> トゥモロウ <b>モーニン</b>.",
      "yaku": "明日の朝、駅に着いたらすぐに電話してね。",
@@ -1322,33 +2024,33 @@
        "s": "Please call me as soon as you get to the station tomorrow morning.",
        "w": [
         [
-         664.694,
-         668.846
+         1304.384,
+         1308.488
         ],
         [
-         669.686,
-         673.838
+         1309.328,
+         1313.432
         ],
         [
-         731.832,
-         735.984
+         1369.388,
+         1373.492
         ],
         [
-         736.684,
-         740.836
+         1374.192,
+         1378.296
         ]
        ]
       }
      ]
     },
     {
-     "n": 14,
+     "n": 27,
      "qid": "B-bb1fd6d5",
-     "start": 743.73,
-     "end": 822.11,
+     "start": 1381.19,
+     "end": 1455.24,
      "en": "I should have taken an umbrella yesterday because it rained all day long.",
      "kana": "アイ <b>シュダヴ</b> <b>テイケン</b> アン <b>アンブレラ</b> <b>イエスタデイ</b> ビコーズ イット <b>レインド</b> オール <b>デイロング</b>.",
-     "yaku": "昨日はずっと雨だったから傘持ってくればよかったな。",
+     "yaku": "昨日は一日中雨だったから傘を持っていけばよかったな。",
      "target": "should have",
      "target_kana": "シュダヴ",
      "kind": "form",
@@ -1376,33 +2078,33 @@
        "s": "I should have taken an umbrella yesterday because it rained all day long.",
        "w": [
         [
-         743.726,
-         748.574
+         1381.186,
+         1385.338
         ],
         [
-         749.414,
-         754.262
+         1386.178,
+         1390.33
         ],
         [
-         808.824,
-         813.672
+         1443.343,
+         1447.495
         ],
         [
-         814.372,
-         819.22
+         1448.195,
+         1452.347
         ]
        ]
       }
      ]
     },
     {
-     "n": 15,
+     "n": 28,
      "qid": "B-f4d6be84",
-     "start": 822.11,
-     "end": 889.68,
+     "start": 1455.24,
+     "end": 1524.84,
      "en": "We have a lot of apples, and we eat them every morning at home.",
      "kana": "ウィ ハヴ <b>アラロブ</b> <b>アップルズ</b> アンド ウィ <b>イート</b> ゼム <b>エブリモーニン</b> アット <b>ホーム</b>.",
-     "yaku": "家で毎朝リンゴをたくさん食べてるよ。",
+     "yaku": "家にリンゴがたくさんあって、毎朝食べてるよ。",
      "target": "a lot of",
      "target_kana": "アラロブ",
      "kind": "form",
@@ -1430,33 +2132,141 @@
        "s": "We have a lot of apples, and we eat them every morning at home.",
        "w": [
         [
-         822.11,
-         826.214
+         1455.237,
+         1459.485
         ],
         [
-         827.054,
-         831.158
+         1460.325,
+         1464.573
         ],
         [
-         877.884,
-         881.988
+         1512.749,
+         1516.997
         ],
         [
-         882.688,
-         886.792
+         1517.697,
+         1521.945
         ]
        ]
       }
      ]
     },
     {
-     "n": 16,
+     "n": 29,
+     "qid": "B-9587e598",
+     "start": 1524.84,
+     "end": 1590.7,
+     "en": "When did you last see him at the office before he left for vacation?",
+     "kana": "",
+     "yaku": "彼が休暇に行く前に最後にオフィスで会ったのはいつ？",
+     "target": "When did you",
+     "target_kana": "ウェンディジュ",
+     "kind": "yod",
+     "memo": "When did you が ウェンディジュ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "When did you last see him at the office before he left for vacation?",
+       "w": [
+        [
+         1524.835,
+         1530.043
+        ],
+        [
+         1530.883,
+         1536.091
+        ],
+        [
+         1576.697,
+         1581.905
+        ],
+        [
+         1582.605,
+         1587.813
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 30,
+     "qid": "B-6281853d",
+     "start": 1590.7,
+     "end": 1645.82,
+     "en": "How did you solve the problem that we discussed last week at the office?",
+     "kana": "",
+     "yaku": "先週オフィスで話した問題、どうやって解決したの？",
+     "target": "How did you",
+     "target_kana": "ハウディジュ",
+     "kind": "yod",
+     "memo": "How did you が ハウディジュ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "How did you solve the problem that we discussed last week at the office?",
+       "w": [
+        [
+         1590.703,
+         1594.711
+        ],
+        [
+         1595.551,
+         1599.559
+        ],
+        [
+         1634.215,
+         1638.223
+        ],
+        [
+         1638.923,
+         1642.931
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 31,
      "qid": "B-ae5e4028",
-     "start": 889.68,
-     "end": 965.85,
+     "start": 1645.82,
+     "end": 1716.1,
      "en": "She is one of the best singers in our town, without any doubt at all.",
      "kana": "シー イズ <b>ワナヴザ</b> <b>ベスト</b> <b>シンガーズ</b> イン アワ <b>タウン</b> ウィズアウト エニ <b>ダウト</b> アト <b>オール</b>.",
-     "yaku": "彼女は町で1番の歌手だよ、間違いなく。",
+     "yaku": "彼女は町で一番の歌手の一人だよ、間違いなく。",
      "target": "one of the",
      "target_kana": "ワナヴザ",
      "kind": "link",
@@ -1484,20 +2294,74 @@
        "s": "She is one of the best singers in our town, without any doubt at all.",
        "w": [
         [
-         889.682,
-         895.034
+         1645.821,
+         1650.069
         ],
         [
-         895.874,
-         901.226
+         1650.909,
+         1655.157
         ],
         [
-         952.05,
-         957.402
+         1704.011,
+         1708.259
         ],
         [
-         958.102,
-         963.454
+         1708.959,
+         1713.207
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "n": 32,
+     "qid": "B-4a7ba245",
+     "start": 1716.1,
+     "end": 1773.61,
+     "en": "I would have called you if I knew you were there yesterday at the event.",
+     "kana": "",
+     "yaku": "昨日イベントにいるって知ってたら電話したのに。",
+     "target": "would have",
+     "target_kana": "ウダヴ",
+     "kind": "form",
+     "memo": "would have が ウダヴ に聞こえます",
+     "answer": "",
+     "answer_full": "",
+     "a_yaku": "",
+     "question": "",
+     "q_yaku": "",
+     "dialogue": [],
+     "crush_spots": [],
+     "bone": [],
+     "bone_en": [],
+     "kotsu": "",
+     "key_line": "",
+     "passage": "",
+     "passage_yaku": "",
+     "key_line_yaku": "",
+     "retell": "",
+     "retell_yaku": "",
+     "retell_min": "",
+     "retell_min_yaku": "",
+     "hl": [
+      {
+       "s": "I would have called you if I knew you were there yesterday at the event.",
+       "w": [
+        [
+         1716.097,
+         1720.465
+        ],
+        [
+         1721.305,
+         1725.673
+        ],
+        [
+         1761.774,
+         1766.142
+        ],
+        [
+         1766.842,
+         1771.21
         ]
        ]
       }
@@ -1506,8 +2370,8 @@
     {
      "n": 0,
      "qid": "B-tail0",
-     "start": 965.85,
-     "end": 1301.63,
+     "start": 1773.61,
+     "end": 2248.68,
      "en": "",
      "kana": "",
      "yaku": "",
