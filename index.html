@@ -237,6 +237,44 @@
   .sk-load{font-size:15px;font-weight:500;color:var(--sub);animation:skpulse 1.2s ease-in-out infinite}   /* 採点中の待ち表示 */
   @keyframes skpulse{50%{opacity:.4}}
 
+  /* 模試の結果。数字は生のものだけ出す(本番スコアの予測はしない=校正データが無いため) */
+  #mres{position:fixed;inset:0;z-index:46;background:var(--bg);overflow-y:auto;
+    padding:calc(env(safe-area-inset-top) + 26px) 24px calc(env(safe-area-inset-bottom) + 40px)}
+  #mres.off{display:none}
+  #mres h2{font-size:22px;font-weight:700;margin:0 0 4px}
+  #mres .rsub{font-size:13px;color:var(--sub);margin:0 0 24px}
+  #mres .rrow{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:baseline;
+    padding:16px 0;border-top:1px solid var(--line)}
+  #mres .rp{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.06em}
+  #mres .rt{font-size:14px;color:var(--ink)}
+  #mres .rv{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
+  #mres .rv small{font-size:12px;color:var(--faint);font-weight:400;margin-left:3px}
+  #mres .rnote{font-size:12px;color:var(--faint);margin-top:3px;line-height:1.7}
+  #mres .rhd{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--faint);margin:30px 0 2px}
+  #mres .wlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  #mres .wchip{border:1px solid var(--line2);border-radius:999px;padding:7px 13px;font-size:14px;
+    color:var(--ink);cursor:pointer;background:none;font-family:inherit}
+  #mres .wchip:hover{border-color:var(--accent);color:var(--accent)}
+  #mres .wchip span{color:var(--faint);font-size:11.5px;margin-left:5px}
+  #mres .rbtn{margin-top:28px;width:100%;padding:14px;border:1px solid var(--accent);border-radius:10px;
+    background:none;color:var(--accent);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+  #mres .rback{margin-top:12px;width:100%;padding:12px;border:0;background:none;color:var(--sub);
+    font:inherit;font-size:14px;cursor:pointer}
+  /* 弱点ドリル: 聞き取れなかった語が入っていた問題を、ゆっくり→本番速度で聞き比べる */
+  #drill{position:fixed;inset:0;z-index:47;background:var(--bg);display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top) + 26px) 24px calc(env(safe-area-inset-bottom) + 26px)}
+  #drill.off{display:none}
+  #drill .dw{font-size:32px;font-weight:600;margin:0 0 6px}
+  #drill .dk{font-size:15px;color:var(--accent);margin:0 0 22px}
+  #drill .dsent{font-size:17px;line-height:1.85;color:var(--ink);margin:0 0 8px}
+  #drill .dsent b{color:var(--accent)}
+  #drill .dyaku{font-size:13px;color:var(--sub);line-height:1.8}
+  #drill .dstate{margin-top:26px;font-size:13px;color:var(--sub);letter-spacing:.06em}
+  #drill .dnav{margin-top:auto;display:flex;gap:10px}
+  #drill .dnav button{flex:1;padding:13px;border:1px solid var(--line2);border-radius:10px;background:none;
+    color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+  #drill .dnav button.pri{border-color:var(--accent);color:var(--accent);font-weight:700}
   /* 本番形式の模試。試験中は余計なものを一切出さない(本番と同じ緊張感にする) */
   #mock{position:fixed;inset:0;z-index:45;background:var(--bg);display:flex;flex-direction:column;
     padding:calc(env(safe-area-inset-top) + 22px) 24px calc(env(safe-area-inset-bottom) + 22px)}
@@ -357,6 +395,27 @@
   <div id="feed"></div>
   <div class="pbanner" id="pbanner" aria-hidden="true"></div>   <!-- パート切替の中央バナー(境目ページの代わり・1.5秒でフェード) -->
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
+  <!-- 模試の結果。パート別の生の数字と、聞き取れなかった語 -->
+  <div id="mres" class="off" aria-hidden="true">
+    <h2>模試の結果</h2>
+    <p class="rsub" id="mrSub"></p>
+    <div id="mrRows"></div>
+    <div id="mrWeak"></div>
+    <button class="rbtn" id="mrDrill" hidden>聞き取れなかった音を潰す</button>
+    <button class="rback" id="mrBack">ホームに戻る</button>
+  </div>
+  <!-- 弱点ドリル。聞き取れなかった語が入っていた問題を、ゆっくり→本番速度で -->
+  <div id="drill" class="off" aria-hidden="true">
+    <div class="dw" id="drWord"></div>
+    <div class="dk" id="drKana"></div>
+    <div class="dsent" id="drSent"></div>
+    <div class="dyaku" id="drYaku"></div>
+    <div class="dstate" id="drState"></div>
+    <div class="dnav">
+      <button id="drAgain">もう一度</button>
+      <button class="pri" id="drNext">次へ</button>
+    </div>
+  </div>
   <!-- 本番形式の模試。音声は1回だけ・途中で戻れない・時間が来たら次へ -->
   <div id="mock" class="off" aria-hidden="true">
     <div class="mtop"><span class="mpart" id="mkPart">Part A</span><span id="mkNum">1 / 42</span></div>
@@ -541,7 +600,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0902-09';
+const BUILD='0903-01';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -928,14 +987,183 @@ function quitMock(){
   const el=document.getElementById('mock');
   el.classList.add('off'); el.setAttribute('aria-hidden','true');
 }
-function finishMock(){
+async function finishMock(){
   clearInterval(mkTimer); mkTimer=0; mkStopRec();
-  document.getElementById('mkState').textContent='お疲れさまでした';
-  document.getElementById('mkCount').textContent='';
-  document.getElementById('mkHint').textContent=`${mkRecs.length}問ぶんの録音が残っています。`;
   document.getElementById('mkBar').style.width='100%';
-  setTimeout(()=>{ try{ logPracticeDay(); }catch(e){} }, 100);
+  document.getElementById('mkCount').textContent='';
+  try{ logPracticeDay(); }catch(e){}
+  try{ if(mkStream) mkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+  mkStream=null;
+  await new Promise(r=>setTimeout(r,300));   // 最後の録音が閉じるのを待つ
+  await scoreMock();
 }
+
+// 試験が終わってからまとめて採点する(試験中に通信を待たせない=本番の流れを崩さない)。
+// E/F は正解が一つに決まらないので採点しない(録音だけ残す)。
+async function scoreMock(){
+  const todo=mkRecs.filter(r=>r.part!=='E'&&r.part!=='F');
+  const st=document.getElementById('mkState'), hi=document.getElementById('mkHint');
+  st.textContent='採点しています';
+  const results=[];
+  for(let i=0;i<todo.length;i++){
+    hi.textContent=`${i+1} / ${todo.length} 問`;
+    const r=todo[i];
+    try{
+      let b64=null, mime='audio/wav';
+      try{ b64=await blobToWav16k(r.blob); }catch(e){ b64=null; }
+      if(!b64){ b64=await blobToB64(r.blob); mime=r.blob.type; }
+      const qa = QA_PARTS.has(r.part);
+      const body = qa ? {audio:b64,reference:r.en,mime,mode:'qa',question:r.en,answer:r.answer}
+                      : {audio:b64,reference:r.en,mime};
+      const ac=new AbortController(); const t=setTimeout(()=>ac.abort(), SCORE_TIMEOUT_MS);
+      const res=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body),signal:ac.signal});
+      clearTimeout(t);
+      let j=null; try{ j=await res.json(); }catch(e){ j=null; }
+      results.push({...r, blob:null, ok:!!(j&&j.ok), j: j&&j.ok?j:null});
+    }catch(e){ results.push({...r, blob:null, ok:false, j:null}); }
+  }
+  showMockResult(results);
+}
+
+// 結果は「生の数字」だけ出す。20〜80のスコア換算や本番スコア予測はしない(校正データが無い)
+let drillQueue=[], drillIdx=0;
+function showMockResult(results){
+  quitMock();
+  const el=document.getElementById('mres');
+  el.classList.remove('off'); el.setAttribute('aria-hidden','false');
+  pushOverlay('mres', closeMockResult);
+  const PART_LABEL={A:'質問',B:'復唱',C:'会話',D:'文章',E:'再話',F:'意見'};
+  const byPart={};
+  results.forEach(r=>{ (byPart[r.part]=byPart[r.part]||[]).push(r); });
+  let rows='';
+  for(const p of ['A','B','C','D']){
+    const rs=byPart[p]; if(!rs) continue;
+    if(p==='B'){
+      const vals=rs.map(r=>r.j&&r.j.scores?r.j.scores.said:null).filter(v=>v!=null);
+      const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+      rows+=`<div class="rrow"><span class="rp">PART ${p}</span>`
+        +`<span class="rt">${PART_LABEL[p]}<div class="rnote">お手本の語をどれだけ言えたか</div></span>`
+        +`<span class="rv">${avg==null?'—':avg}<small>%</small></span></div>`;
+    }else{
+      const ok=rs.filter(r=>r.j&&r.j.verdict==='正解').length;
+      rows+=`<div class="rrow"><span class="rp">PART ${p}</span>`
+        +`<span class="rt">${PART_LABEL[p]}<div class="rnote">内容が答えになっていたか</div></span>`
+        +`<span class="rv">${ok}<small>/ ${rs.length}</small></span></div>`;
+    }
+  }
+  for(const p of ['E','F']){
+    const n=mkRecs.filter(r=>r.part===p).length;
+    if(n) rows+=`<div class="rrow"><span class="rp">PART ${p}</span>`
+      +`<span class="rt">${PART_LABEL[p]}<div class="rnote">答えが一つに決まらないので採点しません</div></span>`
+      +`<span class="rv">録音 ${n}<small>問</small></span></div>`;
+  }
+  // 発音(正確さ)の平均。数字が意味を持つのは長い文なので、Part Bだけから出す
+  const accs=(byPart.B||[]).map(r=>r.j&&r.j.pron?r.j.pron.accuracy:null).filter(v=>v!=null);
+  if(accs.length){
+    const a=Math.round(accs.reduce((x,y)=>x+y,0)/accs.length);
+    rows+=`<div class="rrow"><span class="rp">発音</span>`
+      +`<span class="rt">正確さ<div class="rnote">ネイティブの発音にどれだけ近いか。日本語の話し方だと低めに出ます</div></span>`
+      +`<span class="rv">${a}</span></div>`;
+  }
+  document.getElementById('mrRows').innerHTML=rows;
+  const fail=results.filter(r=>!r.ok).length;
+  document.getElementById('mrSub').textContent =
+    `${results.length}問を採点${fail?`（${fail}問は通信できず採点できませんでした）`:''}。本番のスコアではありません。`;
+
+  // 【独自価値】聞き取れなかった語を集める。ここが競合に無いところ
+  const wmap={};
+  results.forEach(r=>{
+    const j=r.j; if(!j) return;
+    (j.missing||[]).forEach(w=>addW(w,'m'));
+    ((j.pron&&j.pron.words)||[]).filter(x=>x.e==='Mispronunciation').forEach(x=>addW(x.w,'p'));
+    (j.words||[]).filter(x=>x.ok===false&&!x.fn).forEach(x=>addW(x.word,'m'));
+    function addW(w,kind){
+      const k=weakKey(w); if(!k||SK_FUNC.has(k)) return;
+      const e=wmap[k]=wmap[k]||{n:0,word:w,src:null};
+      e.n++;
+      // ドリルでは「その語が実際に入っていた問題」を鳴らす。
+      // 入っていない問題を紐づけると、別の文が流れて聞き比べにならない
+      if(!e.src && new RegExp('\\b'+k+'\\b','i').test(String(r.en||''))) e.src=r;
+    }
+  });
+  // その語が入っている問題を特定できたものだけを出す(音を鳴らせないと練習にならない)
+  const weak=Object.entries(wmap).filter(([k,v])=>v.src).sort((a,b)=>b[1].n-a[1].n).slice(0,12);
+  const wd=document.getElementById('mrWeak');
+  if(weak.length){
+    wd.innerHTML=`<div class="rhd">聞き取れなかった音</div>`
+      +`<div class="rnote">この語が入っていた問題を、ゆっくり→本番速度で聞き比べられます</div>`
+      +`<div class="wlist">${weak.map(([k,v],i)=>
+        `<button class="wchip" data-w="${i}">${skEsc(v.word)}${v.n>1?`<span>${v.n}回</span>`:''}</button>`).join('')}</div>`;
+    drillQueue=weak.map(([k,v])=>({word:v.word, item:v.src}));
+    document.getElementById('mrDrill').hidden=false;
+    wd.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>startDrill(+b.dataset.w));
+  }else{
+    wd.innerHTML=`<div class="rhd">聞き取れなかった音</div><div class="rnote">今回はありませんでした。</div>`;
+    drillQueue=[]; document.getElementById('mrDrill').hidden=true;
+  }
+  // つまずいた語は端末内の記録にも足す(次から「にがてな語」に出る)
+  results.forEach(r=>{ try{ if(r.j) logWeakWords(r.j.missing, r.j.pron); }catch(e){} });
+}
+function closeMockResult(){
+  popOverlay('mres');
+  const el=document.getElementById('mres');
+  el.classList.add('off'); el.setAttribute('aria-hidden','true');
+  try{ renderHome(); markCurrent(); document.getElementById('home').classList.remove('off'); }catch(e){}
+}
+document.getElementById('mrBack').onclick=closeMockResult;
+document.getElementById('mrDrill').onclick=()=>startDrill(0);
+
+// 聞き取れなかった語が入っていた問題を、ゆっくり(0.7倍)→本番速度で流す。
+// 単独の読み上げにしない(実測で本番の2.34倍遅くなり、聞き比べが成立しないため)。
+let drAU=null, drTimer=0;
+function startDrill(i){
+  if(!drillQueue.length) return;
+  drillIdx=Math.max(0,Math.min(i,drillQueue.length-1));
+  const el=document.getElementById('drill');
+  el.classList.remove('off'); el.setAttribute('aria-hidden','false');
+  pushOverlay('drill', closeDrill);
+  playDrill();
+}
+function playDrill(){
+  const d=drillQueue[drillIdx]; if(!d) return;
+  const it=d.item;
+  document.getElementById('drWord').textContent=d.word;
+  document.getElementById('drKana').textContent='';
+  const en=String(it.en||'');
+  const re=new RegExp('\\b'+d.word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','ig');
+  document.getElementById('drSent').innerHTML=skEsc(en).replace(re,m=>`<b>${m}</b>`);
+  document.getElementById('drYaku').textContent='';
+  document.getElementById('drState').textContent=`${drillIdx+1} / ${drillQueue.length}　ゆっくり → 本番速度`;
+  // 模試の音声から、その問題の部分だけを切り出して鳴らす
+  const st=mkSet&&mkSet.items.find(x=>x.qid===it.qid);
+  if(!st){ document.getElementById('drState').textContent='この問題の音声が見つかりませんでした'; return; }
+  clearTimeout(drTimer);
+  try{ if(drAU){ drAU.pause(); } }catch(e){}
+  drAU=new Audio(mkSet.mp3+(mkSet.av?('?v='+mkSet.av):''));
+  const from=Math.max(0,st.q_start-0.15), to=st.q_end+0.1;
+  const run=(rate,next)=>{
+    drAU.currentTime=from; drAU.playbackRate=rate;
+    drAU.play().catch(()=>{});
+    drTimer=setTimeout(()=>{ try{drAU.pause();}catch(e){} if(next) next(); }, ((to-from)/rate)*1000+250);
+  };
+  drAU.addEventListener('loadedmetadata',()=>{
+    run(0.7, ()=>{ document.getElementById('drState').textContent=`${drillIdx+1} / ${drillQueue.length}　本番速度`;
+      setTimeout(()=>run(1.0,null),400); });
+  },{once:true});
+}
+function closeDrill(){
+  popOverlay('drill'); clearTimeout(drTimer);
+  try{ if(drAU){ drAU.pause(); drAU.src=''; } }catch(e){}
+  drAU=null;
+  const el=document.getElementById('drill');
+  el.classList.add('off'); el.setAttribute('aria-hidden','true');
+}
+document.getElementById('drAgain').onclick=playDrill;
+document.getElementById('drNext').onclick=()=>{
+  if(drillIdx+1>=drillQueue.length){ closeDrill(); return; }
+  drillIdx++; playDrill();
+};
 // ブラウザのモーダルは出さない(操作が止まる・見た目もアプリと合わない)。2段タップで確認する
 document.getElementById('mkQuit').onclick=(e)=>{
   const b=e.currentTarget;
