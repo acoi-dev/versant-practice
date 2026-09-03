@@ -550,10 +550,11 @@
   </div>
 </div>
 
-<!-- 模試・模試の結果・弱点ドリルは #app の外に置く。
+<!-- 全画面にかぶせるもの(模試・結果・ドリル・はじめに)は #app の外に置く。
      #app.off は opacity:0 + pointer-events:none なので、中に入れるとホームから開いた瞬間に
      「音は流れているのに画面はホームのまま」になる(2026-09-03に実機同等の環境で確認)。
-     全画面にかぶせるものは、必ずここ(トップレベル)に置くこと。 -->
+     全画面にかぶせるものは、必ずここ(トップレベル)に置くこと。
+     ※この決まりは smoke_test.dart の「全画面はappの外にある」が機械で見張っている。 -->
 <!-- 本番形式の模試。音声は1回だけ・途中で戻れない・時間が来たら次へ -->
 <div id="mock" class="off" aria-hidden="true">
   <div class="mtop"><span class="mpart" id="mkPart">Part A</span><span id="mkNum">1 / 42</span></div>
@@ -589,6 +590,21 @@
   </div>
 </div>
 
+<!-- 使い方(初回だけ)。秒数などの具体的な数字は書かない=変えたときに嘘になるため -->
+<div id="guide" class="off" aria-hidden="true">
+  <div class="gtitle">はじめに</div>
+  <ol>
+    <li><span class="gk">問題を移動する</span><span class="gb">上下にフリックすると、次の問題・前の問題に移ります。</span>
+      <span class="gs">イヤホンやロック画面の「次へ／前へ」でも移動できます。</span></li>
+    <li><span class="gk">話して採点する</span><span class="gb">マイクを押すと録音が始まり、もう一度押すと止まって採点します。</span>
+      <span class="gs">押し忘れても、時間が来ると自動で止まります。静かな場所で、端末のマイクを使うのがおすすめです。</span></li>
+    <li><span class="gk">答えを見る</span><span class="gb">下の「見る」を押すと、解答例と解説が出ます。</span>
+      <span class="gs">その左のボタンで、聞く速さを変えられます。</span></li>
+  </ol>
+  <button class="gbtn" id="guideOk">はじめる</button>
+  <button class="gbtn sub2" id="guideMore">Versantとは／くわしい使い方</button>
+</div>
+
 <div id="app" class="off">
   <div class="head">
     <div class="htitle" id="htitle"></div>
@@ -597,20 +613,6 @@
   <div id="feed"></div>
   <div class="pbanner" id="pbanner" aria-hidden="true"></div>   <!-- パート切替の中央バナー(境目ページの代わり・1.5秒でフェード) -->
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
-  <!-- 使い方(初回だけ)。秒数などの具体的な数字は書かない=変えたときに嘘になるため -->
-  <div id="guide" class="off" aria-hidden="true">
-    <div class="gtitle">はじめに</div>
-    <ol>
-      <li><span class="gk">問題を移動する</span><span class="gb">上下にフリックすると、次の問題・前の問題に移ります。</span>
-        <span class="gs">イヤホンやロック画面の「次へ／前へ」でも移動できます。</span></li>
-      <li><span class="gk">話して採点する</span><span class="gb">マイクを押すと録音が始まり、もう一度押すと止まって採点します。</span>
-        <span class="gs">押し忘れても、時間が来ると自動で止まります。静かな場所で、端末のマイクを使うのがおすすめです。</span></li>
-      <li><span class="gk">答えを見る</span><span class="gb">下の「見る」を押すと、解答例と解説が出ます。</span>
-        <span class="gs">その左のボタンで、聞く速さを変えられます。</span></li>
-    </ol>
-    <button class="gbtn" id="guideOk">はじめる</button>
-    <button class="gbtn sub2" id="guideMore">Versantとは／くわしい使い方</button>
-  </div>
   <!-- 片手操作バー（よく使う「答えを見る/隠す」は中央、ホームは右下） -->
   <div class="navbar">
     <button class="navb eye" id="eyeToggle"></button>
@@ -787,7 +789,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0903-12';
+const BUILD='0903-13';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
