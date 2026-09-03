@@ -47,6 +47,9 @@
   .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
   .plist{display:flex;flex-direction:column;gap:11px}
   .disc{font-size:11px;color:var(--faint);line-height:1.75;margin-top:28px;text-align:center;padding:0 4px}  /* 非公式の免責 */
+  .disc.dfirst{margin-top:34px}
+  .disc.dfirst button{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;
+    font-size:13px;border-radius:9px;padding:11px 16px;cursor:pointer}
   .disc.dlink{margin-top:12px}                                   /* 提供元・規約・問い合わせは免責のすぐ下に1行で */
   .disc.dlink a{color:var(--sub);text-decoration:underline}
   .disc .r{font-size:8px;vertical-align:super}
@@ -307,6 +310,37 @@
   #mock .mquit{align-self:flex-start;border:0;background:none;color:var(--faint);font:inherit;font-size:12px;
     cursor:pointer;padding:6px 0;text-decoration:underline}
   #mock .mprov{font-size:11px;color:var(--faint)}
+  /* はじめての人向けの案内。「Versantとは」「このアプリは何か」「使い方」を1か所に。
+     ⚠️ #app の外に置くこと(#app.off は opacity:0 なので、中に入れるとホームから開けない)。
+     読み物なので、カードで囲わず罫線と余白だけで区切る。 */
+  #howto{position:fixed;inset:0;z-index:49;background:var(--bg);overflow-y:auto;
+    padding:calc(var(--sat) + 24px) 24px calc(var(--sab) + 40px)}
+  #howto.off{display:none}
+  #howto .hwrap{max-width:640px;margin:0 auto}
+  #howto h2{font-size:22px;font-weight:700;margin:0 0 6px;letter-spacing:-.01em}
+  #howto .hsub{font-size:13px;color:var(--sub);margin:0 0 26px}
+  #howto h3{font-size:15px;font-weight:700;margin:32px 0 10px;padding-top:22px;
+    border-top:1px solid var(--line)}
+  #howto p{font-size:14px;line-height:1.9;margin:0 0 12px;color:var(--ink)}
+  #howto p.n{color:var(--sub);font-size:12.5px}
+  #howto ul{margin:0 0 12px;padding-left:1.1em;font-size:14px;line-height:1.9}
+  #howto li{margin-bottom:6px}
+  #howto li b{font-weight:600}
+  #howto .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;
+    line-height:1.9;margin:0 0 12px}
+  #howto .kv dt{color:var(--sub);white-space:nowrap}
+  #howto .kv dd{margin:0}
+  #howto .parts{margin:0 0 12px}
+  #howto .parts .pt{padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.8}
+  #howto .parts .pt:first-child{border-top:1px solid var(--line)}
+  #howto .parts .pk{font-size:11px;letter-spacing:.09em;color:var(--faint);display:block}
+  #howto .parts .pn{font-weight:600}
+  #howto .parts .pd{color:var(--sub);font-size:13px;display:block;margin-top:2px}
+  #howto a{color:var(--accent)}
+  #howto .hbtn{margin-top:30px;width:100%;padding:14px;border:1px solid var(--accent);
+    border-radius:10px;background:none;color:var(--accent);font:inherit;font-size:15px;
+    font-weight:700;cursor:pointer}
+  #howto .hbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   /* マイクを初めて使う前に一度だけ出す同意。使い方(#guide)より上に出す */
   #micok{position:fixed;inset:0;z-index:48;background:var(--bg);display:flex;flex-direction:column;
     padding:calc(var(--sat) + 28px) 24px calc(var(--sab) + 24px);overflow-y:auto}
@@ -337,6 +371,7 @@
   #guide .gbtn{margin-top:24px;width:100%;padding:14px;border:1px solid var(--accent);border-radius:10px;
     background:none;color:var(--accent);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
   #guide .gbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  #guide .gbtn.sub2{margin-top:10px;border-color:var(--line2);color:var(--sub);font-weight:400;font-size:14px}
   .hint{position:fixed;left:0;right:0;top:calc(var(--sat) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
@@ -406,6 +441,7 @@
   <div class="tag">本番例題レベルを、耳で無限反復</div>
   <div class="cdown" id="cdown"></div>
   <div class="plist" id="plist"></div>
+  <p class="disc dfirst"><button type="button" id="homeHowto">はじめての方へ — Versantとは／使い方</button></p>
   <p class="disc">非公式の練習アプリです。Versant<span class="r">®</span> は NCS Pearson, Inc. の登録商標で、本アプリは同社および試験の運営者とは関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
   <p class="disc dlink">提供: Nexus株式会社　/　<a href="./terms.html">利用規約</a>　/　<a href="./privacy.html">声とデータの扱い</a>　/　<a href="mailto:contact@nexus-inc.net">お問い合わせ</a></p>
   <div id="build" class="build"></div>
@@ -418,6 +454,84 @@
 
 <!-- フィード -->
 <!-- マイクを初めて使う前に一度だけ。OSの許可ダイアログでは「声が外部の会社へ送られる」ことが伝わらないので自前で出す -->
+<!-- はじめての人向けの案内。ホーム・設定・初回の「はじめに」から開ける。
+     #app の外に置く(中に入れるとホームから開いたときに opacity:0 で見えない)。 -->
+<div id="howto" class="off" aria-hidden="true">
+ <div class="hwrap">
+  <h2>はじめに読むページ</h2>
+  <p class="hsub">Versantがどんな試験で、このアプリで何ができるか。3分で読めます。</p>
+
+  <h3>このアプリは何か</h3>
+  <p>Versantは「聞いて、すぐ英語で答える」試験です。読み返す時間も、言うことをまとめる時間もほとんどありません。だから、知らない単語を増やすより、<b>同じ形に耳と口を慣らすこと</b>のほうがそのまま点に効きます。</p>
+  <p>このアプリは、その繰り返しだけに絞ってあります。本番と同じ形の問題を、何度でも、好きなだけ。</p>
+
+  <h3>3つの使い方</h3>
+  <ul>
+    <li><b>聞く（移動中）</b>：画面を見なくても、問題 → 答え → 聞こえ方の説明、が流れ続けます。イヤホンの操作でも進めます</li>
+    <li><b>話す（家で）</b>：マイクに向かって答えると、言えたかどうかと、語ごとの発音を返します</li>
+    <li><b>通し（本番の形）</b>：42問を約21分、止まらずに受けます。音声は1回だけ・前には戻れません</li>
+  </ul>
+  <p class="n">迷ったら「聞く」から。耳が追いつかないうちに口だけ動かしても、本番では出てきません。</p>
+
+  <h3>Versantとは</h3>
+  <p>Pearson社の英語スピーキングテストです。<b>すべて声で答えます</b>。書く問題も、選択肢を選ぶ問題もありません。</p>
+  <dl class="kv">
+    <dt>問題数</dt><dd>6つのパート（A〜F）・約40問</dd>
+    <dt>時間</dt><dd>約17〜20分</dd>
+    <dt>受験料</dt><dd>6,600円（税込・1回）</dd>
+    <dt>受け方</dt><dd>スマホアプリ、またはウェブブラウザ</dd>
+    <dt>進み方</dt><dd>音声は基本1回だけ。前の問題には戻れません</dd>
+  </dl>
+  <p class="n">時間と問題数は、公式の資料どうしで書き方が違います（17分／約20分、40問／約37問）。どちらか片方だけを本当のことのように書くのは避けて、両方そのまま載せています。</p>
+  <p>点数は、次の3つに分かれて出ます。</p>
+  <ul>
+    <li><b>Speaking（話す）</b>：全体の50%</li>
+    <li><b>Listening（聞く）</b>：全体の50%</li>
+    <li><b>Manner of Speaking（話し方）</b>：Speakingの半分＝全体の25%</li>
+  </ul>
+
+  <h3>6つのパート</h3>
+  <div class="parts">
+    <div class="pt"><span class="pk">PART A</span><span class="pn">質問（8問）</span>
+      <span class="pd">短い質問に、一語か短いフレーズで答えます。6秒以内に話し始め、答える時間は15秒。質問は1回しか読まれません。</span></div>
+    <div class="pt"><span class="pk">PART B</span><span class="pn">復唱（16問）</span>
+      <span class="pd">聞こえた1文を、そのまま繰り返します。5〜15語。だんだん長くなります。</span></div>
+    <div class="pt"><span class="pk">PART C</span><span class="pn">会話に関する質問（6問）</span>
+      <span class="pd">2人の短い会話を聞いて、そのあとの質問に一語か短いフレーズで答えます。</span></div>
+    <div class="pt"><span class="pk">PART D</span><span class="pn">文章に関する質問（6問）</span>
+      <span class="pd">50〜150語の話を聞いて、その話について3つの質問に答えます（話1本につき3問）。</span></div>
+    <div class="pt"><span class="pk">PART E</span><span class="pn">ストーリーリテリング</span>
+      <span class="pd">聞いた話を、自分の言葉で言い直します。30秒。</span></div>
+    <div class="pt"><span class="pk">PART F</span><span class="pn">自由回答</span>
+      <span class="pd">自分の意見を、理由をつけて話します。40秒。</span></div>
+  </div>
+  <p class="n">CとDの「答える時間」の秒数は、公式の資料に書かれていません。このアプリでは暫定の秒数を使っていて、画面にもその旨を出しています。</p>
+
+  <h3>画面の使い方</h3>
+  <ul>
+    <li><b>上下にフリック</b>：次の問題・前の問題へ。イヤホンやロック画面の「次へ／前へ」でも動きます</li>
+    <li><b>見る</b>：答えと、聞こえ方の説明が出ます</li>
+    <li><b>マイク</b>：押すと録音、もう一度押すと止まって採点します。押し忘れても時間が来ると止まります</li>
+    <li><b>1.0x</b>：ゆっくりにできます。聞き取れない文はここから</li>
+    <li><b>右上の歯車</b>：自動送り、答えを隠す、文字の大きさ、明るさ、記録を消す</li>
+  </ul>
+
+  <h3>出てくる数字の意味</h3>
+  <p>このアプリが出す数字は<b>練習の目安</b>で、本番のスコアではありません。本番の点数を当てるものでもありません。</p>
+  <ul>
+    <li><b>言えた率</b>：お手本の語のうち、いくつが音の中にあったか</li>
+    <li><b>発音の正確さ</b>：語ごとの発音（0〜100）。一語だけの答えは振れやすいので目安として見てください</li>
+    <li><b>「◯◯が△△に聞こえます」</b>：その語が速く話されると、どう変わって聞こえるか</li>
+  </ul>
+
+  <h3>大事なこと</h3>
+  <p>このアプリは<b>非公式</b>です。Versant&reg; は NCS Pearson, Inc. の登録商標で、このアプリは同社および試験の運営者とは関係がありません。承認や推奨を受けたものでもありません。</p>
+  <p>問題・音声・解答例は<b>すべてこのアプリのオリジナル</b>で、本番の試験問題は1問も入っていません。</p>
+  <p><a href="./privacy.html" target="_blank" rel="noopener">声とデータの扱い</a>　/　<a href="./terms.html" target="_blank" rel="noopener">利用規約</a></p>
+
+  <button class="hbtn" id="howtoOk">はじめる</button>
+ </div>
+</div>
 <div id="micok" class="off" aria-hidden="true">
   <div class="mtitle">録音した声の扱い</div>
   <div class="mrow"><span class="mk">どこへ送るか</span>
@@ -436,6 +550,45 @@
   </div>
 </div>
 
+<!-- 模試・模試の結果・弱点ドリルは #app の外に置く。
+     #app.off は opacity:0 + pointer-events:none なので、中に入れるとホームから開いた瞬間に
+     「音は流れているのに画面はホームのまま」になる(2026-09-03に実機同等の環境で確認)。
+     全画面にかぶせるものは、必ずここ(トップレベル)に置くこと。 -->
+<!-- 本番形式の模試。音声は1回だけ・途中で戻れない・時間が来たら次へ -->
+<div id="mock" class="off" aria-hidden="true">
+  <div class="mtop"><span class="mpart" id="mkPart">Part A</span><span id="mkNum">1 / 42</span></div>
+  <div class="mbar"><i id="mkBar"></i></div>
+  <div class="mbody">
+    <div class="mstate" id="mkState">問題を聞いてください</div>
+    <div class="mcount" id="mkCount"></div>
+    <div class="mrec" id="mkRec" hidden><b></b>録音中</div>
+    <div class="mhint" id="mkHint"></div>
+    <div class="mprov" id="mkProv" hidden></div>
+  </div>
+  <button class="mquit" id="mkQuit">試験をやめる</button>
+</div>
+<!-- 模試の結果。パート別の生の数字と、聞き取れなかった語 -->
+<div id="mres" class="off" aria-hidden="true">
+  <h2>模試の結果</h2>
+  <p class="rsub" id="mrSub"></p>
+  <div id="mrRows"></div>
+  <div id="mrWeak"></div>
+  <button class="rbtn" id="mrDrill" hidden>聞き取れなかった音を潰す</button>
+  <button class="rback" id="mrBack">ホームに戻る</button>
+</div>
+<!-- 弱点ドリル。聞き取れなかった語が入っていた問題を、ゆっくり→本番速度で -->
+<div id="drill" class="off" aria-hidden="true">
+  <div class="dw" id="drWord"></div>
+  <div class="dk" id="drKana"></div>
+  <div class="dsent" id="drSent"></div>
+  <div class="dyaku" id="drYaku"></div>
+  <div class="dstate" id="drState"></div>
+  <div class="dnav">
+    <button id="drAgain">もう一度</button>
+    <button class="pri" id="drNext">次へ</button>
+  </div>
+</div>
+
 <div id="app" class="off">
   <div class="head">
     <div class="htitle" id="htitle"></div>
@@ -444,40 +597,6 @@
   <div id="feed"></div>
   <div class="pbanner" id="pbanner" aria-hidden="true"></div>   <!-- パート切替の中央バナー(境目ページの代わり・1.5秒でフェード) -->
   <div class="hint" id="hint"><span class="up">↑</span>上にフリックで次の問題</div>
-  <!-- 模試の結果。パート別の生の数字と、聞き取れなかった語 -->
-  <div id="mres" class="off" aria-hidden="true">
-    <h2>模試の結果</h2>
-    <p class="rsub" id="mrSub"></p>
-    <div id="mrRows"></div>
-    <div id="mrWeak"></div>
-    <button class="rbtn" id="mrDrill" hidden>聞き取れなかった音を潰す</button>
-    <button class="rback" id="mrBack">ホームに戻る</button>
-  </div>
-  <!-- 弱点ドリル。聞き取れなかった語が入っていた問題を、ゆっくり→本番速度で -->
-  <div id="drill" class="off" aria-hidden="true">
-    <div class="dw" id="drWord"></div>
-    <div class="dk" id="drKana"></div>
-    <div class="dsent" id="drSent"></div>
-    <div class="dyaku" id="drYaku"></div>
-    <div class="dstate" id="drState"></div>
-    <div class="dnav">
-      <button id="drAgain">もう一度</button>
-      <button class="pri" id="drNext">次へ</button>
-    </div>
-  </div>
-  <!-- 本番形式の模試。音声は1回だけ・途中で戻れない・時間が来たら次へ -->
-  <div id="mock" class="off" aria-hidden="true">
-    <div class="mtop"><span class="mpart" id="mkPart">Part A</span><span id="mkNum">1 / 42</span></div>
-    <div class="mbar"><i id="mkBar"></i></div>
-    <div class="mbody">
-      <div class="mstate" id="mkState">問題を聞いてください</div>
-      <div class="mcount" id="mkCount"></div>
-      <div class="mrec" id="mkRec" hidden><b></b>録音中</div>
-      <div class="mhint" id="mkHint"></div>
-      <div class="mprov" id="mkProv" hidden></div>
-    </div>
-    <button class="mquit" id="mkQuit">試験をやめる</button>
-  </div>
   <!-- 使い方(初回だけ)。秒数などの具体的な数字は書かない=変えたときに嘘になるため -->
   <div id="guide" class="off" aria-hidden="true">
     <div class="gtitle">はじめに</div>
@@ -490,6 +609,7 @@
         <span class="gs">その左のボタンで、聞く速さを変えられます。</span></li>
     </ol>
     <button class="gbtn" id="guideOk">はじめる</button>
+    <button class="gbtn sub2" id="guideMore">Versantとは／くわしい使い方</button>
   </div>
   <!-- 片手操作バー（よく使う「答えを見る/隠す」は中央、ホームは右下） -->
   <div class="navbar">
@@ -544,6 +664,11 @@
   </div>
   <!-- 記録はこの端末の中だけに保存される。iPhoneは1週間開かないと消えることがあるので、
        黙って消えて驚かせないよう先に伝え、消す手段も用意する(推奨51) -->
+  <!-- いつでも読み返せる場所。初回だけ出して終わりにしない -->
+  <div class="setrow col">
+    <div class="lb"><b>使い方・Versantとは</b><span>試験の中身、3つの使い方、数字の意味</span></div>
+    <button class="prevres" id="openHowto" style="margin-top:10px">開く</button>
+  </div>
   <div class="setrow col">
     <div class="lb"><b>学習の記録</b><span>受験日・練習した日・済み・自己ベスト・にがてな語・直近の採点結果は、この端末の中だけに保存しています。外には送りません。採点をお願いするときだけ、使いすぎを防ぐ回数かぞえのために「この端末の番号」（名前も機種も含まない乱数）を一緒に送っています。消すとこの番号も作り直されます。<a href="./privacy.html" target="_blank" rel="noopener">くわしく</a></span></div>
     <button class="prevres" id="wipeLog" style="margin-top:10px">記録を消す</button>
@@ -662,7 +787,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0903-07';
+const BUILD='0903-11';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1026,18 +1151,34 @@ function mkTick(){
 
 // 録音は問ごとに切る。採点は試験のあとにまとめて行う(試験中に通信を待たせない)
 let mkRec=null, mkStream=null, mkChunks=[];
+// 【重要】マイクの許可を待っている間に、答える時間が終わって次の問へ進むことがある。
+// 初回はOSの許可ダイアログが出るので、実機では必ずこれが起きる。
+// 番号(mkRecTurn)を持たせて、待っている間に次へ進んでいたら**何も始めない・何も表示しない**。
+// これが無いと、止めたあとに「録音中」が点き直し、誰も止めない録音が次の問へ流れ込む
+// (実際にシミュレータで「問題を聞いてください」と「録音中」が同時に出ているのを見つけた)。
+let mkRecTurn=0;
 async function mkStartRec(it){
+  const my=++mkRecTurn;
   try{
     if(!mkStream) mkStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    if(my!==mkRecTurn){ return; }                     // 待つ間に次の問へ進んだ=この録音は要らない
     mkChunks=[]; mkRec=new MediaRecorder(mkStream);
     mkRec.ondataavailable=e=>{ if(e.data.size) mkChunks.push(e.data); };
     mkRec.onstop=()=>{ if(mkChunks.length) mkRecs.push({qid:it.qid, part:it.part, n:it.n,
       en:it.en, answer:it.answer, blob:new Blob(mkChunks,{type:(mkChunks[0]&&mkChunks[0].type)||'audio/mp4'})}); };
     mkRec.start();
     document.getElementById('mkRec').hidden=false;
-  }catch(e){ document.getElementById('mkRec').hidden=true; }
+  }catch(e){
+    if(my!==mkRecTurn) return;
+    // 【重要】黙って進めない。マイクが使えないまま21分の試験を最後まで受けて、
+    // 終わってから「1問も録音されていません」と分かるのがいちばん悪い。
+    document.getElementById('mkRec').hidden=true;
+    const h=document.getElementById('mkHint');
+    if(h) h.textContent='マイクが使えないため、録音していません。試験は続けられますが、あとで採点はできません。';
+  }
 }
 function mkStopRec(){
+  mkRecTurn++;                                        // 走っている開始処理を無効にする
   document.getElementById('mkRec').hidden=true;
   try{ if(mkRec&&mkRec.state!=='inactive') mkRec.stop(); }catch(e){}
 }
@@ -1239,6 +1380,24 @@ document.getElementById('mkQuit').onclick=(e)=>{
   b.dataset.confirm=''; b.textContent='試験をやめる'; quitMock();
 };
 
+// はじめての人向けの案内。ホーム・設定・初回の「はじめに」から開ける。
+// 一度読んだら閉じるだけで、二度と出さない類のものではない(いつでも読み返せる場所に置く)。
+function openHowto(){
+  const el=document.getElementById('howto'); if(!el) return;
+  el.scrollTop=0;
+  el.classList.remove('off'); el.setAttribute('aria-hidden','false');
+  pushOverlay('howto', closeHowto);
+  try{ localStorage.setItem('howtoSeen','1'); }catch(e){}
+}
+function closeHowto(){
+  popOverlay('howto');
+  const el=document.getElementById('howto'); if(!el) return;
+  el.classList.add('off'); el.setAttribute('aria-hidden','true');
+}
+document.getElementById('howtoOk').onclick=closeHowto;
+document.getElementById('homeHowto').onclick=openHowto;
+document.getElementById('openHowto').onclick=()=>{ closeSet(); openHowto(); };
+
 // マイクを初めて使う前に一度だけ同意を取る。
 // OSの許可ダイアログは「マイクを使ってよいか」しか聞かないので、
 // 「録音した声が外部の会社へ送られる」ことはこちらで示さないと伝わらない(Apple 5.1.1(i)/5.1.2(i))。
@@ -1272,6 +1431,7 @@ function showGuideOnce(){
   g.classList.remove('off'); g.setAttribute('aria-hidden','false');
   pushOverlay('guide', closeGuide);
   document.getElementById('guideOk').onclick=closeGuide;
+  document.getElementById('guideMore').onclick=()=>{ closeGuide(); openHowto(); };
 }
 function closeGuide(){
   popOverlay('guide');
