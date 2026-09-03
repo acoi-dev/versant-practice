@@ -121,7 +121,7 @@
   .card.ans .wave{height:20px;gap:4px}
   .card.ans .wave b{height:7px}
   .card.ans .task{font-size:13px}
-  .card.ans .text{flex:1 1 auto;max-height:none}   /* 空いた分は答え欄に回す(下に余白を作らない) */
+  .card.ans .twrap{flex:1 1 auto;min-height:0;max-height:none}   /* 空いた分は答え欄に回す(下に余白を作らない) */
   .wave b{width:5px;height:12px;background:var(--line2);border-radius:3px;display:block}
   .wave.on b{background:var(--accent);animation:w .9s ease-in-out infinite}
   .wave.on b:nth-child(2){animation-delay:.1s}.wave.on b:nth-child(3){animation-delay:.2s}
@@ -132,7 +132,24 @@
   @keyframes wsm{0%,100%{height:6px}50%{height:18px}}
   .card.ans .wave.on b{animation-name:wsm}
 
-  .text{padding-top:16px;min-height:118px;max-height:48dvh;overflow-y:auto}  /* containを外し、答え欄の端まで来たらカード送りに繋がるように(答え表示中もスワイプで次へ) */
+  /* 答え欄。高さの制約は**包み(.twrap)側**に置く。
+     .text に flex を書いても、.twrap で包んだ時点で効かなくなり、
+     中身なりに伸びて**操作ボタンを画面の外へ押し出す**(実際に1035pxまではみ出した)。 */
+  .twrap{position:relative;min-height:118px;max-height:48dvh;display:flex;flex-direction:column}
+  /* containを外し、答え欄の端まで来たらカード送りに繋がるように(答え表示中もスワイプで次へ) */
+  .text{padding-top:16px;padding-bottom:30px;overflow-y:auto;flex:1 1 auto;min-height:0}
+  /* 【2026-09-04】文字を大きくしたら、Part C/D で答えが枠に収まらず**行が中途半端に切れた**。
+     スクロールできるのに、続きがあることが画面から分からない。
+     下に続きがあるときだけ、小さな印を出す(色は付けず濃淡で)。 */
+  /* 印の帯は背景色で塗る。塗らないと、切れた行の半端な文字の上に印が重なって読めない
+     (グラデーションは使わない。ベタで隠して、印だけを見せる) */
+  .tmore{position:absolute;left:0;right:0;bottom:0;height:30px;display:none;
+    align-items:flex-end;justify-content:center;pointer-events:none;background:var(--bg)}
+  .tmore::after{content:'';width:9px;height:9px;margin-bottom:5px;
+    border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);
+    transform:rotate(45deg);animation:tmb 1.6s ease-in-out infinite}
+  @keyframes tmb{0%,100%{transform:rotate(45deg) translate(0,0)}50%{transform:rotate(45deg) translate(2px,2px)}}
+  .twrap.more .tmore{display:flex}
   .text::-webkit-scrollbar{display:none}
   .veil{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--sub);padding:22px 0;cursor:pointer}
   .veil svg{width:27px;height:27px;display:block;color:var(--sub)}
@@ -880,7 +897,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-03';
+const BUILD='0904-05';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1488,6 +1505,24 @@ document.getElementById('mkQuit').onclick=(e)=>{
   b.dataset.confirm=''; b.textContent='試験をやめる'; quitMock();
 };
 
+// 答え欄に続きがあるかを見て、下向きの印を出し入れする。
+// 文字を大きくしたら Part C/D が枠に収まらなくなり、切れた行が半端に見えるだけで
+// 「スクロールできる」と分からなかった。中身が変わるたび・スクロールのたびに見直す。
+function updateMore(el){
+  if(!el) return;
+  const w=el.closest('.twrap'); if(!w) return;
+  const more = el.scrollHeight - el.clientHeight > 6 &&
+               el.scrollTop + el.clientHeight < el.scrollHeight - 6;
+  w.classList.toggle('more', more);
+}
+function bindMore(){
+  document.querySelectorAll('#feed .text').forEach(el=>{
+    if(el.__moreBound) return; el.__moreBound=true;
+    el.addEventListener('scroll',()=>updateMore(el),{passive:true});
+  });
+  document.querySelectorAll('#feed .text').forEach(updateMore);
+}
+
 // ===== 触って覚えるチュートリアル =====
 // 文章のガイド(#howto)は「読みたい人が読む」もので、初めての人はまず読まない。
 // なので、**実物の画面の上で押す場所を指す**案内を初回に1度だけ出す。
@@ -1641,7 +1676,7 @@ function renderFeed(){
         <div class="task">${TASK[PART.id]||''}</div>
         <div class="wave" id="wave${i}"><b></b><b></b><b></b><b></b><b></b><b></b></div>
       </div>
-      <div class="text" id="text${i}"></div>
+      <div class="twrap" id="twrap${i}"><div class="text" id="text${i}"></div><div class="tmore"></div></div>
       <div class="bot">
         <div class="spdrow"><button class="spd" data-spd>${spdTxt(speed)}</button></div>
         <div class="yt">
@@ -1698,6 +1733,7 @@ function renderFeed(){
   }
 
   CARDS.forEach((_,i)=>paintText(i));   // 全カードを最初から正しい状態に(隠す=空/常時表示=本文)。スワイプ中のveilチラつき防止
+  requestAnimationFrame(bindMore);
 }
 
 let seekSeq=0, srcPartId=null;
@@ -1911,6 +1947,8 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   if(c.retell_min)h+=`<div class="row"><span class="k">最低限</span><span class="v">${c.retell_min}${c.retell_min_yaku?'　'+c.retell_min_yaku:''}</span></div>`;  // Part E: これだけ言えば0点回避
   el.innerHTML=h;
   updateEye();   // 下バーの「答えを見る/隠す」を今の表示状態に合わせる
+  // 中身を描き直したら、続きがあるかを見直す(答えを開くと高さが変わる)
+  requestAnimationFrame(()=>{ bindMore(); updateMore(el); });
 }
 
 
