@@ -310,35 +310,85 @@
   #mock .mquit{align-self:flex-start;border:0;background:none;color:var(--faint);font:inherit;font-size:12px;
     cursor:pointer;padding:6px 0;text-decoration:underline}
   #mock .mprov{font-size:11px;color:var(--faint)}
+  /* 触って覚えるチュートリアル。初回にパートを開いたとき、**実物の画面の上に**
+     順番に案内を出す。文章のガイドは読まれないので、ここだけは押す場所を指す。
+     【2026-09-04】「チュートリアルもないしよー」の指摘で追加。
+     ⚠️ #app の外に置く。中に入れると #app.off で見えなくなる(smoke_test が見張っている)。 */
+  #coach{position:fixed;inset:0;z-index:44;display:flex;flex-direction:column;
+    justify-content:flex-end;pointer-events:auto}
+  /* 指す場所が下半分にあるときは、説明の紙を上へ逃がす。
+     これが無いと**指しているボタンが説明の裏に隠れる**(実際にそうなった)。 */
+  #coach.top{justify-content:flex-start}
+  #coach.off{display:none}
+  /* 暗幕。穴を開けているときは、穴の側(box-shadow)が全面を暗くするので、こちらは消す。
+     両方出すと二重に暗くなって、**指した所が光らない**(実際にそうなった)。 */
+  #coach .cdim{position:absolute;inset:0;background:rgba(8,9,12,.74)}
+  #coach.spot .cdim{background:none}
+  #coach.top .cbox{margin:calc(var(--sat) + 22px) 18px 0}
+  /* 指す場所に開ける穴。位置と大きさは JS が実物のボタンから測って入れる */
+  #coach .chole{position:absolute;border:2px solid var(--accent);border-radius:14px;
+    box-shadow:0 0 0 9999px rgba(8,9,12,.74);pointer-events:none;transition:.22s ease}
+  #coach .cbox{position:relative;margin:0 18px calc(var(--sab) + 22px);
+    background:var(--bg);border:1px solid var(--line2);border-radius:16px;padding:20px 20px 16px}
+  #coach .cstep{font-size:11.5px;letter-spacing:.09em;color:var(--faint);margin-bottom:6px}
+  #coach .ctitle{font-size:19px;font-weight:700;margin-bottom:6px;line-height:1.5}
+  #coach .cdesc{font-size:15.5px;line-height:1.85;color:var(--sub)}
+  #coach .crow{display:flex;align-items:center;justify-content:space-between;margin-top:18px;gap:12px}
+  #coach .cskip{border:0;background:none;color:var(--faint);font:inherit;font-size:14px;
+    cursor:pointer;padding:12px 4px}
+  #coach .cnext{border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;
+    font-size:16px;font-weight:700;border-radius:10px;padding:14px 26px;cursor:pointer;min-height:48px}
+  #coach .cdots{display:flex;gap:6px;justify-content:center;margin-top:14px}
+  #coach .cdots i{width:6px;height:6px;border-radius:50%;background:var(--line2);display:block}
+  #coach .cdots i.on{background:var(--accent)}
   /* はじめての人向けの案内。「Versantとは」「このアプリは何か」「使い方」を1か所に。
      ⚠️ #app の外に置くこと(#app.off は opacity:0 なので、中に入れるとホームから開けない)。
-     読み物なので、カードで囲わず罫線と余白だけで区切る。 */
+     読み物なので、カードで囲わず罫線と余白だけで区切る。
+     【2026-09-04】「文字が小さい・量が多い・上に戻る手段が無い」と指摘を受けて作り直した:
+      ・本文16.5px（14pxは読ませる気が無い大きさだった）
+      ・上に固定の閉じる帯（下まで読まないと閉じられないのは辛い）
+      ・見出しを押すと開く形にして、最初は「まず3つ」だけ開いておく */
   #howto{position:fixed;inset:0;z-index:49;background:var(--bg);overflow-y:auto;
-    padding:calc(var(--sat) + 24px) 24px calc(var(--sab) + 40px)}
+    padding:calc(var(--sat) + 84px) 22px calc(var(--sab) + 40px)}
   #howto.off{display:none}
   #howto .hwrap{max-width:640px;margin:0 auto}
-  #howto h2{font-size:22px;font-weight:700;margin:0 0 6px;letter-spacing:-.01em}
-  #howto .hsub{font-size:13px;color:var(--sub);margin:0 0 26px}
-  #howto h3{font-size:15px;font-weight:700;margin:32px 0 10px;padding-top:22px;
-    border-top:1px solid var(--line)}
-  #howto p{font-size:14px;line-height:1.9;margin:0 0 12px;color:var(--ink)}
-  #howto p.n{color:var(--sub);font-size:12.5px}
-  #howto ul{margin:0 0 12px;padding-left:1.1em;font-size:14px;line-height:1.9}
-  #howto li{margin-bottom:6px}
+  #howto .hbar{position:fixed;top:0;left:0;right:0;z-index:2;background:var(--bg);
+    border-bottom:1px solid var(--line);
+    padding:calc(var(--sat) + 8px) 12px 8px;display:flex;align-items:center;justify-content:space-between}
+  #howto .hbar b{font-size:15px;font-weight:600;color:var(--ink);margin-left:6px}
+  #howto .hbar button{border:0;background:none;color:var(--accent);font:inherit;font-size:16px;
+    cursor:pointer;padding:10px 12px;min-height:44px}
+  #howto h2{font-size:26px;font-weight:700;margin:0 0 8px;letter-spacing:-.01em;line-height:1.45}
+  #howto .hsub{font-size:15px;color:var(--sub);margin:0 0 8px;line-height:1.9}
+  #howto p{font-size:16.5px;line-height:1.95;margin:0 0 14px;color:var(--ink)}
+  #howto p.n{color:var(--sub);font-size:14.5px}
+  #howto ul{margin:0 0 14px;padding-left:1.1em;font-size:16.5px;line-height:1.95}
+  #howto li{margin-bottom:9px}
   #howto li b{font-weight:600}
-  #howto .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;
-    line-height:1.9;margin:0 0 12px}
+  /* 折りたたみ。見出しの行そのものを押せるようにする(小さい三角を狙わせない) */
+  #howto details{border-top:1px solid var(--line)}
+  #howto details:last-of-type{border-bottom:1px solid var(--line);margin-bottom:8px}
+  #howto summary{list-style:none;cursor:pointer;padding:20px 0;font-size:17px;font-weight:700;
+    display:flex;align-items:center;justify-content:space-between;gap:12px}
+  #howto summary::-webkit-details-marker{display:none}
+  #howto summary::after{content:'';width:9px;height:9px;flex:0 0 auto;margin-right:4px;
+    border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);
+    transform:rotate(45deg) translate(-2px,-2px);transition:transform .18s ease}
+  #howto details[open]>summary::after{transform:rotate(-135deg) translate(-2px,-2px)}
+  #howto .dbody{padding:0 0 8px}
+  #howto .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:16px;
+    line-height:1.9;margin:0 0 14px}
   #howto .kv dt{color:var(--sub);white-space:nowrap}
   #howto .kv dd{margin:0}
   #howto .parts{margin:0 0 12px}
-  #howto .parts .pt{padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.8}
-  #howto .parts .pt:first-child{border-top:1px solid var(--line)}
-  #howto .parts .pk{font-size:11px;letter-spacing:.09em;color:var(--faint);display:block}
-  #howto .parts .pn{font-weight:600}
-  #howto .parts .pd{color:var(--sub);font-size:13px;display:block;margin-top:2px}
+  #howto .parts .pt{padding:14px 0;border-bottom:1px solid var(--line);line-height:1.85}
+  #howto .parts .pt:last-child{border-bottom:0}
+  #howto .parts .pk{font-size:11.5px;letter-spacing:.09em;color:var(--faint);display:block}
+  #howto .parts .pn{font-weight:600;font-size:16.5px}
+  #howto .parts .pd{color:var(--sub);font-size:15px;display:block;margin-top:3px}
   #howto a{color:var(--accent)}
-  #howto .hbtn{margin-top:30px;width:100%;padding:14px;border:1px solid var(--accent);
-    border-radius:10px;background:none;color:var(--accent);font:inherit;font-size:15px;
+  #howto .hbtn{margin-top:26px;width:100%;padding:16px;border:1px solid var(--accent);
+    border-radius:10px;background:none;color:var(--accent);font:inherit;font-size:16px;
     font-weight:700;cursor:pointer}
   #howto .hbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   /* マイクを初めて使う前に一度だけ出す同意。使い方(#guide)より上に出す */
@@ -456,80 +506,115 @@
 <!-- マイクを初めて使う前に一度だけ。OSの許可ダイアログでは「声が外部の会社へ送られる」ことが伝わらないので自前で出す -->
 <!-- はじめての人向けの案内。ホーム・設定・初回の「はじめに」から開ける。
      #app の外に置く(中に入れるとホームから開いたときに opacity:0 で見えない)。 -->
-<div id="howto" class="off" aria-hidden="true">
- <div class="hwrap">
-  <h2>はじめに読むページ</h2>
-  <p class="hsub">Versantがどんな試験で、このアプリで何ができるか。3分で読めます。</p>
-
-  <h3>このアプリは何か</h3>
-  <p>Versantは「聞いて、すぐ英語で答える」試験です。読み返す時間も、言うことをまとめる時間もほとんどありません。だから、知らない単語を増やすより、<b>同じ形に耳と口を慣らすこと</b>のほうがそのまま点に効きます。</p>
-  <p>このアプリは、その繰り返しだけに絞ってあります。本番と同じ形の問題を、何度でも、好きなだけ。</p>
-
-  <h3>3つの使い方</h3>
-  <ul>
-    <li><b>聞く（移動中）</b>：画面を見なくても、問題 → 答え → 聞こえ方の説明、が流れ続けます。イヤホンの操作でも進めます</li>
-    <li><b>話す（家で）</b>：マイクに向かって答えると、言えたかどうかと、語ごとの発音を返します</li>
-    <li><b>通し（本番の形）</b>：42問を約21分、止まらずに受けます。音声は1回だけ・前には戻れません</li>
-  </ul>
-  <p class="n">迷ったら「聞く」から。耳が追いつかないうちに口だけ動かしても、本番では出てきません。</p>
-
-  <h3>Versantとは</h3>
-  <p>Pearson社の英語スピーキングテストです。<b>すべて声で答えます</b>。書く問題も、選択肢を選ぶ問題もありません。</p>
-  <dl class="kv">
-    <dt>問題数</dt><dd>6つのパート（A〜F）・約40問</dd>
-    <dt>時間</dt><dd>約17〜20分</dd>
-    <dt>受験料</dt><dd>6,600円（税込・1回）</dd>
-    <dt>受け方</dt><dd>スマホアプリ、またはウェブブラウザ</dd>
-    <dt>進み方</dt><dd>音声は基本1回だけ。前の問題には戻れません</dd>
-  </dl>
-  <p class="n">時間と問題数は、公式の資料どうしで書き方が違います（17分／約20分、40問／約37問）。どちらか片方だけを本当のことのように書くのは避けて、両方そのまま載せています。</p>
-  <p>点数は、次の3つに分かれて出ます。</p>
-  <ul>
-    <li><b>Speaking（話す）</b>：全体の50%</li>
-    <li><b>Listening（聞く）</b>：全体の50%</li>
-    <li><b>Manner of Speaking（話し方）</b>：Speakingの半分＝全体の25%</li>
-  </ul>
-
-  <h3>6つのパート</h3>
-  <div class="parts">
-    <div class="pt"><span class="pk">PART A</span><span class="pn">質問（8問）</span>
-      <span class="pd">短い質問に、一語か短いフレーズで答えます。6秒以内に話し始め、答える時間は15秒。質問は1回しか読まれません。</span></div>
-    <div class="pt"><span class="pk">PART B</span><span class="pn">復唱（16問）</span>
-      <span class="pd">聞こえた1文を、そのまま繰り返します。5〜15語。だんだん長くなります。</span></div>
-    <div class="pt"><span class="pk">PART C</span><span class="pn">会話に関する質問（6問）</span>
-      <span class="pd">2人の短い会話を聞いて、そのあとの質問に一語か短いフレーズで答えます。</span></div>
-    <div class="pt"><span class="pk">PART D</span><span class="pn">文章に関する質問（6問）</span>
-      <span class="pd">50〜150語の話を聞いて、その話について3つの質問に答えます（話1本につき3問）。</span></div>
-    <div class="pt"><span class="pk">PART E</span><span class="pn">ストーリーリテリング</span>
-      <span class="pd">聞いた話を、自分の言葉で言い直します。30秒。</span></div>
-    <div class="pt"><span class="pk">PART F</span><span class="pn">自由回答</span>
-      <span class="pd">自分の意見を、理由をつけて話します。40秒。</span></div>
+<!-- 触って覚えるチュートリアル。実物の画面の上に、押す場所を順に指す。 -->
+<div id="coach" class="off" aria-hidden="true">
+  <div class="cdim"></div>
+  <div class="chole" id="cHole" hidden></div>
+  <div class="cbox">
+    <div class="cstep" id="cStep"></div>
+    <div class="ctitle" id="cTitle"></div>
+    <div class="cdesc" id="cDesc"></div>
+    <div class="crow">
+      <button class="cskip" id="cSkip">スキップ</button>
+      <button class="cnext" id="cNext">次へ</button>
+    </div>
+    <div class="cdots" id="cDots"></div>
   </div>
-  <p class="n">CとDの「答える時間」の秒数は、公式の資料に書かれていません。このアプリでは暫定の秒数を使っていて、画面にもその旨を出しています。</p>
+</div>
+<div id="howto" class="off" aria-hidden="true">
+ <div class="hbar"><b>はじめに読むページ</b><button type="button" id="howtoX">閉じる</button></div>
+ <div class="hwrap">
+  <h2>3分で分かる、このアプリ</h2>
+  <p class="hsub">気になる所だけ開いて読めます。あとから設定でいつでも読み返せます。</p>
 
-  <h3>画面の使い方</h3>
-  <ul>
-    <li><b>上下にフリック</b>：次の問題・前の問題へ。イヤホンやロック画面の「次へ／前へ」でも動きます</li>
-    <li><b>見る</b>：答えと、聞こえ方の説明が出ます</li>
-    <li><b>マイク</b>：押すと録音、もう一度押すと止まって採点します。押し忘れても時間が来ると止まります</li>
-    <li><b>1.0x</b>：ゆっくりにできます。聞き取れない文はここから</li>
-    <li><b>右上の歯車</b>：自動送り、答えを隠す、文字の大きさ、明るさ、記録を消す</li>
-  </ul>
+  <p><b>Versantは「聞いて、すぐ英語で答える」試験です。</b>読み返す時間も、言うことをまとめる時間もありません。だから、知らない単語を増やすより、<b>同じ形に耳と口を慣らすこと</b>のほうがそのまま点に効きます。このアプリは、その繰り返しだけに絞ってあります。</p>
 
-  <h3>出てくる数字の意味</h3>
-  <p>このアプリが出す数字は<b>練習の目安</b>で、本番のスコアではありません。本番の点数を当てるものでもありません。</p>
-  <ul>
-    <li><b>言えた率</b>：お手本の語のうち、いくつが音の中にあったか</li>
-    <li><b>発音の正確さ</b>：語ごとの発音（0〜100）。一語だけの答えは振れやすいので目安として見てください</li>
-    <li><b>「◯◯が△△に聞こえます」</b>：その語が速く話されると、どう変わって聞こえるか</li>
-  </ul>
+  <details open>
+    <summary>3つの使い方</summary>
+    <div class="dbody">
+      <ul>
+        <li><b>聞く（移動中）</b><br>画面を見なくても、問題 → 答え → 聞こえ方の説明、が流れ続けます。イヤホンの操作でも進みます</li>
+        <li><b>話す（家で）</b><br>マイクに向かって答えると、言えたかどうかと、語ごとの発音を返します</li>
+        <li><b>通し（本番の形）</b><br>42問を約21分。音声は1回だけ、前には戻れません</li>
+      </ul>
+      <p class="n">迷ったら「聞く」から。耳が追いつかないうちに口だけ動かしても、本番では出てきません。</p>
+    </div>
+  </details>
 
-  <h3>大事なこと</h3>
-  <p>このアプリは<b>非公式</b>です。Versant&reg; は NCS Pearson, Inc. の登録商標で、このアプリは同社および試験の運営者とは関係がありません。承認や推奨を受けたものでもありません。</p>
-  <p>問題・音声・解答例は<b>すべてこのアプリのオリジナル</b>で、本番の試験問題は1問も入っていません。</p>
-  <p><a href="./privacy.html">声とデータの扱い</a>　/　<a href="./terms.html">利用規約</a></p>
+  <details>
+    <summary>画面の使い方</summary>
+    <div class="dbody">
+      <ul>
+        <li><b>上下にフリック</b>：次の問題・前の問題へ</li>
+        <li><b>見る</b>：答えと、聞こえ方の説明が出ます</li>
+        <li><b>マイク</b>：押すと録音、もう一度押すと採点。押し忘れても時間が来ると止まります</li>
+        <li><b>1.0x</b>：ゆっくりにできます。聞き取れない文はここから</li>
+        <li><b>右上の歯車</b>：自動送り、答えを隠す、文字の大きさ、明るさ、記録を消す</li>
+      </ul>
+    </div>
+  </details>
 
-  <button class="hbtn" id="howtoOk">はじめる</button>
+  <details>
+    <summary>Versantとは</summary>
+    <div class="dbody">
+      <p>Pearson社の英語スピーキングテストです。<b>すべて声で答えます。</b>書く問題も、選択肢を選ぶ問題もありません。</p>
+      <dl class="kv">
+        <dt>問題数</dt><dd>6つのパート（A〜F）・約40問</dd>
+        <dt>時間</dt><dd>約17〜20分</dd>
+        <dt>受験料</dt><dd>6,600円（税込・1回）</dd>
+        <dt>受け方</dt><dd>スマホアプリ、またはウェブブラウザ</dd>
+        <dt>進み方</dt><dd>音声は基本1回だけ。前の問題には戻れません</dd>
+      </dl>
+      <p>点数は <b>Speaking（話す）50%</b>、<b>Listening（聞く）50%</b>に分かれ、<b>Manner of Speaking（話し方）</b>はSpeakingの半分＝全体の25%です。</p>
+      <p class="n">時間と問題数は、公式の資料どうしで書き方が違います（17分／約20分、40問／約37問）。片方だけを本当のことのように書くのは避けて、両方そのまま載せています。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>6つのパート</summary>
+    <div class="dbody">
+      <div class="parts">
+        <div class="pt"><span class="pk">PART A</span><span class="pn">質問（8問）</span>
+          <span class="pd">短い質問に、一語か短いフレーズで答えます。6秒以内に話し始め、答える時間は15秒。質問は1回しか読まれません。</span></div>
+        <div class="pt"><span class="pk">PART B</span><span class="pn">復唱（16問）</span>
+          <span class="pd">聞こえた1文を、そのまま繰り返します。5〜15語。だんだん長くなります。</span></div>
+        <div class="pt"><span class="pk">PART C</span><span class="pn">会話に関する質問（6問）</span>
+          <span class="pd">2人の短い会話を聞いて、そのあとの質問に一語か短いフレーズで答えます。</span></div>
+        <div class="pt"><span class="pk">PART D</span><span class="pn">文章に関する質問（6問）</span>
+          <span class="pd">50〜150語の話を聞いて、その話について3つの質問に答えます（話1本につき3問）。</span></div>
+        <div class="pt"><span class="pk">PART E</span><span class="pn">ストーリーリテリング</span>
+          <span class="pd">聞いた話を、自分の言葉で言い直します。30秒。</span></div>
+        <div class="pt"><span class="pk">PART F</span><span class="pn">自由回答</span>
+          <span class="pd">自分の意見を、理由をつけて話します。40秒。</span></div>
+      </div>
+      <p class="n">CとDの「答える時間」の秒数は、公式の資料に書かれていません。このアプリでは暫定の秒数を使っていて、画面にもその旨を出しています。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>出てくる数字の意味</summary>
+    <div class="dbody">
+      <p>このアプリが出す数字は<b>練習の目安</b>で、本番のスコアではありません。本番の点数を当てるものでもありません。</p>
+      <ul>
+        <li><b>言えた率</b>：お手本の語のうち、いくつが音の中にあったか</li>
+        <li><b>発音の正確さ</b>：語ごとの発音（0〜100）。一語だけの答えは振れやすいので目安として見てください</li>
+        <li><b>「◯◯が△△に聞こえます」</b>：その語が速く話されると、どう変わって聞こえるか</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ⚠️ ここは open のまま。折りたたむと**読まれない**し、
+       「非公式であること」は隠す所ではない(審査でも見られる)。 -->
+  <details open>
+    <summary>大事なこと（非公式です）</summary>
+    <div class="dbody">
+      <p>このアプリは<b>非公式</b>です。Versant&reg; は NCS Pearson, Inc. の登録商標で、このアプリは同社および試験の運営者とは関係がありません。承認や推奨を受けたものでもありません。</p>
+      <p>問題・音声・解答例は<b>すべてこのアプリのオリジナル</b>で、本番の試験問題は1問も入っていません。</p>
+      <p><a href="./privacy.html">声とデータの扱い</a>　/　<a href="./terms.html">利用規約</a></p>
+    </div>
+  </details>
+
+  <button class="hbtn" id="howtoOk">とじて、はじめる</button>
  </div>
 </div>
 <div id="micok" class="off" aria-hidden="true">
@@ -669,7 +754,8 @@
   <!-- いつでも読み返せる場所。初回だけ出して終わりにしない -->
   <div class="setrow col">
     <div class="lb"><b>使い方・Versantとは</b><span>試験の中身、3つの使い方、数字の意味</span></div>
-    <button class="prevres" id="openHowto" style="margin-top:10px">開く</button>
+    <button class="prevres" id="openHowto" style="margin-top:10px">読む</button>
+    <button class="prevres" id="replayCoach" style="margin-top:8px">画面の使い方をもう一度</button>
   </div>
   <div class="setrow col">
     <div class="lb"><b>学習の記録</b><span>受験日・練習した日・済み・自己ベスト・にがてな語・直近の採点結果は、この端末の中だけに保存しています。外には送りません。採点をお願いするときだけ、使いすぎを防ぐ回数かぞえのために「この端末の番号」（名前も機種も含まない乱数）を一緒に送っています。消すとこの番号も作り直されます。<a href="./privacy.html">くわしく</a></span></div>
@@ -789,7 +875,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0903-14';
+const BUILD='0904-01';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1386,6 +1472,70 @@ document.getElementById('mkQuit').onclick=(e)=>{
   b.dataset.confirm=''; b.textContent='試験をやめる'; quitMock();
 };
 
+// ===== 触って覚えるチュートリアル =====
+// 文章のガイド(#howto)は「読みたい人が読む」もので、初めての人はまず読まない。
+// なので、**実物の画面の上で押す場所を指す**案内を初回に1度だけ出す。
+// 指す相手は実際のボタンなので、レイアウトが変わっても位置がずれない(その場で測る)。
+const COACH=[
+  {sel:null,            t:'上下にスワイプで進みます',
+   d:'画面を上にはらうと次の問題、下にはらうと前の問題です。イヤホンやロック画面の「次へ／前へ」でも動きます。'},
+  {sel:'[data-play]',   t:'ここで止める・もう一度',
+   d:'問題の音声は自動で流れます。止めたいとき、聞き直したいときはここ。左の矢印は「もう一回」です。'},
+  {sel:'[data-spd]',    t:'聞き取れない文は、ゆっくりに',
+   d:'押すたびに速さが変わります。まずゆっくりで音の形をつかんでから、本番の速さに戻すのがおすすめです。'},
+  {sel:'#eyeToggle',    t:'答えと「聞こえ方」を見る',
+   d:'英文・訳と、速く話されたときにどう聞こえるか（have to → ハフタ）が出ます。先に耳だけで挑戦してから開いてください。'},
+  {sel:'[data-mic]',    t:'声に出して答える',
+   d:'押すと録音、もう一度押すと採点します。語ごとの発音と、言えなかった語が返ります。はじめて押すときに、声の送り先の説明が出ます。'}
+];
+let coachI=0;
+function coachTargets(){ return COACH.filter(x=>!x.sel || document.querySelector(x.sel)); }
+function showCoach(){
+  const list=coachTargets(); if(!list.length) return;
+  coachI=0;
+  const el=document.getElementById('coach');
+  el.classList.remove('off'); el.setAttribute('aria-hidden','false');
+  pushOverlay('coach', endCoach);
+  document.getElementById('cDots').innerHTML=list.map(()=>'<i></i>').join('');
+  renderCoach(list);
+}
+function renderCoach(list){
+  const c=list[coachI], hole=document.getElementById('cHole');
+  document.getElementById('cStep').textContent=(coachI+1)+' / '+list.length;
+  document.getElementById('cTitle').textContent=c.t;
+  document.getElementById('cDesc').textContent=c.d;
+  document.getElementById('cNext').textContent=(coachI===list.length-1)?'はじめる':'次へ';
+  document.querySelectorAll('#cDots i').forEach((d,i)=>d.classList.toggle('on',i===coachI));
+  // 指す場所は、その場で実物から測る(数字を決め打ちしない)
+  const t=c.sel?document.querySelector(c.sel):null;
+  const box=document.getElementById('coach');
+  if(t){ const r=t.getBoundingClientRect(); const pad=8;
+    hole.hidden=false;
+    hole.style.left=(r.left-pad)+'px'; hole.style.top=(r.top-pad)+'px';
+    hole.style.width=(r.width+pad*2)+'px'; hole.style.height=(r.height+pad*2)+'px';
+    // 指す場所が画面の下半分なら、説明の紙は上に置く(指した物を隠さないため)
+    box.classList.toggle('top', (r.top + r.height/2) > window.innerHeight*0.5);
+    box.classList.add('spot');
+  } else { hole.hidden=true; box.classList.remove('top'); box.classList.remove('spot'); }
+}
+function endCoach(){
+  popOverlay('coach');
+  const el=document.getElementById('coach');
+  el.classList.add('off'); el.setAttribute('aria-hidden','true');
+  try{ localStorage.setItem('coachV1','1'); }catch(e){}
+}
+document.getElementById('cNext').onclick=()=>{
+  const list=coachTargets();
+  if(coachI>=list.length-1){ endCoach(); return; }
+  coachI++; renderCoach(list);
+};
+document.getElementById('cSkip').onclick=endCoach;
+// 設定からいつでもやり直せる(一度きりにしない)
+function replayCoach(){ try{ localStorage.removeItem('coachV1'); }catch(e){}
+  closeSet(); if(document.getElementById('app').classList.contains('off')){
+    const el=document.querySelector('#plist .pcard:not([data-mock])'); if(el) el.click();
+  } else { setTimeout(showCoach,300); } }
+
 // はじめての人向けの案内。ホーム・設定・初回の「はじめに」から開ける。
 // 一度読んだら閉じるだけで、二度と出さない類のものではない(いつでも読み返せる場所に置く)。
 function openHowto(){
@@ -1401,8 +1551,10 @@ function closeHowto(){
   el.classList.add('off'); el.setAttribute('aria-hidden','true');
 }
 document.getElementById('howtoOk').onclick=closeHowto;
+document.getElementById('howtoX').onclick=closeHowto;
 document.getElementById('homeHowto').onclick=openHowto;
 document.getElementById('openHowto').onclick=()=>{ closeSet(); openHowto(); };
+document.getElementById('replayCoach').onclick=replayCoach;
 
 // マイクを初めて使う前に一度だけ同意を取る。
 // OSの許可ダイアログは「マイクを使ってよいか」しか聞かないので、
@@ -1432,6 +1584,10 @@ function ensureMicConsent(){
 // 使い方は初回だけ出す。以前は「上にフリックで次の問題」の一行が毎回出るだけで、
 // マイクの使い方も答えの出し方も説明が無かった(推奨40)
 function showGuideOnce(){
+  // 初回は**触って覚えるほう**を出す。文章の「はじめに」は読まれないまま閉じられる。
+  // カードが描かれてから測る必要があるので、少しだけ待つ。
+  let seen=true; try{ seen=!!localStorage.getItem('coachV1'); }catch(e){ seen=true; }
+  if(!seen){ setTimeout(showCoach,450); return; }
   try{ if(localStorage.getItem('guideV1')) return; }catch(e){ return; }
   const g=document.getElementById('guide'); if(!g) return;
   g.classList.remove('off'); g.setAttribute('aria-hidden','false');

@@ -22,18 +22,18 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);
-    font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+    font-size:16.5px;line-height:1.95;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
   .wrap{max-width:680px;margin:0 auto;
-    padding:calc(var(--sat) + 40px) 24px calc(var(--sab) + 64px)}
-  h1{font-size:24px;font-weight:700;line-height:1.5;margin:0 0 6px}
-  .upd{font-size:12.5px;color:var(--faint);margin:0 0 32px}
-  h2{font-size:17px;font-weight:700;margin:38px 0 10px;padding-top:22px;border-top:1px solid var(--line)}
+    padding:calc(var(--sat) + 92px) 22px calc(var(--sab) + 64px)}
+  h1{font-size:26px;font-weight:700;line-height:1.5;margin:0 0 6px}
+  .upd{font-size:13.5px;color:var(--faint);margin:0 0 32px}
+  h2{font-size:18.5px;font-weight:700;margin:38px 0 10px;padding-top:22px;border-top:1px solid var(--line)}
   h2:first-of-type{border-top:0;padding-top:0}
   p{margin:0 0 14px;color:var(--ink)}
-  .note{color:var(--sub);font-size:14px}
+  .note{color:var(--sub);font-size:15px}
   ul{margin:0 0 14px;padding-left:1.15em}
-  li{margin-bottom:7px}
-  table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:14px}
+  li{margin-bottom:7px;line-height:1.95}
+  table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:15px}
   th,td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid var(--line);vertical-align:top}
   th{color:var(--sub);font-weight:600;white-space:nowrap}
   /* 狭い画面では4列が潰れて読めないので、1件ずつ縦に積む(見出しは各行の頭に付ける) */
@@ -44,15 +44,38 @@
     tr:last-child{border-bottom:0}
     td{border:0;padding:0 0 3px}
     td::before{content:attr(data-h);display:inline;color:var(--sub);font-size:12.5px}
-    td:first-child{font-size:15px;padding-bottom:6px}
+    td:first-child{font-size:16px;padding-bottom:6px}
     td:first-child::before{content:none}
   }
+  /* 画面上に固定の戻る帯。アプリの中では上部に戻る手段が無いと詰む
+     (下までスクロールしないと戻れないのは、読み物では特に辛い)。 */
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:5;background:var(--bg);
+    border-bottom:1px solid var(--line);
+    padding:calc(var(--sat) + 8px) 12px 8px;display:flex;align-items:center;gap:2px}
+  .topbar button{display:flex;align-items:center;gap:6px;border:0;background:none;
+    color:var(--accent);font:inherit;font-size:16px;cursor:pointer;padding:10px 10px 10px 6px;
+    min-height:44px}
+  .topbar svg{width:19px;height:19px}
+  .topbar .tt{margin-left:2px;font-size:15px;font-weight:600;color:var(--ink)}
   a{color:var(--accent)}
   code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;color:var(--sub)}
-  .back{display:inline-block;margin-top:40px;color:var(--accent);text-decoration:none;font-size:14px}
+  .back{display:inline-block;margin-top:40px;color:var(--accent);border:0;background:none;
+    font:inherit;font-size:15px;cursor:pointer;padding:12px 0}
 </style>
 </head>
 <body>
+<div class="topbar">
+  <button type="button" id="goBack" aria-label="戻る">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    戻る
+  </button>
+</div>
+<script>
+// アプリの中では、来た所へ帰す。直接開かれた(履歴が無い)ときだけ入口へ。
+document.getElementById('goBack').onclick=function(){
+  if(history.length>1){ history.back(); } else { location.href='./'; }
+};
+</script>
 <div class="wrap">
 <h1>声とデータの扱い</h1>
 <p class="upd">最終更新 2026年9月3日</p>
@@ -125,7 +148,7 @@
 <h2>このアプリについて</h2>
 <p class="note">本サービスは非公式の練習アプリです。Versant&reg; は NCS Pearson, Inc. の登録商標で、本アプリは同社および試験の運営者とは関係ありません。掲載の例題はすべてオリジナルで、本番の試験問題ではありません。</p>
 
-<a class="back" href="./">&lsaquo; アプリに戻る</a>
+<button class="back" type="button" onclick="document.getElementById('goBack').click()">&lsaquo; 戻る</button>
 </div>
 </body>
 </html>
