@@ -43,13 +43,13 @@
   .pop .closex{position:absolute;top:10px;right:12px}
   /* パートを閉じる×は右下（親指位置）。設定の×は上のまま */
   #homeClose{top:auto;bottom:calc(var(--sab) + 16px);right:16px}
-  .brand{font-size:26px;font-weight:600;letter-spacing:-.02em}
-  .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
+  .brand{font-size:28px;font-weight:600;letter-spacing:-.02em}
+  .tag{font-size:14.5px;color:var(--sub);margin:6px 0 28px}
   .plist{display:flex;flex-direction:column;gap:11px}
-  .disc{font-size:11px;color:var(--faint);line-height:1.75;margin-top:28px;text-align:center;padding:0 4px}  /* 非公式の免責 */
+  .disc{font-size:12.5px;color:var(--faint);line-height:1.75;margin-top:28px;text-align:center;padding:0 4px}  /* 非公式の免責 */
   .disc.dfirst{margin-top:34px}
   .disc.dfirst button{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;
-    font-size:13px;border-radius:9px;padding:11px 16px;cursor:pointer}
+    font-size:14.5px;border-radius:9px;padding:11px 16px;cursor:pointer}
   .disc.dlink{margin-top:12px}                                   /* 提供元・規約・問い合わせは免責のすぐ下に1行で */
   .disc.dlink a{color:var(--sub);text-decoration:underline}
   .disc .r{font-size:8px;vertical-align:super}
@@ -57,10 +57,10 @@
   .pcard{border:1px solid var(--line2);border-radius:16px;padding:15px 20px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
   .pcard:active{background:var(--hover)}
   .pcard .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-  .pcard .eb{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--sub);font-weight:600}
-  .pcard .meta{font-size:11.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
-  .pcard .ttl{font-size:16px;font-weight:600;letter-spacing:-.01em}
-  .pcard .desc{font-size:12.5px;color:var(--sub)}
+  .pcard .eb{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--sub);font-weight:600}
+  .pcard .meta{font-size:12.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .pcard .ttl{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .pcard .desc{font-size:14px;color:var(--sub)}
   .pcard.speak{text-decoration:none;color:inherit}        /* 話すモード導線(別ページ遷移) */
   .pcard.speak .eb{color:var(--accent)}                    /* 家用モードだと分かるよう見出しだけアクセント色 */
   .ghdr{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:16px 0 -2px}  /* ホームのグループ見出し(本番れんしゅう/きたえる) */
@@ -69,8 +69,8 @@
   .cdown{margin:4px 0 2px;padding:2px 0 16px;border-bottom:1px solid var(--line2)}
   .cdown .cd-main{display:flex;align-items:baseline;gap:9px}
   .cdown .cd-num{font-size:29px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.1}
-  .cdown .cd-lb{font-size:15px;font-weight:600;color:var(--ink)}
-  .cdown .cd-sub{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65}
+  .cdown .cd-lb{font-size:16.5px;font-weight:600;color:var(--ink)}
+  .cdown .cd-sub{font-size:14px;color:var(--sub);margin-top:5px;line-height:1.65}
   .cdown .cd-set{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .cdown input[type=date]{font:inherit;font-size:14px;color:var(--ink);background:none;border:1px solid var(--line2);border-radius:9px;padding:8px 11px}
   /* 空のときの日付欄。iOSでは「年/月/日」が出ず、ただの空の四角に見えて何の欄か分からない。
@@ -110,17 +110,17 @@
     border:1px solid var(--line2);border-radius:14px;padding:16px 30px;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;gap:5px}
   .nextbtn small{font-size:12px;color:var(--sub);font-weight:400;letter-spacing:.01em}
-  .plabel{font-size:12.5px;color:var(--sub);font-weight:500;font-variant-numeric:tabular-nums}
+  .plabel{font-size:13.5px;color:var(--sub);font-weight:500;font-variant-numeric:tabular-nums}
   .plabel b{color:var(--ink);font-weight:600}
 
   .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;min-height:0}
-  .task{font-size:13px;color:var(--sub);font-weight:500;letter-spacing:.02em}
+  .task{font-size:14px;color:var(--sub);font-weight:500;letter-spacing:.02em}
   .wave{display:flex;gap:5px;align-items:center;height:44px}
   /* 答えを開いている間は上のブロックを詰める。flex:1のままだと縮んだ.midから波形がはみ出して答えに重なる */
   .card.ans .mid{flex:0 0 auto;gap:8px;padding:2px 0;overflow:hidden}   /* 何かがはみ出しても本文には被せない(保険) */
   .card.ans .wave{height:20px;gap:4px}
   .card.ans .wave b{height:7px}
-  .card.ans .task{font-size:12px}
+  .card.ans .task{font-size:13px}
   .card.ans .text{flex:1 1 auto;max-height:none}   /* 空いた分は答え欄に回す(下に余白を作らない) */
   .wave b{width:5px;height:12px;background:var(--line2);border-radius:3px;display:block}
   .wave.on b{background:var(--accent);animation:w .9s ease-in-out infinite}
@@ -142,40 +142,44 @@
   .hidebtn svg{width:15px;height:15px}
   /* 会話を全部見る（Part C・畳んでおく） */
   .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px;min-height:44px;display:inline-flex;align-items:center}
-  .kana{font-size:13px;color:var(--sub);margin-bottom:5px;letter-spacing:.02em;line-height:1.6}  /* 英文の上・どう聞こえるか。かたまりで区切る */
+  .kana{font-size:15px;color:var(--sub);margin-bottom:5px;letter-spacing:.02em;line-height:1.6}  /* 英文の上・どう聞こえるか。かたまりで区切る */
   .kana b{color:var(--ink);font-weight:700}  /* 強く・高く読むかたまり=抑揚 */
-  .enlab{font-size:12px;color:var(--sub);margin-bottom:6px}   /* 大きな英文が「質問」なのか「話(聞く本文)」なのかを示す小見出し(本文ラベルと同じ濃さ) */
-  .en{font-size:20px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
-  .yaku{font-size:14px;color:var(--sub);margin-top:6px}
-  .tip{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65}  /* 解説の一言 */
+  .enlab{font-size:12.5px;color:var(--sub);margin-bottom:6px}   /* 大きな英文が「質問」なのか「話(聞く本文)」なのかを示す小見出し(本文ラベルと同じ濃さ) */
+  .en{font-size:22.5px;line-height:1.5;font-weight:500;letter-spacing:-.005em}
+  .yaku{font-size:15.5px;color:var(--sub);margin-top:6px}
+  .tip{font-size:14px;color:var(--sub);margin-top:5px;line-height:1.65}  /* 解説の一言 */
   .pass{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}  /* Part D 本文全文 */
   .pass.top{margin-top:0;padding-top:0;border-top:none}   /* 本文を先頭に置く時は上罫線・余白を消す(へんな線対策) */
-  .pass .pk{font-size:12px;color:var(--sub);margin-bottom:7px}
+  .pass .pk{font-size:13px;color:var(--sub);margin-bottom:7px}
   .pass .pk span{margin-left:8px;color:var(--faint);font-size:11px}
-  .pass .pen{font-size:15px;line-height:1.75;color:var(--ink)}
+  .pass .pen{font-size:16.5px;line-height:1.75;color:var(--ink)}
   .pass .pen b{font-weight:700}          /* 答えの手がかりの一文は太字で強調(色は付けず濃淡で) */
-  .pass .pyaku{font-size:13px;line-height:1.75;color:var(--sub);margin-top:8px}
+  .pass .pyaku{font-size:14.5px;line-height:1.75;color:var(--sub);margin-top:8px}
   .pass .pyaku b{font-weight:700;color:var(--ink)}
   .lseg{transition:color .1s ease}       /* リスニング本文のなぞり単位(設定の.segと名前衝突を避けlseg) */
   .lseg.lit{color:var(--accent)}         /* 再生中の文/行をなぞる青 */
   .pass .pen .lseg.key{font-weight:700}   /* Part D 答えの手がかりの一文(太字) */
-  .row{display:flex;gap:8px;margin-top:15px;font-size:14px}
-  .row .k{color:var(--sub);white-space:nowrap;font-size:12px;padding-top:2px;min-width:3.6em;flex-shrink:0}   /* ラベルは縮めない(長いラベルが縮んで内容と重なるのを防ぐ) */
+  .row{display:flex;gap:8px;margin-top:15px;font-size:15.5px}
+  .row .k{color:var(--sub);white-space:nowrap;font-size:13px;padding-top:2px;min-width:3.6em;flex-shrink:0}   /* ラベルは縮めない(長いラベルが縮んで内容と重なるのを防ぐ) */
   .row .v{color:var(--ink)}
   .row .v b{font-weight:600}
-  .row.ex .v b{font-weight:700;font-size:15.5px}   /* 解答例の「最低限の答え」は気持ち大きく・濃く(周囲14px→15.5px) */
-  body.bigtext .row.ex .v b{font-size:17px}
+  .row.ex .v b{font-weight:700;font-size:17px}   /* 解答例の「最低限の答え」は気持ち大きく・濃く(周囲14px→15.5px) */
+  body.bigtext .row.ex .v b{font-size:18.5px}
   .dlg.first{padding-bottom:15px;margin-bottom:15px;border-bottom:1px solid var(--line)}  /* Part C: 会話を先頭に置き、質問との間に区切り */
   .dlg.first + .enlab{margin-top:0}   /* Part C: 会話の直後は質問ラベル。会話とラベルを詰める(enlabを挟んだので隣接対象を.enから.enlabへ) */
-  .dlg>div{font-size:14px;margin-bottom:14px;padding-left:46px}   /* 発話ごとに少し余白。行だけ(直接の子)を左ガター分インデント。子孫の.dyにも効くと二重インデントになるので > で限定 */
+  .dlg>div{font-size:15.5px;margin-bottom:14px;padding-left:46px}   /* 発話ごとに少し余白。行だけ(直接の子)を左ガター分インデント。子孫の.dyにも効くと二重インデントになるので > で限定 */
   .dlg span:not(.lseg){color:var(--sub);font-size:11.5px;margin-right:0;display:inline-block;width:46px;margin-left:-46px;vertical-align:top}   /* 話者ラベルを左ガターに固定=英文が全行そろう。台詞本文の.lsegには当てない(会話が11.5px灰色に潰れ・bigtext無効になる回帰を防ぐ) */
-  .dlg .dy{color:var(--sub);font-size:12px;margin:0 0 8px 0}   /* 訳は発話divのpadding-left(46px)で既に英文と同じ左端。ここで足すと二重インデントになる */
+  .dlg .dy{color:var(--sub);font-size:13.5px;margin:0 0 8px 0}   /* 訳は発話divのpadding-left(46px)で既に英文と同じ左端。ここで足すと二重インデントになる */
   /* 「文字を大きく」ON時 */
-  body.bigtext .en{font-size:23px}
-  body.bigtext .yaku{font-size:16px}
-  body.bigtext .row{font-size:15.5px}
-  body.bigtext .dlg div{font-size:16px}
-  body.bigtext .dlg .dy{font-size:14px}
+  body.bigtext .en{font-size:26px}
+  body.bigtext .yaku{font-size:17.5px}
+  body.bigtext .row{font-size:17px}
+  body.bigtext .dlg div{font-size:17.5px}
+  body.bigtext .dlg .dy{font-size:15.5px}
+  body.bigtext .kana{font-size:16.5px}
+  body.bigtext .tip{font-size:15.5px}
+  body.bigtext .pass .pen{font-size:18px}
+  body.bigtext .pass .pyaku{font-size:16px}
 
   .bot{margin-top:14px}
   /* 再生/停止を画面中央に固定、もう一回と速度を左右に置く */
@@ -184,7 +188,7 @@
   .yb:active{opacity:.5}
   .yb.rep{width:46px;height:46px;justify-self:center}
   .yb.play{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg);justify-self:center}
-  .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:13px;padding:9px 15px;min-height:44px;display:inline-flex;align-items:center;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
+  .spd{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;font-size:14px;padding:9px 15px;min-height:44px;display:inline-flex;align-items:center;border-radius:22px;cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums;justify-self:center}
 
   /* ===== 発音採点(押し続け録音のマイク＋結果シート) ===== */
   .spdrow{display:flex;justify-content:center;margin-bottom:14px}   /* 速度は再生ボタンの上段に置く */
@@ -258,14 +262,15 @@
     padding:calc(var(--sat) + 26px) 24px calc(var(--sab) + 40px)}
   #mres.off{display:none}
   #mres h2{font-size:22px;font-weight:700;margin:0 0 4px}
-  #mres .rsub{font-size:13px;color:var(--sub);margin:0 0 24px}
+  #mres .rsub b{color:var(--ink);font-weight:700}
+  #mres .rsub{font-size:14.5px;line-height:1.85;color:var(--sub);margin:0 0 24px}
   #mres .rrow{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:baseline;
     padding:16px 0;border-top:1px solid var(--line)}
-  #mres .rp{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.06em}
-  #mres .rt{font-size:14px;color:var(--ink)}
-  #mres .rv{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
-  #mres .rv small{font-size:12px;color:var(--faint);font-weight:400;margin-left:3px}
-  #mres .rnote{font-size:12px;color:var(--faint);margin-top:3px;line-height:1.7}
+  #mres .rp{font-size:12.5px;font-weight:700;color:var(--sub);letter-spacing:.06em}
+  #mres .rt{font-size:15.5px;color:var(--ink)}
+  #mres .rv{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
+  #mres .rv small{font-size:13px;color:var(--faint);font-weight:400;margin-left:3px}
+  #mres .rnote{font-size:13.5px;color:var(--faint);margin-top:3px;line-height:1.7}
   #mres .rhd{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
     color:var(--faint);margin:30px 0 2px}
   #mres .wlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -282,10 +287,10 @@
     padding:calc(var(--sat) + 26px) 24px calc(var(--sab) + 26px)}
   #drill.off{display:none}
   #drill .dw{font-size:32px;font-weight:600;margin:0 0 6px}
-  #drill .dk{font-size:15px;color:var(--accent);margin:0 0 22px}
-  #drill .dsent{font-size:17px;line-height:1.85;color:var(--ink);margin:0 0 8px}
+  #drill .dk{font-size:16px;color:var(--accent);margin:0 0 22px}
+  #drill .dsent{font-size:18px;line-height:1.85;color:var(--ink);margin:0 0 8px}
   #drill .dsent b{color:var(--accent)}
-  #drill .dyaku{font-size:13px;color:var(--sub);line-height:1.8}
+  #drill .dyaku{font-size:14.5px;color:var(--sub);line-height:1.8}
   #drill .dstate{margin-top:26px;font-size:13px;color:var(--sub);letter-spacing:.06em}
   #drill .dnav{margin-top:auto;display:flex;gap:10px}
   #drill .dnav button{flex:1;padding:13px;border:1px solid var(--line2);border-radius:10px;background:none;
@@ -875,7 +880,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-01';
+const BUILD='0904-03';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1368,8 +1373,19 @@ function showMockResult(results){
   }
   document.getElementById('mrRows').innerHTML=rows;
   const fail=results.filter(r=>!r.ok).length;
-  document.getElementById('mrSub').textContent =
-    `${results.length}問を採点${fail?`（${fail}問は通信できず採点できませんでした）`:''}。本番のスコアではありません。`;
+  const sub=document.getElementById('mrSub');
+  if(!mkRecs.length){
+    // 【重要】録音が1問も無いまま最後まで受けた人。マイクを断った/切った人が実際に通る道。
+    // ここで「0問を採点。」とだけ出すと、21分受けて何が起きたのか分からない。
+    // 何が足りなかったのか、どうすれば採点できるのかを書く。
+    sub.innerHTML='<b>採点できませんでした。</b>マイクが使えなかったため、声が1問も録れていません。'
+      +'<br>端末の「設定」→「Versant練習」→ マイク を許可すると、次から採点できます。'
+      +'<br>問題そのものは最後まで流れているので、聞く練習にはなっています。';
+    document.getElementById('mrRows').innerHTML='';
+  }else{
+    sub.textContent =
+      `${results.length}問を採点${fail?`（${fail}問は通信できず採点できませんでした）`:''}。本番のスコアではありません。`;
+  }
 
   // 【独自価値】聞き取れなかった語を集める。ここが競合に無いところ
   const wmap={};
