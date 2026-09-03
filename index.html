@@ -527,7 +527,7 @@
   <h3>大事なこと</h3>
   <p>このアプリは<b>非公式</b>です。Versant&reg; は NCS Pearson, Inc. の登録商標で、このアプリは同社および試験の運営者とは関係がありません。承認や推奨を受けたものでもありません。</p>
   <p>問題・音声・解答例は<b>すべてこのアプリのオリジナル</b>で、本番の試験問題は1問も入っていません。</p>
-  <p><a href="./privacy.html" target="_blank" rel="noopener">声とデータの扱い</a>　/　<a href="./terms.html" target="_blank" rel="noopener">利用規約</a></p>
+  <p><a href="./privacy.html">声とデータの扱い</a>　/　<a href="./terms.html">利用規約</a></p>
 
   <button class="hbtn" id="howtoOk">はじめる</button>
  </div>
@@ -543,7 +543,7 @@
   <div class="mrow"><span class="mk">気をつけること</span>
     <span class="mb">他の人の声や、知られたくない話が入らない場所で使ってください。</span>
     <span class="ms">学習の記録はこの端末の中だけに保存され、外には送りません。</span></div>
-  <p class="mlink"><a href="./privacy.html" target="_blank" rel="noopener">声とデータの扱い（全文）</a>　/　<a href="./terms.html" target="_blank" rel="noopener">利用規約</a></p>
+  <p class="mlink"><a href="./privacy.html">声とデータの扱い（全文）</a>　/　<a href="./terms.html">利用規約</a></p>
   <div class="mbtns">
     <button class="mbtn" id="micokYes">同意して録音する</button>
     <button class="mbtn sub" id="micokNo">やめる</button>
@@ -672,7 +672,7 @@
     <button class="prevres" id="openHowto" style="margin-top:10px">開く</button>
   </div>
   <div class="setrow col">
-    <div class="lb"><b>学習の記録</b><span>受験日・練習した日・済み・自己ベスト・にがてな語・直近の採点結果は、この端末の中だけに保存しています。外には送りません。採点をお願いするときだけ、使いすぎを防ぐ回数かぞえのために「この端末の番号」（名前も機種も含まない乱数）を一緒に送っています。消すとこの番号も作り直されます。<a href="./privacy.html" target="_blank" rel="noopener">くわしく</a></span></div>
+    <div class="lb"><b>学習の記録</b><span>受験日・練習した日・済み・自己ベスト・にがてな語・直近の採点結果は、この端末の中だけに保存しています。外には送りません。採点をお願いするときだけ、使いすぎを防ぐ回数かぞえのために「この端末の番号」（名前も機種も含まない乱数）を一緒に送っています。消すとこの番号も作り直されます。<a href="./privacy.html">くわしく</a></span></div>
     <button class="prevres" id="wipeLog" style="margin-top:10px">記録を消す</button>
   </div>
 </div>
@@ -789,7 +789,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0903-13';
+const BUILD='0903-14';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
