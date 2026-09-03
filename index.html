@@ -787,7 +787,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0903-11';
+const BUILD='0903-12';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -955,9 +955,13 @@ function renderHome(){
   // 話す採点は各カードのマイクボタンに統合済み。ホームは「本番れんしゅう(A〜F)」と「きたえる(基礎トレ)」の2グループ
   const mkCard=(p,i)=>{
     const n=p.chapters.filter(c=>!c.tail).length;
+    // Part D は本番と同じ「1つの話につき3問」の形なので、章の数=問数ではない。
+    // 「10問」と出していたが実際は10話30問で、少なく見せていた(ストアの説明文も同じ間違いをしていた)。
+    const qn=p.chapters.filter(c=>!c.tail).reduce((a,c)=>a+((c.questions&&c.questions.length)||1),0);
+    const cnt = qn>n ? `${n}話・${qn}問` : `${n}問`;
     const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"
     return `<div class="pcard" data-p="${i}">`
-      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${(SPK_PARTS.has(p.id)||QA_PARTS.has(p.id))?(doneCount(p,n)>=n?'<span class="dq">済み</span>':doneCount(p,n)>0?'<span class="dq">'+doneCount(p,n)+'/'+n+'</span> 済み':n+'問'):(REC_ONLY_PARTS.has(p.id)?n+'問 <span style="color:var(--sub);font-size:11px;margin-left:2px">録音のみ</span>':n+'問')}</span></div>`
+      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${(SPK_PARTS.has(p.id)||QA_PARTS.has(p.id))?(doneCount(p,n)>=n?'<span class="dq">済み</span>':doneCount(p,n)>0?'<span class="dq">'+doneCount(p,n)+'/'+n+'</span> 済み':cnt):(REC_ONLY_PARTS.has(p.id)?cnt+' <span style="color:var(--sub);font-size:11px;margin-left:2px">録音のみ</span>':cnt)}</span></div>`
       +`<div class="ttl">${name}</div>`
       +`<div class="desc">${TASK[p.id]||''}</div></div>`;
   };
