@@ -4,11 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>声とデータの扱い｜Versant 練習</title>
+<link rel="stylesheet" href="./fonts.css">
 <style>
   :root{
+    /* 端の余白。ブラウザは env() がそのまま効く。アプリ(WKWebView)は env() が常に0を返すので、
+       Flutter 側が実測値で上書きする(main.dart の _applyInsets) */
+    --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom);
     --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee; --line2:#d6d8dd;
     --accent:#1f4fd8; --bg:#fbfbfc;
-    --ui:"Inter","Noto Sans JP",-apple-system,BlinkMacSystemFont,sans-serif;
+    --ui:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -20,7 +24,7 @@
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);
     font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
   .wrap{max-width:680px;margin:0 auto;
-    padding:calc(env(safe-area-inset-top) + 40px) 24px calc(env(safe-area-inset-bottom) + 64px)}
+    padding:calc(var(--sat) + 40px) 24px calc(var(--sab) + 64px)}
   h1{font-size:24px;font-weight:700;line-height:1.5;margin:0 0 6px}
   .upd{font-size:12.5px;color:var(--faint);margin:0 0 32px}
   h2{font-size:17px;font-weight:700;margin:38px 0 10px;padding-top:22px;border-top:1px solid var(--line)}
@@ -72,32 +76,39 @@
 <p><strong>当方のサーバーは、声を受け取って各社へ渡すだけで、保存しません。</strong></p>
 
 <h2>この端末の中だけに残るもの</h2>
-<p>次のものは、あなたの端末のブラウザの中だけに保存されます。<strong>外には送りません。</strong></p>
+<p>次のものは、あなたの端末の中だけに保存されます。<strong>外には送りません。</strong></p>
 <ul>
   <li>受験予定日</li>
   <li>練習した日</li>
   <li>問題ごとの「済み」と自己ベスト</li>
   <li>つまずいた語（英単語と、その回数）</li>
   <li>直近80問ぶんの採点結果と、そのときの文字起こし</li>
+  <li>この端末の番号（下の「使いすぎを防ぐために見ているもの」を読んでください）</li>
 </ul>
-<p class="note">ブラウザのデータを消したとき、また iPhone では1週間ほど開かないと、これらが消えることがあります。端末をまたいで引き継ぐ機能はありません。</p>
+<p class="note">端末をまたいで引き継ぐ機能はありません。ウェブ版をブラウザで使っている場合は、ブラウザのデータを消したとき、また iPhone の Safari では1週間ほど開かないと、これらが消えることがあります。アプリ版ではアプリを消すまで残ります。</p>
 
 <h2>録音そのものについて</h2>
 <p>録音した音声は、<strong>端末にもサーバーにも保存していません。</strong>採点が終わると、その場で捨てられます。模試を受けているあいだは、採点のために一時的に端末のメモリに置きますが、画面を閉じると消えます。</p>
 
 <h2>使いすぎを防ぐために見ているもの</h2>
-<p>採点の窓口では、同じ場所から短時間に大量に呼ばれるのを防ぐため、<strong>接続元の番号（IPアドレス）をその日の回数を数えるためだけに一時的に扱っています。</strong>保存も、他の情報との結びつけもしていません。</p>
+<p>採点には外部のAIを使うため、ひとりが極端にたくさん使うと他の方が使えなくなります。それを防ぐために、次の2つでその日の回数を数えています。</p>
+<ul>
+  <li><strong>この端末の番号</strong>：初めて使うときに、この端末の中で作られる乱数です（例：<code>3f9c1a7b…</code>）。あなたの名前も、端末の機種も、広告用のIDも含みません。採点をお願いするときに、回数を数えるためだけに一緒に送ります。<strong>記録を消すと作り直され、その日の残り回数も戻ります。</strong></li>
+  <li><strong>接続元の番号（IPアドレス）</strong>：桁違いに多い呼び出しを止めるための後ろ盾です。</li>
+</ul>
+<p class="note">どちらも、その日の回数を数えるためだけに一時的に扱っています。保存も、他の情報との結びつけもしていません。あなたが誰かを知るためのものではありません。</p>
 
 <h2>外部から読み込んでいるもの</h2>
-<p>画面の書体を Google のサーバーから読み込んでいます。このとき、あなたの接続元の情報が Google に渡ります。書体の表示だけに使われるもので、当方はその情報を受け取りません。</p>
+<p><strong>ありません。</strong>画面の書体も、教材の音声も、問題のデータも、すべてアプリの中に入っています。外に出ていくのは、採点のときに送る録音と文章だけです（上の表のとおり）。</p>
 
 <h2>広告・アクセス解析</h2>
 <p>使っていません。広告は表示せず、アクセス解析のツールも入れていません。</p>
 
 <h2>消し方</h2>
 <ul>
-  <li><strong>アプリの中から消す</strong>：設定（右上の歯車）→「学習の記録」→「記録を消す」</li>
-  <li><strong>まとめて消す</strong>：ブラウザの設定から、このサイトのデータを削除してください</li>
+  <li><strong>中から消す</strong>：設定（右上の歯車）→「学習の記録」→「記録を消す」。上に挙げたものが、端末の番号も含めて全部消えます</li>
+  <li><strong>アプリごと消す</strong>：アプリを削除すると、中のデータも一緒に消えます</li>
+  <li><strong>ブラウザで使っている場合</strong>：ブラウザの設定から、このサイトのデータを削除してください</li>
 </ul>
 <p class="note">外部に送った声は当方で保持していないため、消す対象がありません。各社での扱いは上の表のとおりです。</p>
 

@@ -4,11 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>利用規約｜Versant 練習</title>
+<link rel="stylesheet" href="./fonts.css">
 <style>
   :root{
+    /* 端の余白。ブラウザは env() がそのまま効く。アプリ(WKWebView)は env() が常に0を返すので、
+       Flutter 側が実測値で上書きする(main.dart の _applyInsets) */
+    --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom);
     --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee;
     --accent:#1f4fd8; --bg:#fbfbfc;
-    --ui:"Inter","Noto Sans JP",-apple-system,BlinkMacSystemFont,sans-serif;
+    --ui:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -20,7 +24,7 @@
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);
     font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
   .wrap{max-width:680px;margin:0 auto;
-    padding:calc(env(safe-area-inset-top) + 40px) 24px calc(env(safe-area-inset-bottom) + 64px)}
+    padding:calc(var(--sat) + 40px) 24px calc(var(--sab) + 64px)}
   h1{font-size:24px;font-weight:700;line-height:1.5;margin:0 0 6px}
   .upd{font-size:12.5px;color:var(--faint);margin:0 0 32px}
   h2{font-size:17px;font-weight:700;margin:38px 0 10px;padding-top:22px;border-top:1px solid var(--line)}

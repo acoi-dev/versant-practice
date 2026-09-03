@@ -8,12 +8,16 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Versant 練習</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* Inter は同梱する。Google のサーバーから読むと、通信が無いと書体が崩れ、接続元の情報が第三者に渡る。日本語は端末の書体(iOSならヒラギノ)に任せる=採点のアドバイスは毎回違う文字が来るので、部分書体にすると欠ける */
+  @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/Inter-400-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; } @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/Inter-400-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/Inter-500-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; } @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/Inter-500-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/Inter-600-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; } @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/Inter-600-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   :root{
+    /* 端の余白。ブラウザは env() がそのまま効く。アプリ(WKWebView)は env() が常に0を返すので、
+       Flutter 側が実測値でこの2つを上書きする(main.dart の _applyInsets) */
+    --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom);
     --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee; --line2:#d6d8dd;
     --accent:#1f4fd8; --bg:#fbfbfc; --hover:#f2f3f5; --flashbg:rgba(0,0,0,.05);
-    --ui:"Inter","Noto Sans JP",-apple-system,BlinkMacSystemFont,sans-serif;
+    --ui:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
   }
   /* 寝る前用のダーク（純黒でなく目に優しい濃色） */
   @media (prefers-color-scheme: dark){
@@ -30,15 +34,15 @@
 
   /* ===== ホーム ===== */
   /* ホームはプレイヤーの上にかぶさるオーバーレイ（画面遷移でなくその場で開閉） */
-  #home{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;padding:calc(env(safe-area-inset-top) + 46px) 24px calc(env(safe-area-inset-bottom) + 84px);transition:opacity .18s ease,transform .18s ease}
+  #home{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;padding:calc(var(--sat) + 46px) 24px calc(var(--sab) + 84px);transition:opacity .18s ease,transform .18s ease}
   #home.off{opacity:0;transform:scale(.99);pointer-events:none}
   #home::-webkit-scrollbar{display:none}
   /* 右上の閉じる×（ホーム・設定 共通） */
-  .closex{position:fixed;top:calc(env(safe-area-inset-top) + 12px);right:16px;z-index:12;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-size:24px;line-height:1}
+  .closex{position:fixed;top:calc(var(--sat) + 12px);right:16px;z-index:12;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-size:24px;line-height:1}
   .closex[hidden]{display:none}
   .pop .closex{position:absolute;top:10px;right:12px}
   /* パートを閉じる×は右下（親指位置）。設定の×は上のまま */
-  #homeClose{top:auto;bottom:calc(env(safe-area-inset-bottom) + 16px);right:16px}
+  #homeClose{top:auto;bottom:calc(var(--sab) + 16px);right:16px}
   .brand{font-size:26px;font-weight:600;letter-spacing:-.02em}
   .tag{font-size:13px;color:var(--sub);margin:6px 0 28px}
   .plist{display:flex;flex-direction:column;gap:11px}
@@ -66,6 +70,13 @@
   .cdown .cd-sub{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.65}
   .cdown .cd-set{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .cdown input[type=date]{font:inherit;font-size:14px;color:var(--ink);background:none;border:1px solid var(--line2);border-radius:9px;padding:8px 11px}
+  /* 空のときの日付欄。iOSでは「年/月/日」が出ず、ただの空の四角に見えて何の欄か分からない。
+     見える言葉を下に敷き、本物の入力欄を透明にして上に重ねる(押すと端末のピッカーが開く) */
+  .cdown .cd-pick{position:relative;display:inline-flex;align-items:center;justify-content:center;
+    min-height:40px;padding:8px 14px;border:1px solid var(--line2);border-radius:9px;
+    font-size:14px;color:var(--ink);cursor:pointer}
+  .cdown .cd-pick input[type=date]{position:absolute;inset:0;width:100%;height:100%;
+    opacity:0;border:0;padding:0;margin:0;cursor:pointer}
   .cdown .cd-link{font-size:12px;color:var(--sub);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   .pcard .meta .dq{color:var(--accent);font-weight:600}   /* 右上の「N/M 済み」の数字だけアクセント */
   .pcard.lesson{text-decoration:none;color:inherit}        /* イメージ英文法(別ページへ) */
@@ -75,7 +86,7 @@
   /* イメージ英文法をアプリ内オーバーレイ(iframe)で開く=ページ遷移させない */
   #lesson{position:fixed;inset:0;z-index:16;background:var(--bg);display:flex;flex-direction:column}
   #lesson.off{display:none}
-  .lhead{display:flex;align-items:center;gap:6px;padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;border-bottom:1px solid var(--line);flex:0 0 auto}
+  .lhead{display:flex;align-items:center;gap:6px;padding:calc(var(--sat) + 8px) 12px 8px;border-bottom:1px solid var(--line);flex:0 0 auto}
   .lback{border:0;background:none;color:var(--accent);font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;padding:6px 8px;-webkit-tap-highlight-color:transparent}
   .lhead .lt{font-weight:700;font-size:15px;color:var(--ink)}
   #lframe{flex:1 1 auto;width:100%;border:0;display:block}
@@ -87,7 +98,7 @@
   #feed{height:100dvh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
   #feed::-webkit-scrollbar{display:none}
   .card{height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top) + 60px) 24px calc(env(safe-area-inset-bottom) + 88px)}
+    padding:calc(var(--sat) + 60px) 24px calc(var(--sab) + 88px)}
   /* パート末の番兵カード＝スワイプ/タップで次パートへ */
   .nextcard,.prevcard{justify-content:center;align-items:center;text-align:center}
   .nextwrap{display:flex;flex-direction:column;align-items:center;gap:16px}
@@ -184,7 +195,7 @@
   .spkr.show{display:block}
   .spkr-bg{position:absolute;inset:0;background:rgba(0,0,0,.4)}
   .spkr-sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-top-left-radius:20px;border-top-right-radius:20px;border-top:1px solid var(--line2);
-    padding:22px 22px calc(env(safe-area-inset-bottom) + 24px);max-height:86vh;overflow-y:auto;transform:translateY(100%);transition:transform .24s ease}
+    padding:22px 22px calc(var(--sab) + 24px);max-height:86vh;overflow-y:auto;transform:translateY(100%);transition:transform .24s ease}
   .spkr.show .spkr-sheet{transform:translateY(0)}
   .spkr-x{position:absolute;top:12px;right:14px;border:1px solid var(--line2);background:var(--bg);color:var(--sub);width:44px;height:44px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
   .spkr-body{padding-top:14px}
@@ -241,7 +252,7 @@
 
   /* 模試の結果。数字は生のものだけ出す(本番スコアの予測はしない=校正データが無いため) */
   #mres{position:fixed;inset:0;z-index:46;background:var(--bg);overflow-y:auto;
-    padding:calc(env(safe-area-inset-top) + 26px) 24px calc(env(safe-area-inset-bottom) + 40px)}
+    padding:calc(var(--sat) + 26px) 24px calc(var(--sab) + 40px)}
   #mres.off{display:none}
   #mres h2{font-size:22px;font-weight:700;margin:0 0 4px}
   #mres .rsub{font-size:13px;color:var(--sub);margin:0 0 24px}
@@ -265,7 +276,7 @@
     font:inherit;font-size:14px;cursor:pointer}
   /* 弱点ドリル: 聞き取れなかった語が入っていた問題を、ゆっくり→本番速度で聞き比べる */
   #drill{position:fixed;inset:0;z-index:47;background:var(--bg);display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top) + 26px) 24px calc(env(safe-area-inset-bottom) + 26px)}
+    padding:calc(var(--sat) + 26px) 24px calc(var(--sab) + 26px)}
   #drill.off{display:none}
   #drill .dw{font-size:32px;font-weight:600;margin:0 0 6px}
   #drill .dk{font-size:15px;color:var(--accent);margin:0 0 22px}
@@ -279,7 +290,7 @@
   #drill .dnav button.pri{border-color:var(--accent);color:var(--accent);font-weight:700}
   /* 本番形式の模試。試験中は余計なものを一切出さない(本番と同じ緊張感にする) */
   #mock{position:fixed;inset:0;z-index:45;background:var(--bg);display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top) + 22px) 24px calc(env(safe-area-inset-bottom) + 22px)}
+    padding:calc(var(--sat) + 22px) 24px calc(var(--sab) + 22px)}
   #mock.off{display:none}
   #mock .mtop{display:flex;align-items:baseline;justify-content:space-between;font-size:12px;color:var(--sub)}
   #mock .mpart{font-weight:700;color:var(--ink);font-size:13px;letter-spacing:.04em}
@@ -298,7 +309,7 @@
   #mock .mprov{font-size:11px;color:var(--faint)}
   /* マイクを初めて使う前に一度だけ出す同意。使い方(#guide)より上に出す */
   #micok{position:fixed;inset:0;z-index:48;background:var(--bg);display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top) + 28px) 24px calc(env(safe-area-inset-bottom) + 24px);overflow-y:auto}
+    padding:calc(var(--sat) + 28px) 24px calc(var(--sab) + 24px);overflow-y:auto}
   #micok.off{display:none}
   #micok .mtitle{font-size:19px;font-weight:700;margin-bottom:22px}
   #micok .mrow{padding:16px 0;border-top:1px solid var(--line);line-height:1.75}
@@ -314,7 +325,7 @@
   #micok .mbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   /* 初回だけ出す使い方。カードで囲わず、罫線と余白だけで区切る */
   #guide{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top) + 28px) 24px calc(env(safe-area-inset-bottom) + 24px)}
+    padding:calc(var(--sat) + 28px) 24px calc(var(--sab) + 24px)}
   #guide.off{display:none}
   #guide .gtitle{font-size:19px;font-weight:700;color:var(--ink);margin-bottom:26px}
   #guide ol{list-style:none;margin:0;padding:0;flex:1 1 auto}
@@ -326,7 +337,7 @@
   #guide .gbtn{margin-top:24px;width:100%;padding:14px;border:1px solid var(--accent);border-radius:10px;
     background:none;color:var(--accent);font:inherit;font-size:15px;font-weight:700;cursor:pointer}
   #guide .gbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-  .hint{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
+  .hint{position:fixed;left:0;right:0;top:calc(var(--sat) + 104px);text-align:center;font-size:12px;color:var(--sub);pointer-events:none;transition:.5s}
   .hint.hide{opacity:0}
   .hint .up{display:block;font-size:19px;margin-bottom:3px;animation:bob 1.5s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
@@ -338,15 +349,15 @@
   @keyframes pbfade{0%{opacity:0;transform:translateY(9px)}14%{opacity:1;transform:translateY(0)}68%{opacity:1;transform:translateY(0)}100%{opacity:0}}
 
   /* 上部：タイトル中央＋設定は右上（あまり使わないので親指圏外でOK） */
-  .head{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:0;right:0;padding:0 64px;display:flex;justify-content:center;align-items:center;z-index:5}
+  .head{position:fixed;top:calc(var(--sat) + 12px);left:0;right:0;padding:0 64px;display:flex;justify-content:center;align-items:center;z-index:5}
   .htitle{text-align:center;font-size:13px;color:var(--ink);font-weight:600}
-  .topgear{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:16px;z-index:9;border:1px solid var(--line2);background:none;color:var(--sub);width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .topgear{position:fixed;top:calc(var(--sat) + 10px);right:16px;z-index:9;border:1px solid var(--line2);background:none;color:var(--sub);width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
   .topgear svg{width:22px;height:22px;display:block}
 
   /* ===== 下部の片手操作バー（ホーム／答え表示／設定） ===== */
   /* 3カラムgridで中央ボタンを画面ど真ん中に固定（幅差でずれない） */
   .navbar{position:fixed;left:0;right:0;bottom:0;z-index:8;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-    padding:10px 20px calc(env(safe-area-inset-bottom) + 12px);background:var(--bg)}
+    padding:10px 20px calc(var(--sab) + 12px);background:var(--bg)}
   .navb{border:1px solid var(--line2);background:none;color:var(--sub);cursor:pointer;font:inherit;
     display:flex;align-items:center;justify-content:center;gap:7px}
   .navb:active{background:var(--hover)}
@@ -360,7 +371,7 @@
   /* ===== 設定ポップオーバー（歯車の直下にその場で・画面遷移なし） ===== */
   .popbg{position:fixed;inset:0;z-index:20;display:none}
   .popbg.on{display:block}
-  .pop{position:fixed;top:calc(env(safe-area-inset-top) + 56px);right:16px;width:min(288px,86vw);
+  .pop{position:fixed;top:calc(var(--sat) + 56px);right:16px;width:min(288px,86vw);
     background:var(--bg);border:1px solid var(--line2);border-radius:14px;padding:4px 16px 12px;z-index:21;
     max-height:calc(100dvh - 100px);overflow-y:auto;
     opacity:0;transform:translateY(-6px) scale(.97);transform-origin:top right;transition:opacity .13s ease,transform .13s ease;pointer-events:none}
@@ -534,7 +545,7 @@
   <!-- 記録はこの端末の中だけに保存される。iPhoneは1週間開かないと消えることがあるので、
        黙って消えて驚かせないよう先に伝え、消す手段も用意する(推奨51) -->
   <div class="setrow col">
-    <div class="lb"><b>学習の記録</b><span>受験日・練習した日・済み・自己ベスト・にがてな語・直近の採点結果は、この端末の中だけに保存しています。外には送りません。ブラウザのデータを消したとき、また iPhone では1週間ほど開かないと、消えることがあります。</span></div>
+    <div class="lb"><b>学習の記録</b><span>受験日・練習した日・済み・自己ベスト・にがてな語・直近の採点結果は、この端末の中だけに保存しています。外には送りません。採点をお願いするときだけ、使いすぎを防ぐ回数かぞえのために「この端末の番号」（名前も機種も含まない乱数）を一緒に送っています。消すとこの番号も作り直されます。<a href="./privacy.html" target="_blank" rel="noopener">くわしく</a></span></div>
     <button class="prevres" id="wipeLog" style="margin-top:10px">記録を消す</button>
   </div>
 </div>
@@ -554,6 +565,19 @@ const IC_PLAY='<svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l
 const IC_PAUSE='<svg viewBox="0 0 24 24" width="28" height="28"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
 const IC_MIC='<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/><line x1="9" y1="21" x2="15" y2="21"/></svg>';
 const SPEAK_API='https://versant-speaking-api-s8gk.vercel.app';   // 発音採点API(OpenAI Whisper+語一致+GPT)。押し続け録音→離すと採点
+// この端末の番号。採点の窓口が「ひとりが使いすぎていないか」を数えるためだけに使う。
+// 以前はIPで数えていたが、携帯回線は何千人もが同じIPを共有する(CGNAT)ので、
+// **本人は1回も使っていないのに上限**になっていた。名前も端末の情報も含まない乱数。
+// ⚠️ 呼ぶたびに読み直す(定数にしない)。「記録を消す」で消えた直後も古い番号を送り続けてしまい、
+//    『消すと作り直され、その日の残り回数も戻る』(声とデータの扱い)が嘘になる。
+function cid(){ try{
+  let v=localStorage.getItem('cid');
+  if(!/^[a-z0-9]{8,32}$/.test(v||'')){
+    v=(crypto.randomUUID?crypto.randomUUID():String(Math.random())+Date.now()).replace(/[^a-z0-9]/g,'').slice(0,24);
+    localStorage.setItem('cid',v);
+  }
+  return v;
+}catch(e){ return ''; } }
 const IC_GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
 document.getElementById('mGear').innerHTML=IC_GEAR;
 
@@ -638,7 +662,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0903-02';
+const BUILD='0903-07';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -770,7 +794,7 @@ function renderCountdown(){
   if(!ex){
     el.innerHTML='<div class="cd-lb">受験日を入れると、本番までのペースが見えます</div>'
       +'<div class="cd-sub">まだ決めていなければ、まず2週間チャレンジでもOK。</div>'
-      +'<div class="cd-set"><input type="date" id="examInput" aria-label="受験日"></div>';
+      +'<div class="cd-set"><label class="cd-pick">受験日を選ぶ<input type="date" id="examInput" aria-label="受験日"></label></div>';
     bindExamInput('');
   } else {
     const n=daysUntil(ex);
@@ -784,11 +808,11 @@ function renderCountdown(){
     } else {
       el.innerHTML='<div class="cd-lb">受験おつかれさまでした</div>'
         +'<div class="cd-sub">次の目標日を決めると、また続けやすくなります。</div>'
-        +'<div class="cd-set"><input type="date" id="examInput" aria-label="次の受験日"></div>';
+        +'<div class="cd-set"><label class="cd-pick">次の受験日を選ぶ<input type="date" id="examInput" aria-label="次の受験日"></label></div>';
       bindExamInput('');
     }
     const ed=document.getElementById('examEdit');
-    if(ed) ed.onclick=()=>{ el.querySelector('.cd-set').innerHTML='<input type="date" id="examInput" aria-label="受験日">'; bindExamInput(ex); const i2=document.getElementById('examInput'); if(i2&&i2.showPicker){try{i2.showPicker();}catch(e){}} };
+    if(ed) ed.onclick=()=>{ el.querySelector('.cd-set').innerHTML='<label class="cd-pick">受験日を選ぶ<input type="date" id="examInput" aria-label="受験日"></label>'; bindExamInput(ex); const i2=document.getElementById('examInput'); if(i2&&i2.showPicker){try{i2.showPicker();}catch(e){}} };
   }
 }
 
@@ -931,7 +955,9 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
 document.getElementById('wipeLog').onclick=()=>{
   const b=document.getElementById('wipeLog');
   if(b.dataset.confirm!=='1'){ b.dataset.confirm='1'; b.textContent='本当に消す(元に戻せません)'; setTimeout(()=>{ if(b.dataset.confirm==='1'){ b.dataset.confirm=''; b.textContent='記録を消す'; } },6000); return; }
-  try{ localStorage.removeItem('vlog'); }catch(e){}
+  // 端末の番号(cid)も一緒に消す。「声とデータの扱い」に『記録を消すと作り直され、
+  // その日の残り回数も戻る』と書いてある。書いたとおりに動かすこと。
+  try{ localStorage.removeItem('vlog'); localStorage.removeItem('cid'); }catch(e){}
   b.dataset.confirm=''; b.textContent='消しました';
   try{ renderHome(); markCurrent(); }catch(e){}
   setTimeout(()=>{ b.textContent='記録を消す'; },2500);
@@ -1055,6 +1081,7 @@ async function scoreMock(){
       const qa = QA_PARTS.has(r.part);
       const body = qa ? {audio:b64,reference:r.en,mime,mode:'qa',question:r.en,answer:r.answer}
                       : {audio:b64,reference:r.en,mime};
+      body.cid=cid();
       const ac=new AbortController(); const t=setTimeout(()=>ac.abort(), SCORE_TIMEOUT_MS);
       const res=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify(body),signal:ac.signal});
@@ -1828,6 +1855,7 @@ async function scoreSpk(audioB64, reference, mime){
   try{
     const qa = _recPart && QA_PARTS.has(_recPart.id);   // 質問応答パートは内容判定モード(質問+模範解答も送る)
     const body = qa ? {audio:audioB64,reference,mime,mode:'qa',question:reference,answer:(CARDS[_recIdx]&&CARDS[_recIdx].answer)||''} : {audio:audioB64,reference,mime};
+    body.cid=cid();
     const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ac.signal});
     let j=null; try{ j=await r.json(); }catch(e){ j=null; }   // HTMLのエラーページ等でJSONにならない場合
     if(!j||!j.ok) throw new Error((j&&hasJa(j.error))?j.error:'');   // 日本語の案内だけ通す
