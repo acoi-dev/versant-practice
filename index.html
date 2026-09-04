@@ -156,6 +156,9 @@
   @keyframes wsm{0%,100%{height:6px}50%{height:18px}}
   .card.ans .wave.on b{animation-name:wsm}
 
+  /* 【2026-09-04】答えを覆う veil / 隠すボタン / 会話の開閉 は、
+     下バーの「見る／隠す」に役目を移したあと**呼び出しが0件のまま残っていた**。
+     残しておくと「veil が出るはず」と読み違える火種になるので消した(見た目に影響なし)。 */
   /* 答え欄。高さの制約は**包み(.twrap)側**に置く。
      .text に flex を書いても、.twrap で包んだ時点で効かなくなり、
      中身なりに伸びて**操作ボタンを画面の外へ押し出す**(実際に1035pxまではみ出した)。 */
@@ -175,14 +178,8 @@
   @keyframes tmb{0%,100%{transform:rotate(45deg) translate(0,0)}50%{transform:rotate(45deg) translate(2px,2px)}}
   .twrap.more .tmore{display:flex}
   .text::-webkit-scrollbar{display:none}
-  .veil{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--sub);padding:22px 0;cursor:pointer}
-  .veil svg{width:27px;height:27px;display:block;color:var(--sub)}
-  .veil span{font-size:12.5px;color:var(--sub)}
   /* 答えを再度隠すボタン（表示中の先頭） */
-  .hidebtn{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;cursor:pointer;padding-bottom:11px;margin-bottom:3px;border-bottom:1px solid var(--line)}
-  .hidebtn svg{width:15px;height:15px}
   /* 会話を全部見る（Part C・畳んでおく） */
-  .dlgtoggle{color:var(--accent);font-size:13px;cursor:pointer;padding:11px 0 2px;min-height:44px;display:inline-flex;align-items:center}
   .kana{font-size:15px;color:var(--sub);margin-bottom:5px;letter-spacing:.02em;line-height:1.6}  /* 英文の上・どう聞こえるか。かたまりで区切る */
   .kana b{color:var(--ink);font-weight:700}  /* 強く・高く読むかたまり=抑揚 */
   .enlab{font-size:12.5px;color:var(--sub);margin-bottom:6px}   /* 大きな英文が「質問」なのか「話(聞く本文)」なのかを示す小見出し(本文ラベルと同じ濃さ) */
@@ -850,7 +847,7 @@
 <script>
 const AU=document.getElementById('au');
 const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる',G:'弱く消える音を聞き取る'};
-let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true,dlgShown={},partIdx=null;
+let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true,partIdx=null;
 let TAIL=null;   // 各パート末尾の「まとめ・通し練習」。CARDS には入れず、最終カードから呼ぶ
 let _tailUntil=0;   // まとめを流している間の終端。ここまで来たら止める(次パートへ流さない)
 const SPEEDS=[1,0.85,0.7];                                   // 速度は3段(設定パネルと同じ)。カードのタップもこの順で回す
@@ -960,7 +957,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-11';
+const BUILD='0904-12';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1267,7 +1264,7 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   // CARDS には入れない(問数・済み・名札の数え方に波及するため)。最終カードから呼ぶ。
   TAIL=(PART.chapters||[]).find(c=>c.tail)||null;
   startCard=Math.min(Math.max(0,startCard|0), Math.max(0,CARDS.length-1));   // 教材再生成でカードが減った時など、保存indexが範囲外でも安全に(Bug7)
-  active=startCard; switchTarget=startCard; revealed={}; dlgShown={};
+  active=startCard; switchTarget=startCard; revealed={};
   document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後一覧は×で閉じてプレイヤーに戻れる
   document.getElementById('htitle').textContent=PART.title;
   showPartBanner();   // ★パートが変わったことを中央バナーで一瞬知らせる(境目の空白ページの代わり)
@@ -1982,9 +1979,6 @@ function renderFeed(){
       skOpen('<div class="sk-status">録音を中断しました。もう一度マイクを押すと録り直せます。</div>');
       return;
     }
-    if(e.target.closest('.veil')){const i=+e.target.closest('.veil').dataset.rev;revealed[i]=true;paintText(i);return;}
-    if(e.target.closest('[data-hide]')){const i=+e.target.closest('[data-hide]').dataset.hide;revealed[i]=false;paintText(i);return;}
-    if(e.target.closest('[data-dlg]')){const i=+e.target.closest('[data-dlg]').dataset.dlg;dlgShown[i]=true;paintText(i);return;}
     if(e.target.closest('[data-spd]')){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=spdTxt(speed));if(typeof syncSpeedSeg==='function')syncSpeedSeg();return;}
     if(e.target.closest('[data-rep]')){replay();return;}
     if(e.target.closest('[data-prev]')){ openLastResult(+e.target.closest('[data-prev]').dataset.prev); return; }   // 前回の採点結果を開き直す
@@ -2222,7 +2216,6 @@ function setPlaybackState(s){ if('mediaSession' in navigator){ try{ navigator.me
 AU.addEventListener('play',()=>{document.getElementById('wave'+active)?.classList.add('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PAUSE;document.getElementById('hint')?.classList.add('hide');setPlaybackState('playing');reqWake();});
 AU.addEventListener('pause',()=>{document.getElementById('wave'+active)?.classList.remove('on');const b=document.getElementById('play'+active);if(b)b.innerHTML=IC_PLAY;setPlaybackState('paused');updateHighlight();});   // 停止でなぞりを消す
 
-function veilHTML(i){return `<div class="veil" data-rev="${i}">${IC_EYE}<span>${PART.id==='B'?'英文を見る':'答えを見る'}</span></div>`;}
 function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!el)return;
   if(i===active){_litSeg=-1; updateMediaMeta();}   // 表示カードを描き直すと.textのscrollTopが0に戻るので、なぞり自動スクロールの記憶をリセット(次tickで再追従)。ロック画面の問題番号も更新
   // 答えを開いているカードには .ans を付ける。上の波形ブロックを小さくして、答えに重ならないようにする
