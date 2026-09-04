@@ -344,8 +344,14 @@
     font:inherit;font-size:14px;cursor:pointer}
   /* 弱点ドリル: 聞き取れなかった語が入っていた問題を、ゆっくり→本番速度で聞き比べる */
   #drill{position:fixed;inset:0;z-index:47;background:var(--bg);display:flex;flex-direction:column;
-    padding:calc(var(--sat) + 26px) 24px calc(var(--sab) + 26px)}
+    padding:calc(var(--sat) + 78px) 24px calc(var(--sab) + 26px)}
   #drill.off{display:none}
+  #drill .dbar{position:absolute;top:0;left:0;right:0;background:var(--bg);
+    border-bottom:1px solid var(--line);
+    padding:calc(var(--sat) + 8px) 12px 8px;display:flex;align-items:center;justify-content:space-between}
+  #drill .dbar b{font-size:15px;font-weight:600;color:var(--ink);margin-left:6px}
+  #drill .dbar button{border:0;background:none;color:var(--accent);font:inherit;font-size:16px;
+    cursor:pointer;padding:10px 12px;min-height:44px}
   #drill .dw{font-size:32px;font-weight:600;margin:0 0 6px}
   #drill .dk{font-size:16px;color:var(--accent);margin:0 0 22px}
   #drill .dsent{font-size:18px;line-height:1.85;color:var(--ink);margin:0 0 8px}
@@ -695,7 +701,7 @@
     </div>
   </details>
 
-  <button class="hbtn" id="howtoOk">とじて、はじめる</button>
+  <button class="hbtn" id="howtoOk">閉じる</button>
  </div>
 </div>
 <div id="micok" class="off" aria-hidden="true">
@@ -749,6 +755,8 @@
 </div>
 <!-- 弱点ドリル。聞き取れなかった語が入っていた問題を、ゆっくり→本番速度で -->
 <div id="drill" class="off" aria-hidden="true">
+  <!-- 上に閉じる手段が無いと、Androidの戻るを知らない人が詰む -->
+  <div class="dbar"><b>聞き取れなかった音</b><button type="button" id="drX">閉じる</button></div>
   <div class="dw" id="drWord"></div>
   <div class="dk" id="drKana"></div>
   <div class="dsent" id="drSent"></div>
@@ -962,7 +970,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-15';
+const BUILD='0904-16';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1144,7 +1152,9 @@ function renderCountdown(){
   }
 }
 
-const LV={A:'やさしい',B:'やさしい',C:'少し難しい',D:'少し難しい',E:'難しい',F:'難しい',G:'耳トレ'};   // 入門者から見た目安
+// むずかしさは**入門者から見た目安**で、測って決めた数字ではない。
+// 画面にもそう分かるように出す(根拠のない断定にしない)。
+const LV={A:'やさしめ',B:'やさしめ',C:'やや難',D:'やや難',E:'むずかしめ',F:'むずかしめ',G:'耳トレ'};
 // 崩れの種類ごとの平易な解説(音声学の専門用語は出さない)
 const TIP={form:'2語がくっついて短く言われます。かたまりで覚えると聞き取れます。',
   yod:'前の語と you などが溶け合って「デュ／ヂュ」のように聞こえます。',
@@ -1327,11 +1337,23 @@ document.getElementById('wipeLog').onclick=()=>{
   setTimeout(()=>{ b.textContent='記録を消す'; },2500);
 };
 
+// 画面の外で鳴っている音(模試・弱点ドリルは new Audio() を使う)を、外から止められるようにする。
+// 【なぜ要るか】イヤホンを抜かれた・電話が来た時に止めるのはアプリ側の仕事だが、
+// アプリからは DOM の <audio> しか見えない。ここに登録しておく。
+window.__stopAllAudio=function(){
+  try{ AU.pause(); }catch(e){}
+  try{ if(typeof mkAU!=='undefined' && mkAU) mkAU.pause(); }catch(e){}
+  try{ if(typeof drAU!=='undefined' && drAU) drAU.pause(); }catch(e){}
+  try{ if(typeof _mineAudio!=='undefined' && _mineAudio) _mineAudio.pause(); }catch(e){}
+  try{ speechSynthesis.cancel(); }catch(e){}
+};
+
 // ===== 本番形式の模試 =====
 // 本番と同じ: 音声は1回だけ流れる / 途中で戻れない / 答える時間が来たら自動で次へ。
 // 音声(mock1.mp3)には答える間の無音まで入っているので、再生を止めずに流し切る。
 // 画面は mock_data.json の q_end(=答える時間の始まり)と end で今どこかを判断する。
 let MOCK=null, mkSet=null, mkAU=null, mkTimer=0, mkIdx=-1, mkPhase='', mkRecs=[];
+let mkScoreSeq=0;   // 採点の世代。やめたら世代を進めて、走っている採点を捨てる
 fetch('mock_data.json?v='+BUILD).then(r=>r.ok?r.json():null).then(d=>{ MOCK=d; try{ if(DATA) renderHome(); }catch(e){} }).catch(()=>{});
 
 // 模試が途中で止まったとき(電話・アラーム・別アプリ)に、続きから戻せるようにする。
@@ -1480,6 +1502,7 @@ function mkStopRec(){
 }
 
 function quitMock(){
+  mkScoreSeq++;   // 走っている採点を捨てる(やめたのに通信と費用が続くのを止める)
   popOverlay('mock');
   clearInterval(mkTimer); mkTimer=0;
   mkStopRec();
@@ -1504,11 +1527,14 @@ async function finishMock(){
 // 試験が終わってからまとめて採点する(試験中に通信を待たせない=本番の流れを崩さない)。
 // E/F は正解が一つに決まらないので採点しない(録音だけ残す)。
 async function scoreMock(){
+  const my=++mkScoreSeq;   // この採点の世代。途中でやめられたら止める
   const todo=mkRecs.filter(r=>r.part!=='E'&&r.part!=='F');
   const st=document.getElementById('mkState'), hi=document.getElementById('mkHint');
   st.textContent='採点しています';
   const results=[];
   for(let i=0;i<todo.length;i++){
+    // 【2026-09-04】やめたあとも裏で採点を続け、通信も費用も使い続けていた。
+    if(my!==mkScoreSeq) return;
     hi.textContent=`${i+1} / ${todo.length} 問`;
     const r=todo[i];
     try{
@@ -1799,6 +1825,7 @@ function closeDrill(){
   const el=document.getElementById('drill');
   el.classList.add('off'); el.setAttribute('aria-hidden','true');
 }
+document.getElementById('drX').onclick=closeDrill;
 document.getElementById('drAgain').onclick=playDrill;
 document.getElementById('drNext').onclick=()=>{
   if(drillIdx+1>=drillQueue.length){ closeDrill(); return; }
@@ -1852,9 +1879,13 @@ const COACH=[
 ];
 let coachI=0;
 function coachTargets(){ return COACH.filter(x=>!x.sel || document.querySelector(x.sel)); }
+let _coachWasPlaying=false;
 function showCoach(){
   const list=coachTargets(); if(!list.length) return;
   coachI=0;
+  // 【2026-09-04】案内を読んでいる間も英語が流れ続け、読み終わると
+  // **問題が2つ3つ先に進んでいた**。読んでいる間は止めて、終わったら続きから。
+  try{ _coachWasPlaying=!AU.paused; if(_coachWasPlaying) AU.pause(); }catch(e){ _coachWasPlaying=false; }
   const el=document.getElementById('coach');
   el.classList.remove('off'); el.setAttribute('aria-hidden','false');
   pushOverlay('coach', endCoach);
@@ -1884,7 +1915,9 @@ function endCoach(){
   popOverlay('coach');
   const el=document.getElementById('coach');
   el.classList.add('off'); el.setAttribute('aria-hidden','true');
-  try{ localStorage.setItem('coachV1','1'); }catch(e){}
+  // 触って覚えたなら、文章の「はじめに」はもう出さない(同じ話を全画面で二度読ませない)
+  try{ localStorage.setItem('coachV1','1'); localStorage.setItem('guideV1','1'); }catch(e){}
+  if(_coachWasPlaying){ _coachWasPlaying=false; try{ AU.play().catch(()=>{}); }catch(e){} }
 }
 document.getElementById('cNext').onclick=()=>{
   const list=coachTargets();
@@ -1911,6 +1944,7 @@ document.getElementById('firstCard').onclick=openHowto;
 // 一度読んだら閉じるだけで、二度と出さない類のものではない(いつでも読み返せる場所に置く)。
 function openHowto(){
   const el=document.getElementById('howto'); if(!el) return;
+  updateHowtoBtn();
   el.scrollTop=0;
   el.classList.remove('off'); el.setAttribute('aria-hidden','false');
   pushOverlay('howto', closeHowto);
@@ -1922,7 +1956,21 @@ function closeHowto(){
   const el=document.getElementById('howto'); if(!el) return;
   el.classList.add('off'); el.setAttribute('aria-hidden','true');
 }
-document.getElementById('howtoOk').onclick=closeHowto;
+// まだ一度も練習していない人には、読み終わったらそのまま1問目へ連れて行く。
+// 「はじめる」と書いてあるのに何も始まらないのは、いちばん興ざめする。
+function updateHowtoBtn(){
+  const b=document.getElementById('howtoOk'); if(!b) return;
+  let started=true; try{ started=((JSON.parse(localStorage.getItem('vlog')||'{}').days)||[]).length>0; }catch(e){}
+  b.textContent = started ? '閉じる' : '閉じて、1問目から始める';
+  b.dataset.go = started ? '' : '1';
+}
+document.getElementById('howtoOk').onclick=()=>{
+  const go=document.getElementById('howtoOk').dataset.go==='1';
+  closeHowto();
+  if(go){ setTimeout(()=>{ const b=[...document.querySelectorAll('#plist .pcard[data-p]')]
+      .find(el=>(el.querySelector('.eb')||{}).textContent==='Part B');
+      (b||document.querySelector('#plist .pcard[data-p]'))?.click(); }, 240); }
+};
 document.getElementById('howtoX').onclick=closeHowto;
 document.getElementById('homeHowto').onclick=openHowto;
 document.getElementById('openHowto').onclick=()=>{ closeSet(); openHowto(); };
@@ -1976,9 +2024,12 @@ function closeGuide(){
 // ホームに戻っても音声は止めない(設定と同じく同ページ内の移動として扱う)
 // ホームはプレイヤーの上にかぶせて開く(画面遷移でなく)。プレイヤーはそのまま裏で継続
 function markCurrent(){document.querySelectorAll('.pcard').forEach(el=>el.classList.toggle('current',+el.dataset.p===partIdx));}  // 今いるパートに枠線
-document.getElementById('back').onclick=()=>{popOverlay('part');closeSet();renderHome();markCurrent();document.getElementById('home').classList.remove('off');saveState();};   // 一覧を開くたびに再描画=採点で増えた「済み」を反映
+document.getElementById('back').onclick=()=>{popOverlay('part');closeSet();renderHome();markCurrent();document.getElementById('home').classList.remove('off');saveState();
+  // 【2026-09-04】ホームを開いても履歴を積んでいなかったので、Androidの戻るが素通りして
+  // **いきなりアプリ(サイト)を出ていた**。戻ったら、さっきのプレイヤーに帰す。
+  pushOverlay('home', ()=>{ document.getElementById('home').classList.add('off'); saveState(); });};   // 一覧を開くたびに再描画=採点で増えた「済み」を反映
 // ×で閉じると、さっきのプレイヤーに位置そのまま・音も止めずに戻る
-document.getElementById('homeClose').onclick=()=>{document.getElementById('home').classList.add('off');saveState();};
+document.getElementById('homeClose').onclick=()=>{popOverlay('home');document.getElementById('home').classList.add('off');saveState();};
 
 // 答え表示トグル（下バー中央・親指位置）。今のカードの表示/非表示を切り替える
 function updateEye(){const b=document.getElementById('eyeToggle');if(!b)return;
@@ -2562,11 +2613,23 @@ function skPlayModel(){
 }
 _spkrBody.addEventListener('click',e=>{
   const a=e.target.closest('[data-sk]');
-  if(spkRecording){ if(a&&a.dataset.sk==='again') stopSpkRec(); return; }                  // 録音中は「停止」だけ有効(他は無効=音が混ざらない)
+  if(spkRecording){ if(a&&a.dataset.sk==='again') stopSpkRec(); return; }   // resend は録音中に出ない                  // 録音中は「停止」だけ有効(他は無効=音が混ざらない)
   const w=e.target.closest('.w'); if(w){ skSpeak(w.textContent); return; }                 // 語タップ=その語を読み上げ(単語ヘルパー)
   if(!a) return;
   if(a.dataset.sk==='mine') skPlayMine();                                                  // 自分の声
   else if(a.dataset.sk==='model') skPlayModel();                                            // お手本=カードと同じ実音声
+  else if(a.dataset.sk==='resend'){   // 同じ録音をもう一度おくる(言い直さない)
+    a.textContent='おくっています…'; a.disabled=true;
+    (async()=>{
+      try{
+        let b64=null, mime='audio/wav';
+        try{ b64=await blobToWav16k(spkLastBlob); }catch(e){ b64=null; }
+        if(!b64){ b64=await blobToB64(spkLastBlob); mime=spkLastBlob.type; }
+        renderSpkPending(spkLastRef);
+        await scoreSpk(b64, spkLastRef, mime);
+      }catch(e){ a.disabled=false; a.textContent='もう一度おくる'; }
+    })();
+  }
   else if(a.dataset.sk==='again'){ startSpkRec(true); a.textContent='録音中… タップで停止'; a.classList.add('sk-recing'); }   // 閉じずにその場で録音(文を見ながら)
 });
 
@@ -2640,8 +2703,14 @@ async function scoreSpk(audioB64, reference, mime){
     const msg = e && e.name==='AbortError'
       ? '時間がかかっています。電波の良いところで、もう一度お試しください。'
       : (hasJa(e&&e.message) ? e.message : '通信がうまくいきませんでした。電波の良いところで、もう一度お試しください。');
+    // 【2026-09-04】通信で落ちただけなのに「もう一度言う」しか出しておらず、
+    // **手元にある録音を捨てて言い直させていた**。電車の中で毎回言い直すのは無理。
+    // 同じ録音をもう一度送れるようにする(言い直したい人のために言い直しも残す)。
+    const canResend = !!(spkLastBlob && spkLastRef);
     skOpen('<div class="sk-status">'+skEsc(msg)+'</div>'
-      +`<div class="sk-actions"><button class="sk-btn sk-again" data-sk="again">もう一度言う</button></div>`);
+      +`<div class="sk-actions">`
+      +(canResend?`<button class="sk-btn sk-again" data-sk="resend">もう一度おくる</button>`:'')
+      +`<button class="sk-btn" data-sk="again">言い直す</button></div>`);
   }
   finally{ clearTimeout(t); }
 }
