@@ -198,6 +198,11 @@
   .lseg.lit{color:var(--accent)}         /* 再生中の文/行をなぞる青 */
   .pass .pen .lseg.key{font-weight:700}   /* Part D 答えの手がかりの一文(太字) */
   /* Part D の質問ごとの録音ボタン。1話3問なので、どの質問に答えるかを選ばせないと採点できない */
+  /* 答えを隠している間の案内。答えは出さない。カードにも枠にもしない */
+  .listenhint{padding:26px 0 0;text-align:center}
+  .listenhint .lh-t{font-size:16.5px;font-weight:600;color:var(--ink);line-height:1.7}
+  .listenhint .lh-d{font-size:14px;color:var(--sub);line-height:1.9;margin-top:10px}
+  .listenhint .lh-d b{color:var(--ink);font-weight:600}
   .qmic{display:inline-flex;align-items:center;gap:8px;margin:10px 0 2px;padding:10px 16px;
     min-height:44px;border:1px solid var(--line2);border-radius:22px;background:none;
     color:var(--sub);font:inherit;font-size:14.5px;cursor:pointer}
@@ -970,7 +975,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-16';
+const BUILD='0904-17';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -2322,7 +2327,16 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
         +`${IC_MIC}<span>質問${qi+1}に答える</span></button>`).join('');
       _card&&_card.classList.add('ans'); updateEye(); return;
     }
-    el.innerHTML='';_card&&_card.classList.remove('ans');updateEye();return;   // 非表示中は本文を空に。表示は下バーの「答えを見る」で
+    // 【2026-09-04】ここが空っぽで、画面の7割が白いだけだった。
+    // 聞くモードは画面を見ない前提だが、初めて開いた人には「何も無い＝壊れている」に見える。
+    // 何をする時間なのかだけ、静かに置いておく(答えは出さない)。
+    el.innerHTML='<div class="listenhint">'
+      +'<div class="lh-t">'+(PART.id==='B'?'聞こえたとおりに、そのまま声に出す':
+                             PART.id==='E'?'話を聞いて、自分の言葉で言い直す':
+                             PART.id==='F'?'自分の意見を、理由をつけて話す':'耳だけで答えを考える')+'</div>'
+      +'<div class="lh-d">できたら下の「見る」で答え合わせ。'
+      +'聞き取れなければ <b>1.0x</b> でゆっくりに。</div></div>';
+    _card&&_card.classList.remove('ans');updateEye();return;   // 表示は下バーの「答えを見る」で
   }
   _card&&_card.classList.add('ans');
   document.getElementById('hint')?.classList.add('hide');
