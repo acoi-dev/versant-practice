@@ -702,7 +702,7 @@
   <div class="mtitle">録音した声の扱い</div>
   <div class="mrow"><span class="mk">どこへ送るか</span>
     <span class="mb">採点のため、録音した声を OpenAI と Microsoft Azure（どちらも米国の会社）へ送ります。</span>
-    <span class="ms">文字起こしと、発音の採点に使います。</span></div>
+    <span class="ms">文字起こしと、発音の採点に使います。発音の採点はお手本と読み比べる仕組みなので、問題文や解答例も一緒に送ります。</span></div>
   <div class="mrow"><span class="mk">どれくらい残るか</span>
     <span class="mb">声そのものは、どちらの会社にも残りません。</span>
     <span class="ms">声を文字に直したあとの文章だけが、不正利用の監視のため OpenAI に最大30日間残ります。このアプリのサーバーは声を保存しません。</span></div>
@@ -960,7 +960,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-10';
+const BUILD='0904-11';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -995,11 +995,26 @@ function logPracticeDay(){ const l=loadLog(); l.days=l.days||[]; const t=todaySt
 // (番号だと教材を1問差し込むだけで、既存の記録が別の問題に付いてしまう)。
 // 名札はデータ側(player_data.json の qid)が持つ。古いデータでも壊れないよう番号に落ちる。
 function qidOf(part,idx){ const c=part&&part.chapters&&part.chapters[idx]; return (c&&c.qid)||((part&&part.id||'?')+'#'+idx); }
-function logDone(part,idx){ if(!part) return; const q=qidOf(part,idx); const l=loadLog(); l.done=l.done||{}; const a=l.done[part.id]=l.done[part.id]||[]; if(!a.includes(q)){ a.push(q); saveLog(l); } }
+// 【2026-09-04】Part D は「1つの話に質問3つ」なので、章の名札だけで数えると
+// **30問あるのに 10 で頭打ち**になり、質問1つ正解しただけで3問ぶんが済みになっていた。
+// 質問番号を名札に足して、問ごとに数える(他のパートは今までどおり)。
+function doneKey(part,idx,q){ const base=qidOf(part,idx); return (q!=null&&q>=0)?`${base}#${q}`:base; }
+function logDone(part,idx,q){ if(!part) return; const k=doneKey(part,idx,q); const l=loadLog(); l.done=l.done||{}; const a=l.done[part.id]=l.done[part.id]||[]; if(!a.includes(k)){ a.push(k); saveLog(l); } }
 // いま在る問題のうち、記録に名札が載っているものを数える(問題を減らしても数がおかしくならない)
 function doneCount(part,n){ if(!part) return 0; const a=(loadLog().done||{})[part.id]||[];
   const ch=(part.chapters||[]).filter(c=>!c.tail).slice(0,n==null?undefined:n);
-  return ch.filter((c,i)=>a.includes(qidOf(part,(part.chapters||[]).indexOf(c)))).length; }
+  let done=0;
+  ch.forEach(c=>{
+    const idx=(part.chapters||[]).indexOf(c);
+    const qs=(c.questions&&c.questions.length)||0;
+    if(qs){ for(let q=0;q<qs;q++) if(a.includes(doneKey(part,idx,q))) done++; }
+    else if(a.includes(doneKey(part,idx))) done++;
+  });
+  return done; }
+// その部の「全部でいくつか」。Part D は章でなく問で数える
+function questionCount(part,n){ if(!part) return 0;
+  const ch=(part.chapters||[]).filter(c=>!c.tail).slice(0,n==null?undefined:n);
+  return ch.reduce((a,c)=>a+((c.questions&&c.questions.length)||1),0); }
 // prevScore(前回%)は読み手が無い残骸のため削除
 // 問題(パート×番号)ごとの自己ベスト(過去最高の言えた率)。一度100点を取れば100として残る
 // つまずいた語を貯める(端末内のみ・外には出さない)。m=言えなかった回数 / p=発音が弱かった回数 / n=合計 / d=最終日
@@ -1135,7 +1150,7 @@ function renderHome(){
     const cnt = qn>n ? `${n}話・${qn}問` : `${n}問`;
     const name=p.title.replace(/^Part\s+\S+\s+/,'');   // "Part A 質問" → "質問"
     return `<div class="pcard" data-p="${i}">`
-      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${(SPK_PARTS.has(p.id)||QA_PARTS.has(p.id))?(doneCount(p,n)>=n?'<span class="dq">済み</span>':doneCount(p,n)>0?'<span class="dq">'+doneCount(p,n)+'/'+n+'</span> 済み':cnt):(REC_ONLY_PARTS.has(p.id)?cnt+' <span style="color:var(--sub);font-size:11px;margin-left:2px">録音のみ</span>':cnt)}</span></div>`
+      +`<div class="top"><span class="eb">Part ${p.id}</span><span class="meta">${LV[p.id]||''} ・ ${(SPK_PARTS.has(p.id)||QA_PARTS.has(p.id))?(doneCount(p,n)>=qn?'<span class="dq">済み</span>':doneCount(p,n)>0?'<span class="dq">'+doneCount(p,n)+'/'+qn+'</span> 済み':cnt):(REC_ONLY_PARTS.has(p.id)?cnt+' <span style="color:var(--sub);font-size:11px;margin-left:2px">録音のみ</span>':cnt)}</span></div>`
       +`<div class="ttl">${name}</div>`
       +`<div class="desc">${TASK[p.id]||''}</div></div>`;
   };
@@ -1628,6 +1643,7 @@ function showMockResult(results){
   const wd=document.getElementById('mrWeak');
   if(weak.length){
     wd.innerHTML=`<div class="rhd">聞き取れなかった音</div>`
+      +`<div class="rnote">復唱・質問・会話の問題から拾っています（文章の問題は答えの音声が無いため対象外）。</div>`
       +`<div class="rnote">この語が入っていた問題を、ゆっくり→本番速度で聞き比べられます</div>`
       +`<div class="wlist">${weak.map(([k,v],i)=>
         `<button class="wchip" data-w="${i}">${skEsc(v.word)}${v.n>1?`<span>${v.n}回</span>`:''}</button>`).join('')}</div>`;
@@ -1635,7 +1651,11 @@ function showMockResult(results){
     document.getElementById('mrDrill').hidden=false;
     wd.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>startDrill(+b.dataset.w));
   }else{
-    wd.innerHTML=`<div class="rhd">聞き取れなかった音</div><div class="rnote">今回はありませんでした。</div>`;
+    // 「今回はありませんでした」は言い過ぎ。**拾える範囲**が限られているのに、
+    // 「聞き取れなかった音が1つも無かった」と読める。どこから拾ったのかを書く。
+    wd.innerHTML=`<div class="rhd">聞き取れなかった音</div>`
+      +`<div class="rnote">拾えた語はありませんでした。復唱・質問・会話の問題から拾っています`
+      +`（文章の問題は答えの音声が無いため対象外です）。</div>`;
     drillQueue=[]; document.getElementById('mrDrill').hidden=true;
   }
   // つまずいた語は端末内の記録にも足す(次から「にがてな語」に出る)
@@ -2645,7 +2665,7 @@ function renderSpkResult(j){
   if(!replay){
     try{ logBest(_recPart, _recIdx, said); }catch(e){}   // 言えた率＋自己ベストを記録
     try{ saveLastResult(_recPart, _recIdx, j); refreshPrevBtn(_recIdx); }catch(e){}   // あとから開き直せるように保存
-    if(said>=SAID_DONE && _recPart){ try{ logDone(_recPart, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
+    if(said>=SAID_DONE && _recPart){ try{ logDone(_recPart, _recIdx, _recQ); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }   // 話すモードで100点=その問題を「済み」に
   }
   const words=j.words||[];
   const bad=w=>!w.ok && !SK_FUNC.has(w.word.toLowerCase().replace(/[^a-z']/g,''));   // 短い機能語(to/a/the等)は赤にしない=誤解を減らす
@@ -2692,7 +2712,7 @@ function renderQaResult(j){
   // その問題に「済み」が付き、苦手語の記録まで偽データで汚れていた(サーバー側でも返さないよう直した)
   const replay=!!j._replay || !!j.sample;
   if(!replay){
-    if(ok && _recPart){ try{ logDone(_recPart, _recIdx); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
+    if(ok && _recPart){ try{ logDone(_recPart, _recIdx, _recQ); if(document.getElementById('home')&&!document.getElementById('home').classList.contains('off')) renderHome(); }catch(e){} }
     try{ saveLastResult(_recPart, _recIdx, j); refreshPrevBtn(_recIdx); }catch(e){}   // あとから開き直せるように保存
   }
   const cls = ok?'qa-ok':(v==='おしい'||v==='もう一度'?'qa-mid':'qa-ng');   // 「もう一度」=聞き取れなかっただけ。不正解の赤にはしない

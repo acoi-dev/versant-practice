@@ -78,7 +78,7 @@ document.getElementById('goBack').onclick=function(){
 </script>
 <div class="wrap">
 <h1>声とデータの扱い</h1>
-<p class="upd">最終更新 2026年9月3日</p>
+<p class="upd">最終更新 2026年9月4日</p>
 
 <p>このアプリは、発音や答えを採点するために、あなたの声を録音して外部の会社に送っています。何をどこへ送っているのか、どれくらい残るのか、消し方も含めて、ここに全部書きます。</p>
 
@@ -87,7 +87,7 @@ document.getElementById('goBack').onclick=function(){
 <table>
   <tr><th>送るもの</th><th>送り先</th><th>何のために</th><th>どれくらい残るか</th></tr>
   <tr><td><strong>声（音声）</strong></td><td data-h="送り先：">OpenAI</td><td data-h="用途：">話した内容の文字起こし</td><td data-h="保持："><strong>残りません</strong></td></tr>
-  <tr><td><strong>声（音声）</strong></td><td data-h="送り先：">Microsoft Azure</td><td data-h="用途：">発音の採点（語ごと・音のレベル）</td><td data-h="保持："><strong>残りません</strong></td></tr>
+  <tr><td><strong>声（音声）</strong>＋<strong>お手本の文章</strong></td><td data-h="送り先：">Microsoft Azure</td><td data-h="用途：">発音の採点（語ごと・音のレベル）。<b>お手本と読み比べる仕組みなので、問題文や解答例も一緒に送ります</b></td><td data-h="保持："><strong>残りません</strong></td></tr>
   <tr><td><strong>文字</strong>（文字起こしの結果・問題文・解答例）</td><td data-h="送り先：">OpenAI</td><td data-h="用途：">日本語のアドバイスを作る</td><td data-h="保持：">不正利用の監視のため最大30日間。そのあと消えます</td></tr>
 </table>
 <p>つまり、<strong>あなたの声そのものは、どこにも残りません。</strong>30日残るのは、声を文字に直したあとの文章だけです。どちらの会社も、送ったものを自社のAIの学習には使いません（当方は学習に使う設定にしていません）。</p>
