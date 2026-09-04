@@ -962,7 +962,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-14';
+const BUILD='0904-15';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1721,7 +1721,8 @@ function buildDrillFromLog(){
         }
       }
     }
-    if(src) q.push({word:v.word||k, item:src});
+    if(src) q.push({word:v.word||k, item:src,
+                    audio:partAudio(src._partObj), from:src.start, to:src.end});
     if(q.length>=12) break;
   }
   return q;
@@ -1763,13 +1764,24 @@ function playDrill(){
   document.getElementById('drSent').innerHTML=skEsc(en).replace(re,m=>`<b>${m}</b>`);
   document.getElementById('drYaku').textContent='';
   document.getElementById('drState').textContent=`${drillIdx+1} / ${drillQueue.length}　ゆっくり → 本番速度`;
-  // 模試の音声から、その問題の部分だけを切り出して鳴らす
+  // 鳴らす音源と区間を決める。入口が2つあるので両方に対応する:
+  //   ・模試のあと … 模試のmp3の、その問の質問部分
+  //   ・ホームの「にがてな語」から … 教材のmp3の、その問題の区間
+  // 【2026-09-04】あとから足したホーム経由の入口が、模試の音声しか探しておらず
+  // **「この問題の音声が見つかりませんでした」で一度も鳴らなかった**。
+  let audioUrl, from, to;
   const st=mkSet&&mkSet.items.find(x=>x.qid===it.qid);
-  if(!st){ document.getElementById('drState').textContent='この問題の音声が見つかりませんでした'; return; }
+  if(st){
+    audioUrl=mkSet.mp3+(mkSet.av?('?v='+mkSet.av):'');
+    from=Math.max(0,st.q_start-0.15); to=st.q_end+0.1;
+  }else if(d.audio && d.from!=null && d.to!=null){
+    audioUrl=d.audio; from=Math.max(0,d.from-0.1); to=d.to;
+  }else{
+    document.getElementById('drState').textContent='この問題の音声が見つかりませんでした'; return;
+  }
   clearTimeout(drTimer);
   try{ if(drAU){ drAU.pause(); } }catch(e){}
-  drAU=new Audio(mkSet.mp3+(mkSet.av?('?v='+mkSet.av):''));
-  const from=Math.max(0,st.q_start-0.15), to=st.q_end+0.1;
+  drAU=new Audio(audioUrl);
   const run=(rate,next)=>{
     drAU.currentTime=from; drAU.playbackRate=rate;
     drAU.play().catch(()=>{});
