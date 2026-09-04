@@ -15,22 +15,28 @@
     /* 端の余白。ブラウザは env() がそのまま効く。アプリ(WKWebView)は env() が常に0を返すので、
        Flutter 側が実測値でこの2つを上書きする(main.dart の _applyInsets) */
     --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom);
-    --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee; --line2:#d6d8dd;
-    --accent:#1f4fd8; --onaccent:#fff;   /* アクセント地の上に載せる文字色 */
+    /* 【2026-09-04】--faint は以前 #b9bcc2 で、背景に対して約1.84:1しかなく読めなかった。
+       11〜13pxの小さい文字に23か所使っていたので、4.5:1を狙って締めた。
+       意味のある文字は --sub に上げ、faint に残すのはビルド番号などの飾りだけ。
+       --rec(赤)は**録音中の合図だけ**。正解=青/不正解=赤 はアクセントが2色になるのでやらない。 */
+    --ink:#14151a; --sub:#6b7078; --faint:#6f747d; --line:#eaebee; --line2:#d6d8dd;
+    --accent:#1f4fd8; --onaccent:#fff;
+    /* 赤は**録音中の合図だけ**に使う。判定の正誤に色を足すと、アクセントが2色になる */
+    --rec:#e5484d;
     --bg:#fbfbfc; --hover:#f2f3f5; --flashbg:rgba(0,0,0,.05);
     --ui:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
   }
   /* 寝る前用のダーク（純黒でなく目に優しい濃色） */
   @media (prefers-color-scheme: dark){
-    :root{ --ink:#e9ebf0; --sub:#8b9099; --faint:#4b4f59; --line:#22242c; --line2:#33363f;
-           --accent:#8aa6ff; --onaccent:#10131c;   /* 明るい青の上に白を置くと読めない */
+    :root{ --ink:#e9ebf0; --sub:#8b9099; --faint:#7d828c; --line:#22242c; --line2:#33363f;
+           --accent:#8aa6ff; --onaccent:#10131c; --rec:#ff6b6f;   /* 明るい青の上に白を置くと読めない */
            --bg:#0f1013; --hover:#191b20; --flashbg:rgba(255,255,255,.08); }
   }
-  :root[data-theme="dark"]{ --ink:#e9ebf0; --sub:#8b9099; --faint:#4b4f59; --line:#22242c; --line2:#33363f;
-           --accent:#8aa6ff; --onaccent:#10131c;   /* 明るい青の上に白を置くと読めない */
+  :root[data-theme="dark"]{ --ink:#e9ebf0; --sub:#8b9099; --faint:#7d828c; --line:#22242c; --line2:#33363f;
+           --accent:#8aa6ff; --onaccent:#10131c; --rec:#ff6b6f;   /* 明るい青の上に白を置くと読めない */
            --bg:#0f1013; --hover:#191b20; --flashbg:rgba(255,255,255,.08); }
-  :root[data-theme="light"]{ --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee; --line2:#d6d8dd;
-           --accent:#1f4fd8; --onaccent:#fff;
+  :root[data-theme="light"]{ --ink:#14151a; --sub:#6b7078; --faint:#6f747d; --line:#eaebee; --line2:#d6d8dd;
+           --accent:#1f4fd8; --onaccent:#fff; --rec:#e5484d;
            --bg:#fbfbfc; --hover:#f2f3f5; --flashbg:rgba(0,0,0,.05); }
   *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;overflow:hidden;background:var(--bg)}
@@ -50,7 +56,7 @@
   .brand{font-size:28px;font-weight:600;letter-spacing:-.02em}
   .tag{font-size:14.5px;color:var(--sub);margin:6px 0 28px}
   .plist{display:flex;flex-direction:column;gap:11px}
-  .disc{font-size:12.5px;color:var(--faint);line-height:1.75;margin-top:28px;text-align:center;padding:0 4px}  /* 非公式の免責 */
+  .disc{font-size:12.5px;color:var(--sub);line-height:1.75;margin-top:28px;text-align:center;padding:0 4px}  /* 非公式の免責 */
   .disc.dfirst{margin-top:34px}
   .disc.dfirst button{border:1px solid var(--line2);background:none;color:var(--sub);font:inherit;
     font-size:14.5px;border-radius:9px;padding:11px 16px;cursor:pointer}
@@ -62,12 +68,12 @@
   .pcard:active{background:var(--hover)}
   .pcard .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
   .pcard .eb{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--sub);font-weight:600}
-  .pcard .meta{font-size:12.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .pcard .meta{font-size:12.5px;color:var(--sub);white-space:nowrap;font-variant-numeric:tabular-nums}
   .pcard .ttl{font-size:18px;font-weight:600;letter-spacing:-.01em}
   .pcard .desc{font-size:14px;color:var(--sub)}
   .pcard.speak{text-decoration:none;color:inherit}        /* 話すモード導線(別ページ遷移) */
   .pcard.speak .eb{color:var(--accent)}                    /* 家用モードだと分かるよう見出しだけアクセント色 */
-  .ghdr{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:16px 0 -2px}  /* ホームのグループ見出し(本番れんしゅう/きたえる) */
+  .ghdr{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sub);margin:16px 0 -2px}  /* ホームのグループ見出し(本番れんしゅう/きたえる) */
   .plist>.ghdr:first-child{margin-top:2px}
   /* 受験日カウントダウン(ホーム上部・罫線のみ/塗らない/アクセント1色) */
   /* はじめての人だけに出す入口。カードは塗らず罫線のみ。読んだら消える */
@@ -123,7 +129,7 @@
   /* パート末の番兵カード＝スワイプ/タップで次パートへ */
   .nextcard,.prevcard{justify-content:center;align-items:center;text-align:center}
   .nextwrap{display:flex;flex-direction:column;align-items:center;gap:16px}
-  .nextlabel{font-size:12.5px;color:var(--faint);letter-spacing:.04em}
+  .nextlabel{font-size:12.5px;color:var(--sub);letter-spacing:.04em}
   .nextbtn{font:inherit;font-size:16px;font-weight:600;color:var(--accent);background:none;
     border:1px solid var(--line2);border-radius:14px;padding:16px 30px;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;gap:5px}
@@ -235,9 +241,9 @@
   .spdrow{display:flex;justify-content:center;margin-bottom:14px}   /* 速度は再生ボタンの上段に置く */
   .yb.mic{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--line2);color:var(--ink);justify-self:center}   /* 録音: タップで開始、もう一度で停止して採点 */
   .yb.mic:active{opacity:1}
-  .yb.mic.rec{border-color:#e5484d;color:#e5484d;animation:micpulse 1.1s ease-in-out infinite}
+  .yb.mic.rec{border-color:var(--rec);color:var(--rec);animation:micpulse 1.1s ease-in-out infinite}
   @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.30)}50%{box-shadow:0 0 0 9px rgba(229,72,77,0)}}
-  .miclbl{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:700;color:#e5484d;opacity:0;transition:opacity .15s;pointer-events:none}   /* 録音中の合図はマイクボタンの真上に(浮かせず親=マイクに紐付き=重ならない) */
+  .miclbl{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:700;color:var(--rec);opacity:0;transition:opacity .15s;pointer-events:none}   /* 録音中の合図はマイクボタンの真上に(浮かせず親=マイクに紐付き=重ならない) */
   .yb.mic.rec .miclbl{opacity:1}
   .spkr{position:fixed;inset:0;z-index:14;display:none}
   .spkr.show{display:block}
@@ -258,7 +264,10 @@
   .sk-sub .r span:first-child{color:var(--sub)}
   .sk-sub .r span:last-child{font-weight:600;font-variant-numeric:tabular-nums}
   .sk-words{font-size:19px;line-height:1.9;margin:4px 0}
-  .sk-words .w.bad{color:#e5484d;text-decoration:underline;text-decoration-color:#e5484d;text-underline-offset:3px}
+    /* 言えていない語。**赤を使わない**(正解=青/不正解=赤 は「クソ」と言われた形)。
+     濃さと下線の種類だけで示す: 言えていない=実線 / 発音が弱い=点線 */
+  .sk-words .w.bad{color:var(--ink);font-weight:600;text-decoration:underline;
+    text-decoration-color:var(--ink);text-underline-offset:3px}
   /* 言えてはいるが発音が違うとAzureが判定した語。「言えていない(赤)」とは別物なので色は足さず点線で区別する */
   .sk-words .w.weak{text-decoration:underline dotted;text-decoration-color:var(--sub);text-underline-offset:3px}
   /* まだ一度も練習していない人にだけ出す入口。押すと Part B の1問目へ */
@@ -287,11 +296,11 @@
   .pmeter{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle}
   .pmeter i{width:11px;height:3px;border-radius:2px;background:var(--line2)}
   .pmeter i.on{background:var(--sub)}
-  .sk-leg{font-size:11.5px;color:var(--faint)}
-  .sk-leg b{color:#e5484d;font-weight:600}
+  .sk-leg{font-size:11.5px;color:var(--sub)}
+  .sk-leg b{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
   .sk-adv{font-size:14px;line-height:1.8;border-top:1px solid var(--line);padding-top:14px;margin-top:12px}
   .sk-adv .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);font-weight:600;display:block;margin-bottom:5px}
-  .sk-heard{font-size:12px;color:var(--faint);margin-top:10px}
+  .sk-heard{font-size:12px;color:var(--sub);margin-top:10px}
   .sk-heard b{color:var(--sub);font-weight:600}
   .sk-status{text-align:center;font-size:15px;color:var(--sub);padding:34px 0}
   .sk-words .w{cursor:pointer}
@@ -300,13 +309,13 @@
   .sk-btn{flex:1;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line2);background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 6px;cursor:pointer;text-align:center;white-space:nowrap}
   .sk-btn:active{background:var(--hover)}
   .sk-btn.sk-again{border-color:var(--accent);color:var(--accent)}
-  .sk-btn.sk-recing{border-color:#e5484d;color:#e5484d;animation:skpulse 1.1s ease-in-out infinite}   /* 録音中の停止ボタン */
+  .sk-btn.sk-recing{border-color:var(--rec);color:var(--rec);animation:skpulse 1.1s ease-in-out infinite}   /* 録音中の停止ボタン */
   .sk-verdict{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .sk-verdict span{font-size:12.5px;color:var(--sub);font-weight:600;font-variant-numeric:tabular-nums}
   .sk-verdict .sk-best.full{color:var(--accent)}   /* 自己ベスト100%はアクセント色 */
   .sk-qa{font-size:22px;font-weight:700}   /* 質問応答の判定(正解/おしい/不正解) */
   .sk-verdict .sk-qa.qa-ok{color:var(--accent)}
-  .sk-verdict .sk-qa.qa-ng{color:#e5484d}
+  .sk-verdict .sk-qa.qa-ng{color:var(--ink)}   /* 不正解も色でなく文字で伝える */
   .sk-verdict .sk-qa.qa-mid{color:var(--ink)}
   .sk-load{font-size:15px;font-weight:500;color:var(--sub);animation:skpulse 1.2s ease-in-out infinite}   /* 採点中の待ち表示 */
   @keyframes skpulse{50%{opacity:.4}}
@@ -324,7 +333,7 @@
   #mres .rt{font-size:15.5px;color:var(--ink)}
   #mres .rv{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
   #mres .rv small{font-size:13px;color:var(--faint);font-weight:400;margin-left:3px}
-  #mres .rnote{font-size:13.5px;color:var(--faint);margin-top:3px;line-height:1.7}
+  #mres .rnote{font-size:13.5px;color:var(--sub);margin-top:3px;line-height:1.7}
   #mres .rhd{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
     color:var(--faint);margin:30px 0 2px}
   #mres .wlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -366,12 +375,12 @@
   #mock .mrec{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--accent)}
   #mock .mrec b{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:mblink 1s infinite}
   @keyframes mblink{0%,100%{opacity:1}50%{opacity:.25}}
-  #mock .mquit{align-self:flex-start;border:0;background:none;color:var(--faint);font:inherit;font-size:12px;
+  #mock .mquit{align-self:flex-start;border:0;background:none;color:var(--sub);font:inherit;font-size:13.5px;
     cursor:pointer;padding:6px 0;text-decoration:underline}
   #mock .mkresume{margin-top:16px}
   #mock .mkresume button{border:1px solid var(--accent);background:var(--accent);color:var(--onaccent);
     font:inherit;font-size:16px;font-weight:700;border-radius:10px;padding:14px 26px;cursor:pointer;min-height:48px}
-  #mock .mprov{font-size:11px;color:var(--faint)}
+  #mock .mprov{font-size:11px;color:var(--sub)}
   /* 触って覚えるチュートリアル。初回にパートを開いたとき、**実物の画面の上に**
      順番に案内を出す。文章のガイドは読まれないので、ここだけは押す場所を指す。
      【2026-09-04】「チュートリアルもないしよー」の指摘で追加。
@@ -400,7 +409,7 @@
   #coach .ctitle{font-size:19px;font-weight:700;margin-bottom:6px;line-height:1.5}
   #coach .cdesc{font-size:15.5px;line-height:1.85;color:var(--sub)}
   #coach .crow{display:flex;align-items:center;justify-content:space-between;margin-top:18px;gap:12px}
-  #coach .cskip{border:0;background:none;color:var(--faint);font:inherit;font-size:14px;
+  #coach .cskip{border:0;background:none;color:var(--sub);font:inherit;font-size:14.5px;
     cursor:pointer;padding:12px 4px}
   #coach .cnext{border:1px solid var(--accent);background:var(--accent);color:var(--onaccent);font:inherit;
     font-size:16px;font-weight:700;border-radius:10px;padding:14px 26px;cursor:pointer;min-height:48px}
@@ -542,7 +551,7 @@
   .seg button{flex:1;border:0;background:none;color:var(--sub);font:inherit;font-size:12.5px;padding:8px 0;min-height:46px;cursor:pointer;border-left:1px solid var(--line2)}
   .seg button:first-child{border-left:0}
   .seg button.on{background:var(--accent);color:var(--bg)}
-  .pophint{font-size:11px;color:var(--faint);line-height:1.6;padding-top:12px;border-top:1px solid var(--line)}
+  .pophint{font-size:11px;color:var(--sub);line-height:1.6;padding-top:12px;border-top:1px solid var(--line)}
 
   /* ===== ホーム：目安 ===== */
   .pcard{position:relative}
@@ -842,6 +851,8 @@
 const AU=document.getElementById('au');
 const TASK={A:'質問に短く答える',B:'聞いて繰り返す',C:'会話を聞いて答える',D:'話を聞いて答える',E:'自分の言葉で言い直す',F:'意見を述べる',G:'弱く消える音を聞き取る'};
 let DATA=null,PART=null,CARDS=[],auto=true,active=0,revealed={},speed=1,hideAns=true,dlgShown={},partIdx=null;
+let TAIL=null;   // 各パート末尾の「まとめ・通し練習」。CARDS には入れず、最終カードから呼ぶ
+let _tailUntil=0;   // まとめを流している間の終端。ここまで来たら止める(次パートへ流さない)
 const SPEEDS=[1,0.85,0.7];                                   // 速度は3段(設定パネルと同じ)。カードのタップもこの順で回す
 const spdTxt=s=>s.toFixed(2).replace(/0$/,'')+'x';          // 速度表示を統一(1.0x/0.85x/0.7x)。初期もタップも設定も同じ表記に
 const ARROW='<path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/>';
@@ -949,7 +960,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-08';
+const BUILD='0904-10';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1234,6 +1245,12 @@ function openPart(pi, startCard, noPlay){   // noPlay=リロード復元時。iO
   const wasPlaying = !noPlay && !AU.paused;   // ★連続再生: この切替の直前に鳴っていたか(ensureAudioSourceがpauseする前に見る)
   switching=true;   // 目標カードに着地するまで判定停止(switchTargetは下でclamp後に設定)
   PART=DATA.parts[pi]; partIdx=pi; CARDS=PART.chapters.filter(c=>!c.tail);
+  // 【2026-09-04】各パートの最後には「まとめ・通し練習」の音声が焼き込まれているのに、
+  // どこからも流していなかった(A 4.2分 / B 7.9分 / D・F 各10秒、合計12.5分が封印されていた)。
+  // 中身を実際に文字起こしして確かめた: A「最後に、通しでもう一度」B「同じ形で口ならし」
+  // D「誰が・何を・どうしたかの3つを追えれば答えられます」F「正解は一つではありません」。
+  // CARDS には入れない(問数・済み・名札の数え方に波及するため)。最終カードから呼ぶ。
+  TAIL=(PART.chapters||[]).find(c=>c.tail)||null;
   startCard=Math.min(Math.max(0,startCard|0), Math.max(0,CARDS.length-1));   // 教材再生成でカードが減った時など、保存indexが範囲外でも安全に(Bug7)
   active=startCard; switchTarget=startCard; revealed={}; dlgShown={};
   document.getElementById('homeClose').hidden=false;   // 一度パートを開いたら、以後一覧は×で閉じてプレイヤーに戻れる
@@ -1748,9 +1765,16 @@ function updateMore(el){
 function bindMore(){
   document.querySelectorAll('#feed .text').forEach(el=>{
     if(el.__moreBound) return; el.__moreBound=true;
-    el.addEventListener('scroll',()=>updateMore(el),{passive:true});
+    el.addEventListener('scroll',()=>{
+      if(!el.__auto) el.__userScrolled=true;   // 自動でないスクロール=本人が読みに行った
+      updateMore(el);
+    },{passive:true});
   });
   document.querySelectorAll('#feed .text').forEach(updateMore);
+}
+// 問が変わったら、なぞりの追従を元に戻す(前の問で手動にしたまま持ち越さない)
+function resetUserScroll(){
+  document.querySelectorAll('#feed .text').forEach(el=>{ el.__userScrolled=false; });
 }
 
 // ===== 触って覚えるチュートリアル =====
@@ -1925,6 +1949,7 @@ function renderFeed(){
           ${(SPEAK_ENABLED&&c.en&&(SPK_PARTS.has(PART.id)||QA_PARTS.has(PART.id)||REC_ONLY_PARTS.has(PART.id))&&!(PART.id==='D'&&c.questions&&c.questions.length))?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
         </div>
         ${loadLastResult(PART,i)?`<button class="prevres" data-prev="${i}">前回の結果を見る</button>`:''}
+        ${(i===CARDS.length-1&&TAIL)?`<button class="prevres" data-tail>まとめを聞く（${Math.max(1,Math.round((TAIL.end-TAIL.start)/60))}分）</button>`:''}
       </div>
     </section>`).join('');
 
@@ -1951,6 +1976,25 @@ function renderFeed(){
       _pendingQ=qi;
       document.querySelectorAll('.qmic').forEach(b=>b.classList.toggle('on', b===_qb));
       toggleSpkRec();
+      return;
+    }
+    // まとめ(通し練習)を鳴らす。カードとしては持っていないので、区間を直接指定して流す
+    if(e.target.closest('[data-tail]')){
+      if(!TAIL) return;
+      try{ AU.pause(); }catch(err){}
+      const go=()=>{
+        _tailUntil=TAIL.end;
+        AU.currentTime=TAIL.start; AU.playbackRate=speed;
+        AU.play().catch(()=>{});
+        alertLite('まとめを流しています。止めるときは中央のボタンを押してください。');
+      };
+      // ⚠️ ここで ensureAudioSource() を呼ばないこと。
+      //    音源が正しいのに load() を起こすと、直前のカード送りが仕掛けておいた
+      //    loadedmetadata の頭出しが走り、**最終カードの位置へ引き戻される**
+      //    (実測: まとめの1043.2秒へ飛ばしたのに999秒=最終カードの位置になった)。
+      if(srcWrong()){ ensureAudioSource(); AU.addEventListener('loadedmetadata',go,{once:true}); }
+      else if(AU.readyState>=1) go();
+      else AU.addEventListener('loadedmetadata',go,{once:true});
       return;
     }
     if(e.target.closest('[data-mic]')){toggleSpkRec();return;}   // マイク: タップで録音開始(Part D 以外)、もう一度タップで停止して採点。タップで再生はさせない
@@ -2011,6 +2055,10 @@ function togglePlay(){
   else AU.play().catch(()=>{});                                                // カード内での一時停止→続きから再開
 }
 function trySeek(start){   // seekable範囲が目標をカバーしていれば頭出し。効いたら true
+  // 【2026-09-04】まとめ(通し練習)を流している間は、カードの頭出しをしない。
+  // playCard が仕掛けた頭出しが遅れて走り、**まとめの位置(1043秒)から
+  // 最終カード(996秒)へ引き戻していた**(実測でこの経路を確認)。
+  if(_tailUntil) return false;
   try{
     const s=AU.seekable;
     if(s&&s.length&&s.end(s.length-1)>=start-0.5){AU.currentTime=start;return AU.currentTime>=start-1;}
@@ -2019,6 +2067,7 @@ function trySeek(start){   // seekable範囲が目標をカバーしていれば
   return false;
 }
 function playCard(i, noPlay){const c=CARDS[i];if(!c)return;
+  resetUserScroll();   // 問が変わったら、なぞりの追従を元に戻す
   // 【2026-08-14】録音中に別のカードへ移ると、教材の声が自分の録音に混ざって点が下がっていた。
   // スワイプ・自動送り・ロック画面の番号送り・音源の自己修復まで、鳴らし始める経路はここに集まるので
   // ここで必ず止める(採点はしない)。止めたことは画面に一言出す=黙って消えたように見せない。
@@ -2112,20 +2161,32 @@ function updateHighlight(){
   if(cur>=0 && (cur!==_litSeg || active!==_litCard)){   // なぞる行が変わった時だけ、本文枠(.text)内で青い行を見える位置へスクロール(#feedのカードスナップは触らない)
     _litSeg=cur; _litCard=active;
     const seg=el.querySelector('.lseg[data-seg="'+cur+'"]');
-    if(seg){ const cr=el.getBoundingClientRect(), sr=seg.getBoundingClientRect();
-      if(sr.top<cr.top+6 || sr.bottom>cr.bottom-6)   // 枠の外(上/下)に出ていたら
-        el.scrollTo({top: el.scrollTop + (sr.top-cr.top) - cr.height*0.32, behavior:'smooth'});   // 枠の上から約1/3の位置へ寄せる
+    // 【2026-09-04】自分でスクロールして答えの続きを読もうとすると、
+    // なぞりが**毎回いちばん上へ引き戻していた**(Part C/D は答えが枠に収まらない)。
+    // 手で動かした後は、その問のあいだ追うのをやめる。次の問へ行けば元に戻る。
+    if(seg && !el.__userScrolled){ const cr=el.getBoundingClientRect(), sr=seg.getBoundingClientRect();
+      if(sr.top<cr.top+6 || sr.bottom>cr.bottom-6){   // 枠の外(上/下)に出ていたら
+        el.__auto=true;                                // これは自動。手のスクロールと区別する印
+        el.scrollTo({top: el.scrollTop + (sr.top-cr.top) - cr.height*0.32, behavior:'smooth'});
+        setTimeout(()=>{ el.__auto=false; }, 700);     // なめらか移動が終わるころに戻す
+      }
     }
   }
 }
 AU.addEventListener('timeupdate',()=>{
+  // まとめ(通し練習)を流している間は、カード追従も自動送りもしない。
+  // 終端まで来たら止める(そのまま流すと次パートへ勝手に進む)。
+  if(_tailUntil){
+    if(AU.currentTime>=_tailUntil-0.05){ AU.pause(); _tailUntil=0; alertLite('まとめは以上です。'); }
+    return;
+  }
   const c=CARDS[active];
   if(repeat && c && AU.currentTime>=c.end-0.05){ replay(); return; }   // 1問リピート
   reconcile();
   updateHighlight();
 });
 AU.addEventListener('ended',()=>{ if(repeat){ replay(); return; } if(auto) goNextPart(); else AU.pause(); });   // パート音源の終端→次パート(Bug4: timeupdateが末尾閾値に届かず無音停止するのを防ぐ)
-setInterval(reconcile, 500);   // 予備: timeupdateが疎な時のズレも拾う
+setInterval(()=>{ if(!_tailUntil) reconcile(); }, 500);   // 予備: timeupdateが疎な時のズレも拾う(まとめ再生中は追従しない)
 document.addEventListener('visibilitychange',()=>{   // 画面復帰(別アプリから戻る/ロック解除)で表示と音源を合わせ直す
   if(document.hidden) return;
   switching=false;

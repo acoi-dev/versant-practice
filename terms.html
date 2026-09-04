@@ -10,13 +10,13 @@
     /* 端の余白。ブラウザは env() がそのまま効く。アプリ(WKWebView)は env() が常に0を返すので、
        Flutter 側が実測値で上書きする(main.dart の _applyInsets) */
     --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom);
-    --ink:#14151a; --sub:#6b7078; --faint:#b9bcc2; --line:#eaebee;
+    --ink:#14151a; --sub:#6b7078; --faint:#6f747d; --line:#eaebee;
     --accent:#1f4fd8; --bg:#fbfbfc;
     --ui:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --ink:#e9eaee; --sub:#a3a8b2; --faint:#6d727c; --line:#252830;
+      --ink:#e9eaee; --sub:#a3a8b2; --faint:#7d828c; --line:#252830;
       --accent:#7ea2ff; --bg:#14161a;
     }
   }
