@@ -78,6 +78,12 @@
   .firstcard .fc-d{display:block;font-size:14px;color:var(--sub);line-height:1.8}
   .firstcard .fc-go{display:inline-block;margin-top:12px;font-size:14.5px;font-weight:600;color:var(--accent)}
   .firstcard .fc-go::after{content:' ›'}
+  /* 画面を止めない小さな知らせ。ブラウザの alert は見た目が合わず操作も止まる */
+  #lite{position:fixed;left:16px;right:16px;bottom:calc(var(--sab) + 92px);z-index:60;
+    background:var(--ink);color:var(--bg);font-size:14.5px;line-height:1.7;
+    padding:14px 16px;border-radius:12px;opacity:0;transform:translateY(8px);
+    transition:.22s ease;pointer-events:none;text-align:left}
+  #lite.on{opacity:1;transform:none}
   .cdown{margin:4px 0 2px;padding:2px 0 16px;border-bottom:1px solid var(--line2)}
   .cdown .cd-main{display:flex;align-items:baseline;gap:9px}
   .cdown .cd-num{font-size:29px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.1}
@@ -188,6 +194,12 @@
   .lseg{transition:color .1s ease}       /* リスニング本文のなぞり単位(設定の.segと名前衝突を避けlseg) */
   .lseg.lit{color:var(--accent)}         /* 再生中の文/行をなぞる青 */
   .pass .pen .lseg.key{font-weight:700}   /* Part D 答えの手がかりの一文(太字) */
+  /* Part D の質問ごとの録音ボタン。1話3問なので、どの質問に答えるかを選ばせないと採点できない */
+  .qmic{display:inline-flex;align-items:center;gap:8px;margin:10px 0 2px;padding:10px 16px;
+    min-height:44px;border:1px solid var(--line2);border-radius:22px;background:none;
+    color:var(--sub);font:inherit;font-size:14.5px;cursor:pointer}
+  .qmic svg{width:18px;height:18px}
+  .qmic.on{border-color:var(--accent);color:var(--accent)}
   .row{display:flex;gap:8px;margin-top:15px;font-size:15.5px}
   .row .k{color:var(--sub);white-space:nowrap;font-size:13px;padding-top:2px;min-width:3.6em;flex-shrink:0}   /* ラベルは縮めない(長いラベルが縮んで内容と重なるのを防ぐ) */
   .row .v{color:var(--ink)}
@@ -249,6 +261,19 @@
   .sk-words .w.bad{color:#e5484d;text-decoration:underline;text-decoration-color:#e5484d;text-underline-offset:3px}
   /* 言えてはいるが発音が違うとAzureが判定した語。「言えていない(赤)」とは別物なので色は足さず点線で区別する */
   .sk-words .w.weak{text-decoration:underline dotted;text-decoration-color:var(--sub);text-underline-offset:3px}
+  /* まだ一度も練習していない人にだけ出す入口。押すと Part B の1問目へ */
+  .startcard{display:block;width:100%;text-align:left;margin:0 0 8px;padding:18px 18px 16px;
+    border:1px solid var(--accent);border-radius:14px;background:none;font:inherit;cursor:pointer}
+  .startcard .sc-t{display:block;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:5px}
+  .startcard .sc-d{display:block;font-size:14px;color:var(--sub);line-height:1.8}
+  .startcard .sc-go{display:inline-block;margin-top:12px;font-size:14.5px;font-weight:600;color:var(--accent)}
+  .startcard .sc-go::after{content:' ›'}
+  .mocknote{font-size:13.5px;color:var(--sub);line-height:1.8;margin:6px 0 10px}
+  /* にがてな語のまとまり。押すとその語だけのドリルに入る。カードは塗らず罫線のみ */
+  .wkcard{display:block;width:100%;text-align:left;margin:2px 0 0;padding:14px 16px 12px;
+    border:1px solid var(--line2);border-radius:12px;background:none;font:inherit;cursor:pointer}
+  .wkcard .wkgo{display:block;margin-top:10px;font-size:14px;font-weight:600;color:var(--accent)}
+  .wkcard .wkgo::after{content:' ›'}
   /* ホームの「にがてな語」。カードにも枠にもしない=1行の覚え書き。回数は濃淡だけで示す */
   .wknote{font-size:14px;line-height:2.1;color:var(--ink)}
   .wknote span{font-size:11px;color:var(--faint);margin:0 14px 0 4px}
@@ -343,6 +368,9 @@
   @keyframes mblink{0%,100%{opacity:1}50%{opacity:.25}}
   #mock .mquit{align-self:flex-start;border:0;background:none;color:var(--faint);font:inherit;font-size:12px;
     cursor:pointer;padding:6px 0;text-decoration:underline}
+  #mock .mkresume{margin-top:16px}
+  #mock .mkresume button{border:1px solid var(--accent);background:var(--accent);color:var(--onaccent);
+    font:inherit;font-size:16px;font-weight:700;border-radius:10px;padding:14px 26px;cursor:pointer;min-height:48px}
   #mock .mprov{font-size:11px;color:var(--faint)}
   /* 触って覚えるチュートリアル。初回にパートを開いたとき、**実物の画面の上に**
      順番に案内を出す。文章のガイドは読まれないので、ここだけは押す場所を指す。
@@ -704,6 +732,8 @@
   <div id="mrRows"></div>
   <div id="mrWeak"></div>
   <button class="rbtn" id="mrDrill" hidden>聞き取れなかった音を潰す</button>
+  <!-- 通信で落ちた問だけを録音を捨てずにやり直す。21分もう一度受けさせない -->
+  <button class="rbtn" id="mrRetry" hidden>採点をやり直す</button>
   <button class="rback" id="mrBack">ホームに戻る</button>
 </div>
 <!-- 弱点ドリル。聞き取れなかった語が入っていた問題を、ゆっくり→本番速度で -->
@@ -919,7 +949,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-07';
+const BUILD='0904-08';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1111,16 +1141,40 @@ function renderHome(){
         // 実装できたらここに戻す
   // にがてな語。2回以上つまずいた語だけを、多い順に最大6語。1回では偶然に振り回されるので出さない
   const wl=weakList().slice(0,6);
-  const weakLine = wl.length ? `<div class="ghdr">にがてな語</div><div class="wknote">${wl.map(([k,v])=>`${skEsc(k)}<span>${v.n}</span>`).join('')}</div>` : '';
+  // 【2026-09-04】ここは見せるだけで押せなかった。このアプリで他に無いのは
+  // 「聞き取れなかった音を、その語が入っていた問題で練習する」ことなのに、
+  // 入口が模試の結果画面だけ＝模試を最後まで受けた人しか触れなかった。ここから直接入れる。
+  const weakLine = wl.length
+    ? `<div class="ghdr">にがてな語</div>`
+      +`<button type="button" class="wkcard" id="weakDrill">`
+      +`<span class="wknote">${wl.map(([k,v])=>`${skEsc(k)}<span>${v.n}</span>`).join('')}</span>`
+      +`<span class="wkgo">この音だけを練習する</span></button>` : '';
   // 本番形式の模試(通し)。40問前後を止めずに受ける。練習と混ざらないよう先頭に別グループで置く
   const mockCard = MOCK ? MOCK.sets.map((st,si)=>
       `<div class="pcard" data-mock="${si}"><div class="top"><span class="eb kt">本番形式</span>`
       +`<span class="meta">${st.items.length}問 ・ 約${Math.round(st.total/60)}分</span></div>`
       +`<div class="ttl">模試 ${si+1}</div>`
       +`<div class="desc">本番と同じ流れで通しで受ける。音声は1回だけ・途中で戻れない</div></div>`).join('') : '';
+  // 【2026-09-04】並びを入れ替えた。以前は**開いた瞬間の一番上が21分の模試**だった。
+  // 初めての人が最初にやることは「1問を言い切る」であって、21分だまって録音されることではない。
+  // 模試は一番下(受ける気になった人が探して押すもの)。
+  const started = (loadLog().days||[]).length>0;
+  const startHere = started ? '' :
+    `<button type="button" class="startcard" id="startHere">`
+    +`<span class="sc-t">ここから始める</span>`
+    +`<span class="sc-d">Part B「復唱」の1問目へ。聞こえた1文をそのまま繰り返すだけです。</span>`
+    +`<span class="sc-go">始める</span></button>`;
   document.getElementById('plist').innerHTML=
-    (mockCard?`<div class="ghdr">本番と同じ形で受ける</div>${mockCard}`:'')
-    +`<div class="ghdr">本番れんしゅう</div>${test}<div class="ghdr">きたえる</div>${kitae}${weakLine}`;
+    startHere
+    +`<div class="ghdr">本番れんしゅう</div>${test}<div class="ghdr">きたえる</div>${kitae}${weakLine}`
+    +(mockCard?`<div class="ghdr">本番と同じ形で通しで受ける</div>`
+      +`<div class="mocknote">練習パートを一周してからのほうが、点が意味を持ちます。`
+      +`途中でやめても、そこまでの分は結果に出ます。</div>${mockCard}`:'');
+  const _wd=document.getElementById('weakDrill');
+  if(_wd) _wd.onclick=openDrillFromLog;
+  const _sh=document.getElementById('startHere');
+  if(_sh) _sh.onclick=()=>{ const b=[...document.querySelectorAll('#plist .pcard[data-p]')]
+      .find(el=>(el.querySelector('.eb')||{}).textContent==='Part B'); (b||document.querySelector('#plist .pcard[data-p]')).click(); };
   // 模試は全問を録音するので、始める前に声の送り先の同意を取る(練習のマイクと同じ一度きり)
   document.querySelectorAll('.pcard[data-mock]').forEach(el=>el.onclick=async()=>{
     if(await ensureMicConsent()) startMock(+el.dataset.mock); });
@@ -1232,12 +1286,57 @@ document.getElementById('wipeLog').onclick=()=>{
 let MOCK=null, mkSet=null, mkAU=null, mkTimer=0, mkIdx=-1, mkPhase='', mkRecs=[];
 fetch('mock_data.json?v='+BUILD).then(r=>r.ok?r.json():null).then(d=>{ MOCK=d; try{ if(DATA) renderHome(); }catch(e){} }).catch(()=>{});
 
+// 模試が途中で止まったとき(電話・アラーム・別アプリ)に、続きから戻せるようにする。
+function showMockPaused(){
+  if(!mkSet || !mkAU) return;
+  const el=document.getElementById('mock');
+  if(el.classList.contains('off')) return;
+  clearInterval(mkTimer); mkTimer=0;
+  mkStopRec();
+  document.getElementById('mkState').textContent='一時停止中';
+  document.getElementById('mkCount').textContent='';
+  document.getElementById('mkHint').innerHTML=
+    '電話などで音が止まりました。<br>続きから戻せます（止まった所からやり直しになる問はありません）。'
+    +'<div class="mkresume"><button type="button" id="mkResume">続きから再開</button></div>';
+  const b=document.getElementById('mkResume');
+  if(b) b.onclick=()=>{
+    mkAU.play().then(()=>{
+      document.getElementById('mkHint').textContent='';
+      mkPhase='';                                  // 状態を作り直させる(止めた間に問が進んでいることがある)
+      if(!mkTimer) mkTimer=setInterval(mkTick,120);
+    }).catch(()=>{});
+  };
+}
+// 画面に戻ってきたとき、止まったままなら同じ案内を出す
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden) return;
+  if(mkSet && mkAU && mkAU.paused && !mkAU.ended
+     && !document.getElementById('mock').classList.contains('off')) showMockPaused();
+});
+
+// 模試をやめる前に必ず確認する。戻るキーからも、画面のボタンからも、ここを通す。
+function confirmQuitMock(){
+  if(document.getElementById('mock').classList.contains('off')) return;
+  skOpen('<div class="sk-status">試験をやめますか？<br>ここまでの録音は残りません。</div>'
+    +'<div class="sk-actions">'
+    +'<button class="sk-btn" data-mkq="stay">続ける</button>'
+    +'<button class="sk-btn sk-again" data-mkq="quit">やめる</button></div>');
+}
+document.addEventListener('click',(e)=>{
+  const b=e.target.closest('[data-mkq]'); if(!b) return;
+  skClose();
+  if(b.dataset.mkq==='quit'){ quitMock(); }
+  else { pushOverlay('mock', confirmQuitMock); }   // 続けるなら履歴を積み直す(次の戻るでまた確認)
+});
+
 function startMock(si){
   if(!MOCK||!MOCK.sets[si]) return;
   mkSet=MOCK.sets[si]; mkIdx=-1; mkPhase=''; mkRecs=[];   // mkPhase は「問番号:状態」を持つ
   const el=document.getElementById('mock');
   el.classList.remove('off'); el.setAttribute('aria-hidden','false');
-  pushOverlay('mock', quitMock);
+  // ⚠️ 戻るキーに quitMock を直接渡さない。画面の「試験をやめる」には2段の確認を付けたのに、
+  //    **Androidの戻るだけ素通しで21分が消えていた**。同じ確認を通す。
+  pushOverlay('mock', confirmQuitMock);
   try{ AU.pause(); }catch(e){}                       // 練習側の音声が鳴っていたら止める
   mkAU=new Audio(mkSet.mp3+(mkSet.av?('?v='+mkSet.av):''));
   mkAU.preload='auto';
@@ -1245,6 +1344,13 @@ function startMock(si){
   document.getElementById('mkHint').textContent='英語の指示が流れます。指示のあと、問題が始まります。';
   document.getElementById('mkCount').textContent='';
   mkAU.addEventListener('ended', finishMock);
+  // 【2026-09-04】電話・アラーム・別アプリで音が止められると、
+  // **画面は同じ問のまま永久に固まっていた**(戻す処理がどこにも無かった)。
+  // 止まったことに気づいて、続きから戻せるようにする。位置(currentTime)はそのままで整合する。
+  mkAU.addEventListener('pause', ()=>{ if(!mkSet) return; if(mkAU.ended) return; showMockPaused(); });
+  mkAU.addEventListener('error', ()=>{ if(!mkSet) return;
+    document.getElementById('mkState').textContent='音声を読めませんでした';
+    document.getElementById('mkHint').textContent='通信は要りません。アプリを開き直してもう一度お試しください。'; });
   mkAU.play().then(()=>{ mkTimer=setInterval(mkTick,120); })
     .catch(()=>{ document.getElementById('mkState').textContent='画面をタップすると始まります';
                  el.addEventListener('click',()=>mkAU.play().then(()=>{mkTimer=setInterval(mkTick,120);}),{once:true}); });
@@ -1365,15 +1471,53 @@ async function scoreMock(){
         body:JSON.stringify(body),signal:ac.signal});
       clearTimeout(t);
       let j=null; try{ j=await res.json(); }catch(e){ j=null; }
-      results.push({...r, blob:null, ok:!!(j&&j.ok), j: j&&j.ok?j:null});
-    }catch(e){ results.push({...r, blob:null, ok:false, j:null}); }
+      // 【2026-09-04】採点に失敗した問の録音まで捨てていた。
+      // 圏外だと全問が落ちるのに、手元の録音を消して「もう一度21分受けろ」になっていた。
+      // **採点できた問だけ捨てる**(記憶を無駄に抱えない)。落ちた問は残してやり直せるようにする。
+      const okk=!!(j&&j.ok);
+      results.push({...r, blob: okk?null:r.blob, ok:okk, j: okk?j:null});
+    }catch(e){ results.push({...r, ok:false, j:null}); }
   }
   showMockResult(results);
 }
 
 // 結果は「生の数字」だけ出す。20〜80のスコア換算や本番スコア予測はしない(校正データが無い)
 let drillQueue=[], drillIdx=0;
+// 通信で落ちた問だけを、録音を捨てずにやり直す。
+// 【なぜ要るか】圏外だと全問が落ちる。録音はまだ手元にあるのに、
+// 「もう一度21分受けろ」は誰もやらない。落ちた分だけ送り直す。
+let _lastResults=null;
+async function retryMockScoring(){
+  if(!_lastResults) return;
+  const again=_lastResults.filter(r=>!r.j && r.blob);
+  if(!again.length){ alertLite('やり直す問はありません。'); return; }
+  const rt=document.getElementById('mrRetry');
+  if(rt){ rt.disabled=true; rt.textContent='採点しています…'; }
+  for(let i=0;i<again.length;i++){
+    const r=again[i];
+    if(rt) rt.textContent=`採点しています… ${i+1} / ${again.length}`;
+    try{
+      let b64=null, mime='audio/wav';
+      try{ b64=await blobToWav16k(r.blob); }catch(e){ b64=null; }
+      if(!b64){ b64=await blobToB64(r.blob); mime=r.blob.type; }
+      const qa=QA_PARTS.has(r.part);
+      const body = qa ? {audio:b64,reference:r.en,mime,mode:'qa',question:r.en,answer:r.answer}
+                      : {audio:b64,reference:r.en,mime};
+      body.cid=cid();
+      const ac=new AbortController(); const t=setTimeout(()=>ac.abort(), SCORE_TIMEOUT_MS);
+      const res=await fetch(SPEAK_API+'/api/score',{method:'POST',
+        headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ac.signal});
+      clearTimeout(t);
+      const j=await res.json().catch(()=>null);
+      if(j&&j.ok){ r.j=j; r.ok=true; }
+    }catch(e){}
+  }
+  if(rt){ rt.disabled=false; }
+  showMockResult(_lastResults);   // 数字を出し直す
+}
+
 function showMockResult(results){
+  _lastResults=results;   // やり直しのために持っておく(録音も含めて捨てない)
   quitMock();
   const el=document.getElementById('mres');
   el.classList.remove('off'); el.setAttribute('aria-hidden','false');
@@ -1387,14 +1531,22 @@ function showMockResult(results){
     if(p==='B'){
       const vals=rs.map(r=>r.j&&r.j.scores?r.j.scores.said:null).filter(v=>v!=null);
       const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+      const miss=rs.length-vals.length;
       rows+=`<div class="rrow"><span class="rp">PART ${p}</span>`
-        +`<span class="rt">${PART_LABEL[p]}<div class="rnote">お手本の語をどれだけ言えたか</div></span>`
-        +`<span class="rv">${avg==null?'—':avg}<small>%</small></span></div>`;
+        +`<span class="rt">${PART_LABEL[p]}<div class="rnote">お手本の語をどれだけ言えたか`
+        +`${miss?`<br>${miss}問は採点できませんでした`:''}</div></span>`
+        +`<span class="rv">${avg==null?'<small>—</small>':`${avg}<small>%</small>`}</span></div>`;
     }else{
-      const ok=rs.filter(r=>r.j&&r.j.verdict==='正解').length;
+      // 【2026-09-04】採点できなかった問を分母に入れていた。
+      // 圏外だと「0 / 8」= **全問不正解に見える**が、実際は1問も採点していない。
+      // 採点できた問だけを分母にし、落ちた問は別に書く。
+      const done=rs.filter(r=>r.j);
+      const ok=done.filter(r=>r.j.verdict==='正解').length;
+      const miss=rs.length-done.length;
       rows+=`<div class="rrow"><span class="rp">PART ${p}</span>`
-        +`<span class="rt">${PART_LABEL[p]}<div class="rnote">内容が答えになっていたか</div></span>`
-        +`<span class="rv">${ok}<small>/ ${rs.length}</small></span></div>`;
+        +`<span class="rt">${PART_LABEL[p]}<div class="rnote">内容が答えになっていたか`
+        +`${miss?`<br>${miss}問は採点できませんでした`:''}</div></span>`
+        +`<span class="rv">${done.length?`${ok}<small>/ ${done.length}</small>`:'<small>—</small>'}</span></div>`;
     }
   }
   for(const p of ['E','F']){
@@ -1423,8 +1575,19 @@ function showMockResult(results){
       +'<br>問題そのものは最後まで流れているので、聞く練習にはなっています。';
     document.getElementById('mrRows').innerHTML='';
   }else{
-    sub.textContent =
-      `${results.length}問を採点${fail?`（${fail}問は通信できず採点できませんでした）`:''}。本番のスコアではありません。`;
+    const done=results.filter(r=>r.j).length, fail2=results.length-done;
+    if(done===0){
+      // 1問も採点できていないのに数字を並べると、全問不正解に見える
+      sub.innerHTML='<b>採点できませんでした。</b>電波が届かないか、採点の窓口につながりませんでした。'
+        +'<br>録音は残してあるので、電波のあるところで「採点をやり直す」を押してください。';
+      document.getElementById('mrRows').innerHTML='';
+    }else{
+      sub.textContent =
+        `${done}問を採点${fail2?`（${fail2}問は通信できず採点できませんでした）`:''}。本番のスコアではありません。`;
+    }
+    // 落ちた問があるなら、録音を捨てずにやり直せるようにする
+    const rt=document.getElementById('mrRetry');
+    if(rt){ rt.hidden = fail2===0; rt.textContent = `採点をやり直す（${fail2}問）`; }
   }
 
   // 【独自価値】聞き取れなかった語を集める。ここが競合に無いところ
@@ -1469,6 +1632,53 @@ function closeMockResult(){
 }
 document.getElementById('mrBack').onclick=closeMockResult;
 document.getElementById('mrDrill').onclick=()=>startDrill(0);
+document.getElementById('mrRetry').onclick=retryMockScoring;
+
+// ===== 弱点ドリルを「模試のあと」以外からも開けるようにする =====
+// 【2026-09-04】このアプリで他に無いのは「聞き取れなかった音の特定→その語が入っていた問題を変速で練習」。
+// なのに入口が**模試の結果画面ひとつだけ**だった。21分の模試を最後まで受けた人しか触れない
+// ＝ほとんどの人に価値が届かない。端末に貯まった「にがてな語」からも同じドリルを作る。
+function buildDrillFromLog(){
+  const wl=weakList();                      // 2回以上つまずいた語(多い順)
+  if(!wl.length) return [];
+  // その語が入っている問題を、いま読み込んでいる全パートから探す。
+  // 音を鳴らせない語はドリルにならないので落とす(模試のときと同じ考え方)。
+  const q=[];
+  for(const [k,v] of wl){
+    let src=null;
+    outer:
+    for(const part of (DATA&&DATA.parts)||[]){
+      for(const c of part.chapters||[]){
+        if(c.tail) continue;
+        const en=String(c.en||'');
+        if(!en) continue;
+        if(new RegExp('\\b'+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i').test(en)){
+          src={en:c.en, yaku:c.yaku||c.q_yaku||'', part:part.id,
+               start:c.start, end:c.end, _partObj:part};
+          break outer;
+        }
+      }
+    }
+    if(src) q.push({word:v.word||k, item:src});
+    if(q.length>=12) break;
+  }
+  return q;
+}
+function openDrillFromLog(){
+  const q=buildDrillFromLog();
+  if(!q.length){
+    alertLite('まだ練習できる語がありません。マイクで答えると、聞き取れなかった語がここに貯まります。');
+    return;
+  }
+  drillQueue=q; startDrill(0);
+}
+// 小さな知らせ(confirm/alert はアプリの見た目と合わず、画面を止めるので使わない)
+function alertLite(msg){
+  let el=document.getElementById('lite');
+  if(!el){ el=document.createElement('div'); el.id='lite'; document.body.appendChild(el); }
+  el.textContent=msg; el.classList.add('on');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'), 3600);
+}
 
 // 聞き取れなかった語が入っていた問題を、ゆっくり(0.7倍)→本番速度で流す。
 // 単独の読み上げにしない(実測で本番の2.34倍遅くなり、聞き比べが成立しないため)。
@@ -1521,12 +1731,9 @@ document.getElementById('drNext').onclick=()=>{
   drillIdx++; playDrill();
 };
 // ブラウザのモーダルは出さない(操作が止まる・見た目もアプリと合わない)。2段タップで確認する
-document.getElementById('mkQuit').onclick=(e)=>{
-  const b=e.currentTarget;
-  if(b.dataset.confirm!=='1'){ b.dataset.confirm='1'; b.textContent='本当にやめる（録音は残りません）';
-    setTimeout(()=>{ if(b.dataset.confirm==='1'){ b.dataset.confirm=''; b.textContent='試験をやめる'; } },6000); return; }
-  b.dataset.confirm=''; b.textContent='試験をやめる'; quitMock();
-};
+// 画面のボタンも戻るキーも、確認は1か所(confirmQuitMock)に通す。
+// 2つの確認の仕組みが並ぶと、片方だけ直して片方が素通しになる(実際にそうなった)。
+document.getElementById('mkQuit').onclick=confirmQuitMock;
 
 // 答え欄に続きがあるかを見て、下向きの印を出し入れする。
 // 文字を大きくしたら Part C/D が枠に収まらなくなり、切れた行が半端に見えるだけで
@@ -1715,7 +1922,7 @@ function renderFeed(){
         <div class="yt">
           <button class="yb rep" data-rep aria-label="もう一回">${IC_REPLAY}</button>
           <button class="yb play" data-play id="play${i}">${IC_PAUSE}</button>
-          ${(SPEAK_ENABLED&&c.en&&(SPK_PARTS.has(PART.id)||QA_PARTS.has(PART.id)||REC_ONLY_PARTS.has(PART.id)))?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
+          ${(SPEAK_ENABLED&&c.en&&(SPK_PARTS.has(PART.id)||QA_PARTS.has(PART.id)||REC_ONLY_PARTS.has(PART.id))&&!(PART.id==='D'&&c.questions&&c.questions.length))?`<button class="yb mic" data-mic aria-label="録音開始・もう一度押すと停止">${IC_MIC}<span class="miclbl">録音中…</span></button>`:''}
         </div>
         ${loadLastResult(PART,i)?`<button class="prevres" data-prev="${i}">前回の結果を見る</button>`:''}
       </div>
@@ -1725,7 +1932,7 @@ function renderFeed(){
     // 録音中にマイク以外(再生/もう一回/カード)を押したら録音を止める(採点せず)。
     // 【2026-08-14】以前はそのまま再生まで始めていたので「押したのに何も起きず勝手に音が鳴った」と見えた。
     // 中断したことを一言出し、**このタップは中断だけに使う**(再生は次のタップから)。
-    if(spkRecording && !e.target.closest('[data-mic]')){
+    if(spkRecording && !e.target.closest('[data-mic]') && !e.target.closest('[data-qmic]')){
       stopSpkRec(true);
       skOpen('<div class="sk-status">録音を中断しました。もう一度マイクを押すと録り直せます。</div>');
       return;
@@ -1736,7 +1943,17 @@ function renderFeed(){
     if(e.target.closest('[data-spd]')){speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];AU.playbackRate=speed;document.querySelectorAll('[data-spd]').forEach(x=>x.textContent=spdTxt(speed));if(typeof syncSpeedSeg==='function')syncSpeedSeg();return;}
     if(e.target.closest('[data-rep]')){replay();return;}
     if(e.target.closest('[data-prev]')){ openLastResult(+e.target.closest('[data-prev]').dataset.prev); return; }   // 前回の採点結果を開き直す
-    if(e.target.closest('[data-mic]')){toggleSpkRec();return;}   // マイク: タップで録音開始、もう一度タップで停止して採点。タップで再生はさせない
+    // Part D の質問ごとの録音。どの質問に答えるかを先に決めてから開始する
+    const _qb=e.target.closest('[data-qmic]');
+    if(_qb){
+      const qi=+_qb.dataset.qmic;
+      if(spkRecording){ toggleSpkRec(); return; }      // 録音中なら止めて採点
+      _pendingQ=qi;
+      document.querySelectorAll('.qmic').forEach(b=>b.classList.toggle('on', b===_qb));
+      toggleSpkRec();
+      return;
+    }
+    if(e.target.closest('[data-mic]')){toggleSpkRec();return;}   // マイク: タップで録音開始(Part D 以外)、もう一度タップで停止して採点。タップで再生はさせない
     if(e.target.closest('[data-play]')){togglePlay();return;}
     togglePlay();   // カードのどこをタップしても再生/停止(ダブルタップ廃止=拡大防止)
   }));
@@ -1929,7 +2146,19 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
   if(i===active){_litSeg=-1; updateMediaMeta();}   // 表示カードを描き直すと.textのscrollTopが0に戻るので、なぞり自動スクロールの記憶をリセット(次tickで再追従)。ロック画面の問題番号も更新
   // 答えを開いているカードには .ans を付ける。上の波形ブロックを小さくして、答えに重ならないようにする
   const _card=el.closest('.card');
-  if(!revealed[i] && hideAns){el.innerHTML='';_card&&_card.classList.remove('ans');updateEye();return;}   // 非表示中は本文を空に。表示は下バーの「答えを見る」で
+  if(!revealed[i] && hideAns){
+    // 【2026-09-04】Part D は「1つの話に質問3つ」で、どの質問に答えるかを選ばないと録音できない。
+    // 質問ごとのマイクを答えの中だけに置いていたため、**声を出すには先に解答例を見るしかなかった**。
+    // 質問文は聞こえてくるもの(答えではない)ので、隠しているときも出してよい。
+    if(PART.id==='D' && c.questions && c.questions.length && SPEAK_ENABLED){
+      el.innerHTML=c.questions.map((q,qi)=>
+        `<div class="enlab">質問${qi+1}</div><div class="en">${q.question}</div>`
+        +`<button class="qmic" data-qmic="${qi}" aria-label="質問${qi+1}に声で答える">`
+        +`${IC_MIC}<span>質問${qi+1}に答える</span></button>`).join('');
+      _card&&_card.classList.add('ans'); updateEye(); return;
+    }
+    el.innerHTML='';_card&&_card.classList.remove('ans');updateEye();return;   // 非表示中は本文を空に。表示は下バーの「答えを見る」で
+  }
   _card&&_card.classList.add('ans');
   document.getElementById('hint')?.classList.add('hide');
   const isDlg=c.dialogue&&c.dialogue.length;
@@ -1953,8 +2182,14 @@ function paintText(i){const c=CARDS[i],el=document.getElementById('text'+i);if(!
       let ex=q.answer_full||q.answer_short||'';
       if(q.answer_short){const li=ex.toLowerCase().indexOf(q.answer_short.toLowerCase());
         if(li>=0)ex=ex.slice(0,li)+'<b>'+ex.slice(li,li+q.answer_short.length)+'</b>'+ex.slice(li+q.answer_short.length);}
+      // 【2026-09-04】質問ごとに録音ボタンを置く。
+      // これが無い間、Part D は**本文まるごとを「質問」として採点窓口に送っていた**ので、
+      // 30問すべてが正しく採点されない状態だった(答えも3問中1問目しか渡していなかった)。
+      const canSpk = SPEAK_ENABLED && q.question;
       return `<div class="enlab">質問${qi+1}</div><div class="en">${q.question}</div>`
         +(q.q_yaku?`<div class="yaku">${q.q_yaku}</div>`:'')
+        +(canSpk?`<button class="qmic" data-qmic="${qi}" aria-label="質問${qi+1}に声で答える">`
+            +`${IC_MIC}<span>質問${qi+1}に答える</span></button>`:'')
         +(ex?`<div class="row ex"><span class="k">解答例</span><span class="v">${ex}`
             +`<div class="tip">太字だけでも正解${q.a_yaku?'・'+q.a_yaku:''}</div></span></div>`:'');
     }).join('');
@@ -2030,6 +2265,9 @@ if(new URLSearchParams(location.search).get('debug')==='1'){
 
 // ===== 発音採点(押し続けて録音→離すと採点。結果は同じ画面のシートに表示) =====
 let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null, spkLastBlob=null, spkLastRef='', _mineAudio=null, _modelAudio=null, _maxRecTimer=0, _recStart=0, _recCancel=false, _recStarting=false;
+// Part D は1つの話に質問が3つある。どれに答えているかを覚えていないと、
+// **本文まるごとを「質問」として採点窓口へ送る**ことになる(実際にそうなっていた)。-1=カード全体
+let _recQ=-1, _pendingQ=-1;   // _pendingQ=押されたボタンが指す質問。開始時に _recQ へ移す
 // 止め忘れの自動停止まで。本番の持ち時間に合わせてパートごとに変える
 // (E=再話30秒 / F=自由回答40秒。A〜Dは本番15秒だが言い直す余裕を見て20秒のまま)。
 const SPK_MAX_BY_PART={E:30000, F:40000};
@@ -2059,7 +2297,11 @@ async function startSpkRec(fromSheet){
     spkRec.onstop=async ()=>{
       try{ spkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
       if(_recCancel){ _recCancel=false; return; }   // 再生等で割り込み→採点せず終了
-      const ref=(CARDS[_recIdx]&&CARDS[_recIdx].en)||''; spkLastRef=ref;
+      // Part D は質問ごとに採点する。カードの en は**本文まるごと**なので、
+      // そのまま送ると質問でない長文をお手本にしてしまう(300字上限にも当たる)
+      const _c=CARDS[_recIdx];
+      const _q=(_recQ>=0 && _c && _c.questions && _c.questions[_recQ]) ? _c.questions[_recQ] : null;
+      const ref=(_q ? _q.question : (_c&&_c.en)) || ''; spkLastRef=ref;
       if(!spkChunks.length||!ref||(Date.now()-_recStart)<SPK_MIN_MS){
         // 短すぎる録音は採点しない。ただし黙って閉じると「押したのに何も起きない=壊れている」と見える
         skOpen('<div class="sk-status">短すぎて聞き取れませんでした。もう少し長く押して、話してから止めてください。</div>'
@@ -2081,6 +2323,7 @@ async function startSpkRec(fromSheet){
       }catch(e){ skOpen('<div class="sk-status">音声の処理に失敗しました</div>'); }
     };
     spkRec.start(); spkRecording=true; _recStart=Date.now(); _recIdx=active; _recPart=PART;
+    _recQ=_pendingQ; _pendingQ=-1;   // どの質問に答えるかは、押したボタンで決まっている
     const _lim=maxRecMs(PART&&PART.id);
     clearTimeout(_maxRecTimer); _maxRecTimer=setTimeout(()=>{ if(spkRecording) stopSpkRec(); }, _lim);   // 止め忘れ対策: 最長で自動停止
     document.querySelectorAll('[data-mic]').forEach(m=>m.classList.add('rec'));   // マイクボタンが赤く点滅＋真上に「録音中…」ラベル(.miclbl)。シート内録音時はシートが覆うので裏のラベルは見えない
@@ -2158,7 +2401,13 @@ function renderRecOnly(c){
   );
 }
 // タップで録音開始 / もう一度タップで停止して採点(カードのclickハンドラから呼ばれる)
-function toggleSpkRec(){ if(spkRecording) stopSpkRec(); else startSpkRec(); }
+function toggleSpkRec(){
+  // 質問が指定されていればそれを使う。指定が無いときだけカード全体に戻す。
+  // ⚠️ ここで無条件に -1 にすると、結果シートの「もう一度言う」から来たときに
+  //    Part D が本文まるごとを送る形に戻り、必ず400(文章が長すぎます)になる。
+  if(!spkRecording && _pendingQ<0 && !(_recPart&&_recPart.id==='D'&&_recQ>=0)) _recQ=-1;
+  if(spkRecording) stopSpkRec(); else startSpkRec();
+}
 document.getElementById('spkrX').addEventListener('click',skClose);
 document.getElementById('spkrBg').addEventListener('click',skClose);
 // 結果シート内の操作: 語タップで読み上げ / 自分の声・お手本を再生 / もう一度言う
@@ -2263,7 +2512,11 @@ async function scoreSpk(audioB64, reference, mime){
   const t=setTimeout(()=>ac.abort(), SCORE_TIMEOUT_MS);
   try{
     const qa = _recPart && QA_PARTS.has(_recPart.id);   // 質問応答パートは内容判定モード(質問+模範解答も送る)
-    const body = qa ? {audio:audioB64,reference,mime,mode:'qa',question:reference,answer:(CARDS[_recIdx]&&CARDS[_recIdx].answer)||''} : {audio:audioB64,reference,mime};
+    // Part D は質問ごとの模範解答を渡す。カード全体の answer は1問目のものしか入っていない
+    const _c2=CARDS[_recIdx];
+    const _q2=(_recQ>=0 && _c2 && _c2.questions && _c2.questions[_recQ]) ? _c2.questions[_recQ] : null;
+    const _ans=_q2 ? (_q2.answer_short||_q2.answer||'') : ((_c2&&_c2.answer)||'');
+    const body = qa ? {audio:audioB64,reference,mime,mode:'qa',question:reference,answer:_ans} : {audio:audioB64,reference,mime};
     body.cid=cid();
     const r=await fetch(SPEAK_API+'/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ac.signal});
     let j=null; try{ j=await r.json(); }catch(e){ j=null; }   // HTMLのエラーページ等でJSONにならない場合
