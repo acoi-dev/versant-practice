@@ -947,9 +947,17 @@ SWB.onclick=()=>{bigText=!bigText;localStorage.setItem('big',bigText?'1':'0');ap
 let wakeOn=localStorage.getItem('wake')==='1',wakeLock=null;
 const SWW=document.getElementById('swWake');
 SWW.classList.toggle('on',wakeOn);SWW.setAttribute('aria-checked',wakeOn);
-async function reqWake(){if(wakeOn&&'wakeLock'in navigator&&document.visibilityState==='visible'){try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}}
+// 【2026-09-04】模試のあいだは、設定に関係なく画面を消さない。
+// 21分の試験の途中で画面が消えると、音は流れ続けるのに録音の区切りが崩れる。
+// 練習中は今までどおり設定に従う(勝手に電池を食わない)。
+let _forceWake=false;
+async function reqWake(){
+  if((wakeOn||_forceWake) && 'wakeLock' in navigator && document.visibilityState==='visible'){
+    try{ wakeLock=await navigator.wakeLock.request('screen'); }catch(e){}
+  }
+}
 function relWake(){try{if(wakeLock)wakeLock.release();}catch(e){}wakeLock=null;}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wakeOn)reqWake();});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&(wakeOn||_forceWake))reqWake();});
 SWW.onclick=()=>{wakeOn=!wakeOn;SWW.classList.toggle('on',wakeOn);SWW.setAttribute('aria-checked',wakeOn);localStorage.setItem('wake',wakeOn?'1':'0');wakeOn?reqWake():relWake();};
 
 // ===== Androidの戻るボタン(とブラウザの戻る)で、開いているものを閉じる =====
@@ -975,7 +983,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-17';
+const BUILD='0904-18';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1351,6 +1359,10 @@ window.__stopAllAudio=function(){
   try{ if(typeof drAU!=='undefined' && drAU) drAU.pause(); }catch(e){}
   try{ if(typeof _mineAudio!=='undefined' && _mineAudio) _mineAudio.pause(); }catch(e){}
   try{ speechSynthesis.cancel(); }catch(e){}
+  // 【2026-09-04】録音を止めていなかった。イヤホンを抜いても録り続け、
+  // 赤い「録音中」も出たままで、抜いたあとの周りの音まで採点に送られていた。
+  try{ if(typeof spkRecording!=='undefined' && spkRecording) stopSpkRec(true); }catch(e){}
+  try{ if(typeof mkStopRec==='function') mkStopRec(); }catch(e){}
 };
 
 // ===== 本番形式の模試 =====
@@ -1418,6 +1430,7 @@ function startMock(si){
   document.getElementById('mkState').textContent='読み込み中…';
   document.getElementById('mkHint').textContent='英語の指示が流れます。指示のあと、問題が始まります。';
   document.getElementById('mkCount').textContent='';
+  _forceWake=true; reqWake();   // 試験のあいだは画面を消さない
   mkAU.addEventListener('ended', finishMock);
   // 【2026-09-04】電話・アラーム・別アプリで音が止められると、
   // **画面は同じ問のまま永久に固まっていた**(戻す処理がどこにも無かった)。
@@ -1507,6 +1520,7 @@ function mkStopRec(){
 }
 
 function quitMock(){
+  _forceWake=false; if(!wakeOn) relWake();   // 試験が終わったら元に戻す
   mkScoreSeq++;   // 走っている採点を捨てる(やめたのに通信と費用が続くのを止める)
   popOverlay('mock');
   clearInterval(mkTimer); mkTimer=0;
@@ -2446,7 +2460,8 @@ if(new URLSearchParams(location.search).get('debug')==='1'){
 let spkRec=null, spkChunks=[], spkRecording=false, spkStream=null, spkLastBlob=null, spkLastRef='', _mineAudio=null, _modelAudio=null, _maxRecTimer=0, _recStart=0, _recCancel=false, _recStarting=false;
 // Part D は1つの話に質問が3つある。どれに答えているかを覚えていないと、
 // **本文まるごとを「質問」として採点窓口へ送る**ことになる(実際にそうなっていた)。-1=カード全体
-let _recQ=-1, _pendingQ=-1;   // _pendingQ=押されたボタンが指す質問。開始時に _recQ へ移す
+let _recQ=-1, _pendingQ=-1;
+let _wavFailed=false;   // 音の変換に失敗した=発音採点が付かない回   // _pendingQ=押されたボタンが指す質問。開始時に _recQ へ移す
 // 止め忘れの自動停止まで。本番の持ち時間に合わせてパートごとに変える
 // (E=再話30秒 / F=自由回答40秒。A〜Dは本番15秒だが言い直す余裕を見て20秒のまま)。
 const SPK_MAX_BY_PART={E:30000, F:40000};
@@ -2474,6 +2489,11 @@ async function startSpkRec(fromSheet){
     spkChunks=[]; spkRec=new MediaRecorder(spkStream);
     spkRec.ondataavailable=e=>{ if(e.data.size) spkChunks.push(e.data); };
     spkRec.onstop=async ()=>{
+      // 【2026-09-04】止め方が stopSpkRec 経由とは限らない(端末側で止まる・機器が変わる)。
+      // ここでも必ず表示と状態を戻す。戻さないと**赤い「録音中」が残ったまま採点シートが開く**。
+      spkRecording=false;
+      try{ clearTimeout(_maxRecTimer); stopRecCountdown(); }catch(e){}
+      try{ document.querySelectorAll('[data-mic]').forEach(m=>m.classList.remove('rec')); }catch(e){}
       try{ spkStream.getTracks().forEach(t=>t.stop()); }catch(e){}
       if(_recCancel){ _recCancel=false; return; }   // 再生等で割り込み→採点せず終了
       // Part D は質問ごとに採点する。カードの en は**本文まるごと**なので、
@@ -2497,7 +2517,13 @@ async function startSpkRec(fromSheet){
         // 変換できない端末では元の音声をそのまま送る(文字起こしだけは動く)
         let b64w=null, sendMime='audio/wav';
         try{ b64w=await blobToWav16k(spkLastBlob); }catch(e){ b64w=null; }
-        if(!b64w){ b64w=await blobToB64(spkLastBlob); sendMime=spkLastBlob.type; }
+        if(!b64w){
+          // 【2026-09-04】変換できないと、採点の窓口は WAV でないものに発音採点をかけない。
+          // つまり**発音の点も、Part A の2択の決着も、黙って丸ごと消える**。
+          // 黙って消すと「点が出ないアプリ」に見えるので、何が起きたかを伝える。
+          b64w=await blobToB64(spkLastBlob); sendMime=spkLastBlob.type;
+          _wavFailed=true;
+        } else { _wavFailed=false; }
         await scoreSpk(b64w, ref, sendMime);
       }catch(e){ skOpen('<div class="sk-status">音声の処理に失敗しました</div>'); }
     };
@@ -2770,6 +2796,11 @@ function pronNote(band, wordCount){
   return a+b;
 }
 const SK_FUNC=new Set('a an the to of in on at for and or but is am are was were be been do does did have has had will would shall can could i he she it we they you your my me this that with as so no not'.split(' '));
+function wavFailNote(){
+  // 音の変換に失敗した回だけ出す。発音の点が付かない理由を黙って伏せない
+  return _wavFailed ? '<div class="sk-heard">この端末では音の変換ができず、'
+    +'今回は発音の点が付いていません（言えたかどうかの判定は出ています）。</div>' : '';
+}
 function renderSpkResult(j){
   if(j.mode==='qa') return renderQaResult(j);   // 質問応答パート(A/C/D)は内容判定の表示へ
   const said=Math.round((j.scores&&j.scores.said)??0);
@@ -2808,8 +2839,9 @@ function renderSpkResult(j){
   skOpen(
     `<div class="sk-verdict">${verdict}<span>言えた率 ${said}%</span>${band?`<span style="margin-left:8px">発音 ${band.label}${pronMeter(band)}</span>`:''}${best!=null?`<span class="sk-best${best>=100?' full':''}">自己ベスト ${best}%</span>`:''}</div>`
     +`<div class="sk-words">${wHTML}</div>`
-    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${(hasBad||hasWeak)?'（'+[hasBad?'赤 ＝ 言えていない所':'',hasWeak?'点線 ＝ 発音がすこし弱い所':''].filter(Boolean).join('／')+'）':''}</div>`
+    +`<div class="sk-leg"><span class="sk-tap">語をタップで読み上げ</span>${(hasBad||hasWeak)?'（'+[hasBad?'実線 ＝ 言えていない所':'',hasWeak?'点線 ＝ 発音がすこし弱い所':''].filter(Boolean).join('／')+'）':''}</div>`
     +`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||'')}`
+      +wavFailNote()
       +(note?`<div class="sk-heard">${note}</div>`:'')
       +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
     +`</div>`
@@ -2873,10 +2905,11 @@ function renderQaResult(j){
     // お手本の語で言えていないものがあるときだけ、何が届いていないかを出す
     +(hasBad?`<span class="sk-lbl">お手本と比べると</span>`
       +`<div class="sk-words sub">${words.map(w=>`<span class="w ${isBad(w)?'bad':(isWeak(w)?'weak':'')}">${skEsc(w.word)}</span>`).join(' ')}</div>`
-      +`<div class="sk-leg">赤 ＝ 届いていない所</div>`:'')
+      +`<div class="sk-leg">実線 ＝ 届いていない所</div>`:'')
     // 解答例(模範解答)。答えが短いので注記は付けない=Part Aの表示ルール
     +((ans && !sameAsModel)?`<div class="sk-adv"><span class="k">解答例</span><b>${skEsc(ans)}</b>${(j.reason&&!ok)?`<div class="sk-heard">${skEsc(j.reason)}</div>`:''}</div>`:'')
     +((j.advice||j.reason)?`<div class="sk-adv"><span class="k">アドバイス</span>${skEsc(j.advice||j.reason)}`
+       +wavFailNote()
        +(note?`<div class="sk-heard">${note}</div>`:'')
        +(repeats.length?`<div class="sk-heard">${repeats.map(r=>`${skEsc(String(r.w).replace(/[^A-Za-z']/g,''))} は これまで${r.n}回`).join('・')} つまずいています</div>`:'')
        +`</div>`:'')
