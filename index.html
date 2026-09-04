@@ -377,6 +377,7 @@
   #mock .mkresume{margin-top:16px}
   #mock .mkresume button{border:1px solid var(--accent);background:var(--accent);color:var(--onaccent);
     font:inherit;font-size:16px;font-weight:700;border-radius:10px;padding:14px 26px;cursor:pointer;min-height:48px}
+  #mock .mlead{font-size:13.5px;color:var(--sub)}
   #mock .mprov{font-size:11px;color:var(--sub)}
   /* 触って覚えるチュートリアル。初回にパートを開いたとき、**実物の画面の上に**
      順番に案内を出す。文章のガイドは読まれないので、ここだけは押す場所を指す。
@@ -678,6 +679,8 @@
         <li><b>発音の正確さ</b>：語ごとの発音（0〜100）。一語だけの答えは振れやすいので目安として見てください</li>
         <li><b>「◯◯が△△に聞こえます」</b>：その語が速く話されると、どう変わって聞こえるか</li>
       </ul>
+      <p class="n"><b>聞く練習に回数の制限はありません。</b>声を採点するほうは、外部のAIを使うので
+      1日80回までにしています（模試1回は36問ぶん使います）。日をまたぐと戻ります。</p>
     </div>
   </details>
 
@@ -727,6 +730,8 @@
     <div class="mcount" id="mkCount"></div>
     <div class="mrec" id="mkRec" hidden><b></b>録音中</div>
     <div class="mhint" id="mkHint"></div>
+    <!-- 本番の「何秒以内に話し始める」の決まりを伝える(自動では打ち切らない) -->
+    <div class="mlead" id="mkLead"></div>
     <div class="mprov" id="mkProv" hidden></div>
   </div>
   <button class="mquit" id="mkQuit">試験をやめる</button>
@@ -957,7 +962,7 @@ try{ history.replaceState({root:1},''); }catch(e){}
 
 // 画面とデータの版。boot() が教材データのURLに使うので、**必ず boot() より前**に置く
 // (後ろに置くと起動時に未定義エラーで真っ白になる)
-const BUILD='0904-12';
+const BUILD='0904-14';
 boot();
 function boot(){
   if(window.EMBED){ DATA=window.EMBED; migrateRecordKeys(); renderHome(); restoreState(); return; }
@@ -1109,7 +1114,20 @@ function renderCountdown(){
   } else {
     const n=daysUntil(ex);
     if(n>0){
+      // 【2026-09-04】「受験日を入れると、本番までのペースが見えます」と書きながら、
+      // 日数しか出していなかった。**何をどれだけやればいいか**を出す。
+      const total=(DATA&&DATA.parts||[]).filter(p=>p.id!=='G')
+        .reduce((a,p)=>a+p.chapters.filter(c=>!c.tail)
+          .reduce((b,c)=>b+((c.questions&&c.questions.length)||1),0),0);
+      const doneAll=(DATA&&DATA.parts||[]).filter(p=>p.id!=='G')
+        .reduce((a,p)=>a+doneCount(p),0);
+      const left=Math.max(0,total-doneAll);
+      const perDay=Math.ceil(left/n);
       el.innerHTML='<div class="cd-main"><span class="cd-num">あと'+n+'日</span><span class="cd-lb">本番まで</span></div>'
+        +(left>0
+          ? '<div class="cd-sub">残り'+left+'問。<b>1日'+perDay+'問</b>で本番までに一周できます。'
+            +(doneAll?'（済み '+doneAll+' / '+total+'問）':'')+'</div>'
+          : '<div class="cd-sub">全部の問題を一周しました。気になるパートを繰り返してください。</div>')
         +'<div class="cd-set"><button class="cd-link" id="examEdit">受験日を変える</button></div>';
     } else if(n===0){
       el.innerHTML='<div class="cd-main"><span class="cd-num">本番は今日</span></div>'
@@ -1177,7 +1195,8 @@ function renderHome(){
       `<div class="pcard" data-mock="${si}"><div class="top"><span class="eb kt">本番形式</span>`
       +`<span class="meta">${st.items.length}問 ・ 約${Math.round(st.total/60)}分</span></div>`
       +`<div class="ttl">模試 ${si+1}</div>`
-      +`<div class="desc">本番と同じ流れで通しで受ける。音声は1回だけ・途中で戻れない</div></div>`).join('') : '';
+      +`<div class="desc">本番と同じ流れで通しで受ける。音声は1回だけ・途中で戻れない`
+      +`${MOCK.sets.length>1?`<br>模試1と模試2で<b>同じ問題は1問も出ません</b>`:''}</div></div>`).join('') : '';
   // 【2026-09-04】並びを入れ替えた。以前は**開いた瞬間の一番上が21分の模試**だった。
   // 初めての人が最初にやることは「1問を言い切る」であって、21分だまって録音されることではない。
   // 模試は一番下(受ける気になった人が探して押すもの)。
@@ -1407,11 +1426,16 @@ function mkTick(){
   if(key!==mkPhase){
     mkPhase=key;
     if(answering){ mkStartRec(it); document.getElementById('mkState').textContent='答えてください';
+      // 本番には「何秒以内に話し始める」の決まりがある(A/B=6秒、C/D=8秒)。
+      // ここで自動的に打ち切ることはしない(音の判定を誤ると試験が壊れる)。決まりだけ伝える。
+      const _lead=document.getElementById('mkLead');
+      if(_lead) _lead.textContent = it.lead ? `本番では${it.lead}秒以内に話し始めます` : '';
       document.getElementById('mkHint').textContent = it.part==='B' ? '聞こえたとおりに、そのまま繰り返してください。'
         : it.part==='E' ? '聞いた話を、自分の言葉で言い直してください。'
         : it.part==='F' ? '自分の意見を、理由もつけて話してください。'
         : '一語か短いフレーズで答えてください。'; }
     else { mkStopRec(); document.getElementById('mkState').textContent='問題を聞いてください';
+      const _lead2=document.getElementById('mkLead'); if(_lead2) _lead2.textContent='';
       document.getElementById('mkHint').textContent=''; document.getElementById('mkCount').textContent=''; }
   }
   if(answering){
@@ -1662,6 +1686,10 @@ function closeMockResult(){
   popOverlay('mres');
   const el=document.getElementById('mres');
   el.classList.add('off'); el.setAttribute('aria-hidden','true');
+  // 「声とデータの扱い」に『模試のあいだは一時的に端末のメモリに置きますが、
+  // 画面を閉じると消えます』と書いてある。書いたとおりに手放す。
+  // (採点のやり直しは、この画面を開いているあいだだけ)
+  mkRecs=[]; _lastResults=null;
   try{ renderHome(); markCurrent(); document.getElementById('home').classList.remove('off'); }catch(e){}
 }
 document.getElementById('mrBack').onclick=closeMockResult;

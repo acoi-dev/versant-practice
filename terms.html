@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>利用規約｜Versant 練習</title>
+<script>
+// 設定(自動/ライト/ダーク)を、この読み物ページにも効かせる。
+// アプリの中でダークにしたのに、規約と声とデータの扱いだけ端末の設定に従っていた。
+(function(){ try{
+  var t=localStorage.getItem('theme');
+  if(t==='light'||t==='dark') document.documentElement.setAttribute('data-theme',t);
+}catch(e){} })();
+</script>
 <link rel="stylesheet" href="./fonts.css">
 <style>
   :root{
@@ -14,11 +22,18 @@
     --accent:#1f4fd8; --bg:#fbfbfc;
     --ui:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
   }
+  /* 端末の設定がダークのとき(ライトを明示していなければ) */
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --ink:#e9eaee; --sub:#a3a8b2; --faint:#7d828c; --line:#252830;
+      --ink:#e9eaee; --sub:#a3a8b2; --faint:#7d828c; --line:#252830; --line2:#3a3e48;
       --accent:#7ea2ff; --bg:#14161a;
     }
+  }
+  /* アプリの設定で「ダーク」を選んだとき。
+     これが無いと、アプリ側でダークにしても**この読み物だけ白いまま**になる。 */
+  :root[data-theme="dark"]{
+      --ink:#e9eaee; --sub:#a3a8b2; --faint:#7d828c; --line:#252830; --line2:#3a3e48;
+      --accent:#7ea2ff; --bg:#14161a;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);
